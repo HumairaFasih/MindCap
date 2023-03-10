@@ -1,4 +1,4 @@
-# Mindedly
+# MindCap
 
 This is a project for CS360: Software Engineering course at LUMS.
 
@@ -6,7 +6,7 @@ This is a project for CS360: Software Engineering course at LUMS.
 
 ### Extensions
 
-Install the following extension in Visual Studio Code:
+Install the following extensions in Visual Studio Code:
 
 - ESLint
 - Babel Javascript
@@ -18,14 +18,15 @@ Install the dependencies via:
 ```
 npm install
 ```
+
 ## Usage
 
-Backend Server (with live reload)
+### Backend Server (with live reload)
 ```
 cd ./server && npm run dev
 ```
 
-Frontend Client (with live reload)
+### Frontend Client (with live reload)
 ```
 cd ./client && npm start
 ```
