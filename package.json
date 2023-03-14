@@ -1,0 +1,16 @@
+{
+  "name": "mindcap",
+  "version": "1.0.0",
+  "scripts": {
+    "install": "cd client && npm install && cd ../server && npm install",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HumairaFasih/MindCap"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
