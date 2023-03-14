@@ -8,7 +8,7 @@ const logger = require('morgan');
 
 // allows creation of schemas and models
 // eslint-disable-next-line import/no-extraneous-dependencies
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 /* all routers shall handle a full category of API endpoints related to that functionality (authentication in this case)
 helps with code modularity and division of work thus making merging easier */
@@ -32,20 +32,24 @@ app.use('/api/user', userRouter);
 app.use('/api/notification', notificationRouter);
 
 // Connect to database
-mongoose
-  .connect(process.env.MONGO_CONN_URI)
-  .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log(
-        `Connection to database successful. Server started on port ${process.env.PORT}`
-      );
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-
+// mongoose
+//   .connect(process.env.MONGO_CONN_URI)
+//   .then(() => {
+//     app.listen(process.env.PORT, () => {
+//       console.log(
+//         `Connection to database successful. Server started on port ${process.env.PORT}`
+//       );
+//     });
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//   });
 // generic test get request
-app.get('/', (req, res) => {
-  res.send('Hello World from the server!');
+
+// app.get('/', (req, res) => {
+//   res.send('Hello World from the server!');
+// });
+
+app.listen(3003, () => {
+  console.log("Server started on port 3003")
 });
