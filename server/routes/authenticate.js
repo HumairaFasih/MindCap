@@ -1,6 +1,5 @@
 // Router that handles requests sent to the /api/authenticate route
 const express = require('express');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const jwtDecode = require('jwt-decode');
 const Admin = require('../models/adminModel');
@@ -56,4 +55,3 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
-
