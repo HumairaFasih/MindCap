@@ -1,14 +1,14 @@
-// react component boiler plate
+import React from 'react';
 import TextField from '@mui/material/TextField';
 import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import axios from 'axios';
-import tree from './images/Tree.png';
-import logo from './images/Logo.png';
-import './signin.css';
+import tree from './assets/images/tree.png';
+import logo from './assets/images/logo.png';
+import './SignIn.css';
 
-const Signinbutton = styled(Button)({
+const SignInButton = styled(Button)({
   boxShadow: 'none',
   textTransform: 'none',
   fontSize: 16,
@@ -36,7 +36,7 @@ const Signinbutton = styled(Button)({
   },
 });
 
-function Signin() {
+function SignIn() {
   const [username, setUsername] = useState('');
 
   const [password, setpassword] = useState('');
@@ -114,9 +114,9 @@ function Signin() {
             required
           />
 
-          <Signinbutton variant="contained" onClick={handleSubmit}>
+          <SignInButton variant="contained" onClick={handleSubmit}>
             SIGN IN
-          </Signinbutton>
+          </SignInButton>
           <h5 className="bottomtext">
             Are you a student? <a href="./SignUp">Sign Up</a>{' '}
           </h5>
@@ -126,4 +126,4 @@ function Signin() {
   );
 }
 
-export default Signin;
+export default SignIn;

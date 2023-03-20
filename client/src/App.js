@@ -1,4 +1,5 @@
 import React from 'react';
+import SignIn from './components/SignIn';
 
 function App() {
   const dummyStyle = {
@@ -9,9 +10,7 @@ function App() {
 
   return (
     <div className="App" style={dummyStyle}>
-      <header className="App-header">
-        <h1> All set up! </h1>
-      </header>
+      <SignIn/>
     </div>
   );
 }
