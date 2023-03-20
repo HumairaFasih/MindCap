@@ -1,0 +1,67 @@
+.lefthalf {
+/* covers half the screen with colour  */
+    background-color: #DCE8D5;
+    height: 100%;
+    width: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.logoheader{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.logoimg{
+    height: 40px;
+    padding-right:20px;
+}
+
+.circlelogo{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background-color: #F5F5F5;
+    z-index: -1;
+}
+
+.righthalf{
+    background-color: #FFFFFF;
+    height: 100%;
+    width: 50%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: -1;
+}
+
+.signinbox{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.bottomtext{
+    color:#3F51B5;
+    text-align: center;
+}
+
+a{
+    color:#3F51B5;
+}
+
+a:hover{
+    color:#5d6fd2;
+}
+
+/* fix responsiveness for tab */
