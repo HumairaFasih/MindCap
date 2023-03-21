@@ -9,7 +9,7 @@ function App() {
   };
 
   return (
-    <div className="App" style={dummyStyle}>
+    <div className="App">
       <SignIn/>
     </div>
   );
