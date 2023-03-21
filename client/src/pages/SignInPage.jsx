@@ -1,52 +1,21 @@
-import React from 'react';
-import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import tree from './assets/images/tree.png';
-import logo from './assets/images/logo.png';
-import './SignIn.css';
-
-const SignInButton = styled(Button)({
-  boxShadow: 'none',
-  textTransform: 'none',
-  fontSize: 16,
-  padding: '6px 12px',
-  width: 400,
-  lineHeight: 1.5,
-  backgroundColor: '#93B77D',
-  fontFamily: [
-    '-apple-system',
-    'BlinkMacSystemFont',
-    '"Segoe UI"',
-    'Roboto',
-    '"Helvetica Neue"',
-    'Arial',
-    'sans-serif',
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
-  ].join(','),
-  '&:hover': {
-    backgroundColor: '#93B77D',
-  },
-  '&:active': {
-    backgroundColor: '#93B77D',
-  },
-});
+import { TextField } from '@mui/material';
+import tree from '../assets/images/tree.png';
+import logo from '../assets/images/logo.png';
+import './SignInPage.css';
+import { SignInButton } from '../components/SignInButton';
 
 function SignIn() {
   const [username, setUsername] = useState('');
-
-  const [password, setpassword] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleChangeUsername = (event) => {
     setUsername(event.target.value);
   };
 
   const handleChangePassword = (event) => {
-    setpassword(event.target.value);
+    setPassword(event.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -118,7 +87,7 @@ function SignIn() {
             SIGN IN
           </SignInButton>
           <h5 className="bottomtext">
-            Are you a student? <a href="./SignUp">Sign Up</a>{' '}
+            Are you a student? <a href="./SignUp">Sign Up</a>
           </h5>
         </div>
       </div>

@@ -1,16 +1,10 @@
 import React from 'react';
-import SignIn from './components/SignIn';
+import SignIn from './pages/SignInPage';
 
 function App() {
-  const dummyStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  };
-
   return (
     <div className="App">
-      <SignIn/>
+      <SignIn />
     </div>
   );
 }
