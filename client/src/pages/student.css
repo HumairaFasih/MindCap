@@ -1,0 +1,11 @@
+/* In order to make the menu button not conflict with the remaining screen */
+.MainScreen{
+    margin-top: 30px;
+}
+
+.SpaceBetween{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+}

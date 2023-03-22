@@ -19,8 +19,8 @@ helps with code modularity and division of work thus making merging easier */
 
 // connect routers to the main express app
 const authenticateRouter = require('./routes/authenticate');
-const notificationRouter = require('./routes/notification');
-const userRouter = require('./routes/user');
+// const notificationRouter = require('./routes/notification');
+// const userRouter = require('./routes/user');
 const profileRouter = require('./routes/profile');
 
 // intilaise express app
@@ -35,8 +35,8 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 // routes
 // all requests made to these endpoints (will be made by the frontend application or postman while we test it) will be forwaded to the respective routers
 app.use('/api/authenticate', authenticateRouter);
-app.use('/api/user', userRouter);
-app.use('/api/notification', notificationRouter);
+// app.use('/api/user', userRouter);
+// app.use('/api/notification', notificationRouter);
 app.use('/api/profile', profileRouter);
 
 
