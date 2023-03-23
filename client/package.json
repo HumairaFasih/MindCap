@@ -6,6 +6,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
+    "@mui/joy": "^5.0.0-alpha.72",
     "@mui/material": "^5.11.13",
     "axios": "^1.3.4",
     "react": "^18.2.0",
@@ -26,6 +27,8 @@
       "airbnb/hooks"
     ],
     "rules": {
+      "react/prop-types": "off",
+      "no-nested-ternary": "off",
       "prettier/prettier": [
         "warn",
         {

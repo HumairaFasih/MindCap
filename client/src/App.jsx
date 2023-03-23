@@ -1,11 +1,14 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import SignIn from './pages/SignInPage';
+import CreateAccount from './pages/CreateAccount'
 
 function App() {
   return (
-    <div className="App">
-      <SignIn />
-    </div>
+    <Routes>
+      <Route path="/" element={<SignIn />} />
+      <Route path="/create-account" element={<CreateAccount />} />
+    </Routes>
   );
 }
 
