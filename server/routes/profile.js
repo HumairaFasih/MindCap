@@ -16,20 +16,13 @@ router.post('/updateprofile', upload.single('pdf'), async (req, res) => {
   // get id and usertype from the decoded token
   const { id } = jwtDecoded;
   const { usertype } = jwtDecoded;
-  const { username } = jwtDecoded
-
-  await MedicalRecord.create({
-    student_username: username,
-    data: req.file.buffer,
-    contentType: req.file.mimetype,
-  });
+  const { username } = jwtDecoded;
 
   // if student, then update student profile, else update counselor profile
   if (usertype === 'Student') {
     try {
       // get student data and update the record
       const { newfirstname, newlastname, newdob, newgender } = req.body;
-
       await Student.update(
         { _id: id },
         {
@@ -39,6 +32,13 @@ router.post('/updateprofile', upload.single('pdf'), async (req, res) => {
           gender: newgender,
         }
       );
+      if (req.file != null) {
+        await MedicalRecord.create({
+          student_username: username,
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+        });
+      }
       res.send('Success');
     } catch (error) {
       res.send(error);
@@ -46,4 +46,4 @@ router.post('/updateprofile', upload.single('pdf'), async (req, res) => {
   }
 });
 
-
+module.exports = router;
