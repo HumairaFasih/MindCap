@@ -1,19 +1,28 @@
 const express = require('express');
 const jwtDecode = require('jwt-decode');
+const multer = require('multer');
 const Student = require('../models/studentModel');
+const MedicalRecord = require('../models/medicalModel');
 
+const upload = multer();
 // create a router
 const router = express.Router();
 
-router.post('/updateprofile', async (req, res) => {
+router.post('/updateprofile', upload.single('pdf'), async (req, res) => {
   // access and decode token
   const token = req.cookies.jwt;
-  console.log(token);
   const jwtDecoded = jwtDecode(token);
 
   // get id and usertype from the decoded token
   const { id } = jwtDecoded;
   const { usertype } = jwtDecoded;
+  const { username } = jwtDecoded
+
+  await MedicalRecord.create({
+    student_username: username,
+    data: req.file.buffer,
+    contentType: req.file.mimetype,
+  });
 
   // if student, then update student profile, else update counselor profile
   if (usertype === 'Student') {
@@ -37,4 +46,4 @@ router.post('/updateprofile', async (req, res) => {
   }
 });
 
-module.exports = router;
+
