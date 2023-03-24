@@ -1,0 +1,49 @@
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .user-profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .user-profile-icon {
+    margin-right: 20px;
+  }
+  
+  .user-profile-title {
+    flex-grow: 1;
+  }
+  
+  .user-profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-profile-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .user-profile-qualification {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .user-profile-gender {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .user-profile-experience {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .user-profile-rating {
+    font-size: 18px;
+  }

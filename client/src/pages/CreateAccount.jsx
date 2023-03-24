@@ -65,7 +65,7 @@ function CreateAccount(props) {
           }}
         >
           <div className='MainScreen'>
-            <PageTitle text='Create Counselor Account' />
+            <PageTitle text='Create Counselor Account' marginB="15px" marginL="20px"/>
 
             <Divider
               variant='middle'

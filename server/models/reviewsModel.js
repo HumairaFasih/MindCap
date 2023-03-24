@@ -20,6 +20,16 @@ const ReviewsSchema = mongoose.Schema({
   },
 });
 
+
+ReviewsSchema.statics.getdetails = async function(filter) {
+  try {
+    return await this.find(filter).lean();
+  }
+  catch(err) {
+    throw Error('Failed')
+  }
+}
+
 const Reviews = mongoose.model('Reviews', ReviewsSchema, 'Reviews');
 
 module.exports = Reviews;
