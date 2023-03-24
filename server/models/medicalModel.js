@@ -6,16 +6,20 @@ const MedicalRecordsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  attachment: {
-    required: true,
-    contentType: { type: String, default: 'application/octet-stream' },
-    data: Buffer,
-  },
+  data: Buffer,
+  contentType: String,
   visible_to: {
     type: String,
-    required: true,
   },
 });
+
+MedicalRecordsSchema.statics.getDetails = async function (filter) {
+  try {
+    return await this.findOne(filter);
+  } catch (err) {
+    throw Error('Failed');
+  }
+};
 
 const MedicalRecords = mongoose.model(
   'MedicalRecords',
