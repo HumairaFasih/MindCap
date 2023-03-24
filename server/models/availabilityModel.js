@@ -36,6 +36,15 @@ AvailabilitySchema.statics.getdetails = async function(filter) {
   }
 }
 
+AvailabilitySchema.statics.update = async function(filter, update) {
+  try{
+    await this.findOneAndUpdate(filter, update, {upsert: true});
+  }
+  catch(err){
+    throw Error('Failed')
+  }
+}
+
 const Availability = mongoose.model(
   'Availability',
   AvailabilitySchema,

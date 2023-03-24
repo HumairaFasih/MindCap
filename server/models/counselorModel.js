@@ -49,8 +49,8 @@ const CounselorSchema = new mongoose.Schema({
 });
 
 // search for username in Counselor collection, if found compare passwords
-CounselorSchema.statics.login = async function (email, password) {
-  const counselor = await this.findOne({ email });
+CounselorSchema.statics.login = async function (username, password) {
+  const counselor = await this.findOne({ username });
   if (counselor) {
     const result = await bcrypt.compare(password, counselor.password);
     if (result) {
@@ -62,7 +62,7 @@ CounselorSchema.statics.login = async function (email, password) {
   }
 };
 
-CounselorSchema.statics.updateOne = async function(filter, update) {
+CounselorSchema.statics.update = async function(filter, update) {
   try{
   await this.findOneAndUpdate(filter, update);
   }
