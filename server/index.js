@@ -19,6 +19,7 @@ helps with code modularity and division of work thus making merging easier */
 
 // connect routers to the main express app
 const authenticateRouter = require('./routes/authenticate');
+const rateRouter = require('./routes/rate');
 // const notificationRouter = require('./routes/notification');
 // const userRouter = require('./routes/user');
 const profileRouter = require('./routes/profile');
@@ -38,7 +39,7 @@ app.use('/api/authenticate', authenticateRouter);
 // app.use('/api/user', userRouter);
 // app.use('/api/notification', notificationRouter);
 app.use('/api/profile', profileRouter);
-
+app.use('/api/rate', rateRouter);
 
 // Connect to database
 mongoose
