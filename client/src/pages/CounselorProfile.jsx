@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import WestIcon from '@mui/icons-material/West';
 import { Typography } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
-
+import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
 
 
@@ -16,7 +16,7 @@ import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
 import ProfileIcon from '../components/ProfileIcon';
 import Sidebar from '../components/SidebarStudent';
-import MyRating from '../components/Rating';
+
 // import { SignInButton } from '../components/SignInButton';
 import { MyButton } from '../components/MyButton';
 import ReviewList from '../components/ReviewList';
@@ -27,43 +27,67 @@ const drawerWidth = 270;
 
 function CounselorProfile(props) {
     // const { counselor } = props.location.state;
-    const [rating, setRating] = useState(null);
     const [reviewsList, setReviewsList] = useState([]);
     const { counselor } = useParams();
+    const [newReview, setNewReview] = useState({
+        content: '',
+        rating: null
+    });
+
+    const handleChange = (prop) => (event) => {
+        setNewReview({ ...newReview, [prop]: event.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const result = await axios({
+                method: 'post',
+                url: `http://localhost:3003/api/rate/addreview`,
+                data: JSON.stringify({ ...newReview, counselorusername: counselor }),
+                headers: { 'Content-Type': 'application/json' },
+            });
+            setNewReview({
+                content: '',
+                rating: null
+            });
+            getData();
+        
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+
     const [details, setDetails] = useState({
         username: '',
-        firstName: '',
-        lastName: '',
-        gender : '',
+        name: '',
+        gender: '',
         experience: '',
         qualification: '',
-      });
+        bio: '',
+        availabilityday: '',
+        availabilitytime: '',
+        rating: 0,
+        revs: []
+    });
+    const getData = React.useCallback(async () => {
+        try {
+            const result = await axios({
+                method: 'get',
+                url: `http://localhost:3003/api/profile/users/${counselor}`,
+                headers: { 'Content-Type': 'application/json' },
+            });
+            console.log(result.data);
+            setDetails(result.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }, [counselor]);
 
     useEffect(() => {
-       
-        const getData = async () => {
-            try {
-                // const result = await axios({
-                //     method: 'get',
-                //     url: `http://localhost:3003/api/rate/${counselor}/rating`,
-                //     headers: { 'Content-Type': 'application/json' },
-                // });
-                // setRating(result.data.rating);
-                // setReviewsList(result.data.reviews);
-
-                const counselorDetails = await axios({
-                    method: 'get',
-                    url: `http://localhost:3003/api/profile/users/${counselor}`,
-                    headers: { 'Content-Type': 'application/json' },
-                });
-                console.log('DATA:', counselorDetails);
-                
-            } catch (err) {
-                console.log(err);
-            }
-        };
         getData();
-    }, [counselor]);
+    }, [getData]);
     return (
         <div>
             <Box sx={{ display: 'flex' }}>
@@ -82,20 +106,24 @@ function CounselorProfile(props) {
                     <div className="user-profile-header">
 
                         <div className="user-profile-icon">
-                            <ProfileIcon accountName="Counselor" />
+                            <ProfileIcon accountName={details.name} />
                         </div>
                         <div className="user-profile-fields">
                             <div className="user-profile-title">
-                                <PageTitle text="Counselor Profile" marginL="0rem" />
+                                <PageTitle text={details.name} marginL="0rem" />
                             </div>
-                            <div>Psychologist</div>
-                            <div>Username | Gender | Experience</div>
+                            <div>{details.qualification}</div>
+                            <div>{details.username} | {details.gender} | {details.experience}</div>
                             <div>
-                                {rating !== null && <MyRating name="rating" value={rating} readOnly />}
+                                {details.rating !== null && <Rating
+                                                                name='rating'
+                                                                value={details.rating}
+                                                                readOnly
+                                                                />}
                             </div>
 
                         </div>
-                        <MyButton newWidth='200px' paddingLR='10px' paddingTB='10px' variant='contained' sx={{ mb: 10, ml: 50, mt: 1 }}>
+                        <MyButton newWidth='200px' paddingLR='10px' paddingTB='10px' variant='contained' sx={{ mb: 9, ml: 'auto' }}>
                             Book Appointment
                         </MyButton>
                     </div>
@@ -106,39 +134,40 @@ function CounselorProfile(props) {
                             <div className="availability">
                                 <TodayIcon style={{ fontSize: '1.8rem', color: '#000000' }} className="TodayIcon" />
                                 <div className="availability-day-text">
-                                    Weekdays | 9:00 AM - 5:00 PM
+                                    {details.availabilityday} | {details.availabilitytime}
                                 </div>
                             </div>
 
                             <SubSecHeading text="Bio" />
                             <div className="content">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel
-                                tincidunt lacinia, nunc nisl aliquam mauris, eget aliquam nisl nisl et nisl.
+                                {details.bio}
                             </div>
                             <SubSecHeading text="Reviews" />
                             <div className="review">
                                 <div className="review-text">
                                     Rate Counselor:
                                 </div>
-                                <MyRating name="rating" value={0} readOnly={false} onChange={(event, newValue) => { }} />
+                                {/* onChange={(event, newValue) => { }}  */}
+                                <Rating name="rating" value={newReview.rating} onChange={handleChange('rating')} />
                             </div>
                             <div className="review">
                                 <TextField
                                     id="outlined-multiline-static"
                                     label="Write a review"
+                                    value={newReview.content}
                                     multiline
                                     rows={4}
                                     variant="outlined"
-                                    style={{ width: '98%' }} />
+                                    style={{ width: '98%' }} onChange={handleChange('content')} />
                             </div>
                             <div className="review-button">
-                                <MyButton newWidth='100px' paddingLR='5px' paddingTB='5px' variant='contained' >
+                                <MyButton newWidth='100px' paddingLR='5px' paddingTB='5px' variant='contained' onClick={handleSubmit} >
                                     Submit
                                 </MyButton>
                             </div>
 
                             <div className="review-list">
-                                <ReviewList reviews={reviewsList} />
+                                <ReviewList reviews={details.revs} />
                             </div>
 
 
@@ -154,3 +183,8 @@ function CounselorProfile(props) {
 }
 
 export default CounselorProfile;
+
+
+
+
+

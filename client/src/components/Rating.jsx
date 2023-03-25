@@ -1,17 +1,20 @@
-import React from 'react';
+import { React, useState } from 'react';
 import { Rating } from '@mui/material';
 
+
 function MyRating({ name, value, readOnly, onChange }) {
+  const [rating, setRating] = useState(value);
   const handleChange = (event, newValue) => {
-    if (!readOnly && onChange) {
-      onChange(event, newValue);
-    }
+    // if (readOnly) return;
+    setRating(newValue);
+    onChange(newValue);
+    
   };
 
   return (
     <Rating
       name={name}
-      value={value}
+      value={readOnly ? value : rating}
       readOnly={readOnly}
       onChange={handleChange}
     />

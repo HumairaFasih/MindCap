@@ -7,61 +7,28 @@ const router = express.Router();
 
 router.post('/addreview', async (req, res) => {
   // access and decode token
-  const token = req.cookies.jwt;
-  console.log(token);
-  const jwtDecoded = jwtDecode(token);
+  // const token = req.cookies.jwt;
+  // console.log(token);
+  // const jwtDecoded = jwtDecode(token);
 
-  // get id and usertype from the decoded token
+  // // // get id and usertype from the decoded token
   // const { id } = jwtDecoded;
-  const { usertype } = jwtDecoded;
+  // const { usertype } = jwtDecoded;
 
   // safety check to ensure only student can decode
-  if (usertype === 'Student') {
+  if (true) {
     try {
-      const { counselorusername, rating, review } = req.body;
+      const { counselorusername, rating, content } = req.body;
       await Reviews.create({
         counselor_username: counselorusername,
         rating,
-        review,
+        review: content
       });
       res.send('Success!');
     } catch (err) {
       res.send(err);
     }
   }
-});
-
-router.get('/:counselor/rating', async (req, res) => {
-  // const token = req.cookies.jwt;
-  // console.log(token);
-  // const jwtDecoded = jwtDecode(token);
-
-  // // get id and usertype from the decoded token
-  // // const { id } = jwtDecoded;
-  // const { usertype } = jwtDecoded;
-
-  // safety check to ensure only student can decode
-  console.log(req.params.counselor)
-  try {
-    // Fetch rating from MongoDB
-    const { counselor } = req.params;
-    const reviews = await Reviews.getdetails({
-      counselor_username: counselor
-    });
-    // go over each review and add the rating to the total
-    let total = 0;
-    for (let i = 0; i < reviews.length; i += 1) {
-      total += reviews[i].rating;
-    }
-    console.log(reviews)
-    // divide the total by the number of reviews to get the average
-    const rating = total / reviews.length;
-    res.json({ rating, reviews });
-  } catch (err) {
-    res.send(err);
-  }
-
-
 });
 
 module.exports = router;
