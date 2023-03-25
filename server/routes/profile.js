@@ -90,48 +90,47 @@ router.get('/viewprofile', async (req, res) => {
 
 router.get('/users/:username', async (req, res) => {
   // access and decode token
-  // const token = req.cookies.jwt;
-  // console.log(token);
-  // const jwtDecoded = jwtDecode(token);
-  // console.log(jwtDecoded);
+  const token = req.cookies.jwt;
+  console.log(token);
+  const jwtDecoded = jwtDecode(token);
+  console.log(jwtDecoded);
+  const { id, usertype } = jwtDecoded;
 
   // // if user type is student and searchUsername is not empty, then search for counselor profile with that username
   const { username } = req.params;
-
-  // // javeria's usecase - view counselor profile for student
-  try {
-    const counselor = await Counselor.getdetails({ username });
-    let availability = await Availability.getdetails({ counselor_username: username });
-    if (availability === null) {
-      availability = { day_type: '', time: '' };
+  if (usertype === 'Student') {
+    // javeria's usecase - view my profile for student
+    try {
+      const counselor = await Counselor.getdetails({ username });
+      let availability = await Availability.getdetails({ counselor_username: username });
+      if (availability === null) {
+        availability = { day_type: '', time: '' };
+      }
+      const reviews = await Reviews.getdetails({ counselor_username: username });
+      // go over each review and add the rating to the total
+      let total = 0;
+      for (let i = 0; i < reviews.length; i += 1) {
+        total += reviews[i].rating;
+      }
+      const rating = total / reviews.length;
+      console.log(rating)
+      const returnObj = {
+        name: `${counselor.first_name} ${counselor.last_name}`,
+        qualification: counselor.qualification,
+        username: counselor.username,
+        gender: counselor.gender,
+        experience: counselor.experience,
+        bio: counselor.bio,
+        availabilityday: availability.day_type,
+        availabilitytime: availability.time,
+        rating,
+        revs: [...reviews],
+      }
+      res.send(returnObj);
+    } catch (err) {
+      res.send(err);
     }
-    const reviews = await Reviews.getdetails({ counselor_username: username });
-    // go over each review and add the rating to the total
-    let total = 0;
-    for (let i = 0; i < reviews.length; i += 1) {
-      total += reviews[i].rating;
-    }
-    const rating = total / reviews.length;
-    console.log(rating)
-    const returnObj = {
-      name: `${counselor.first_name} ${counselor.last_name}`,
-      qualification: counselor.qualification,
-      username: counselor.username,
-      gender: counselor.gender,
-      experience: counselor.experience,
-      bio: counselor.bio,
-      availabilityday: availability.day_type,
-      availabilitytime: availability.time,
-      rating,
-      revs: [...reviews],
-    }
-    console.log(returnObj);
-    res.send(returnObj);
-  } catch (err) {
-    res.send(err);
   }
-  
-
 });
 
 

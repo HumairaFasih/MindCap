@@ -44,6 +44,7 @@ function CounselorProfile(props) {
             const result = await axios({
                 method: 'post',
                 url: `http://localhost:3003/api/rate/addreview`,
+                withCredentials: true,
                 data: JSON.stringify({ ...newReview, counselorusername: counselor }),
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -75,6 +76,7 @@ function CounselorProfile(props) {
         try {
             const result = await axios({
                 method: 'get',
+                withCredentials: true,
                 url: `http://localhost:3003/api/profile/users/${counselor}`,
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -113,7 +115,7 @@ function CounselorProfile(props) {
                                 <PageTitle text={details.name} marginL="0rem" />
                             </div>
                             <div>{details.qualification}</div>
-                            <div>{details.username} | {details.gender} | {details.experience}</div>
+                            <div>{details.username} | {details.gender} | {details.experience} years</div>
                             <div>
                                 {details.rating !== null && <Rating
                                                                 name='rating'
