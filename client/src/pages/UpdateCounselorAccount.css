@@ -1,0 +1,63 @@
+.ExternalBox{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    margin: 20px;
+}
+
+.InternalBox{
+    display: flex;
+    flex-direction: column;
+    margin-right: 120px;
+    margin-top:20px;
+    /* margin-left:50px; */
+}
+
+
+@media only screen and (max-width: 768px) {
+    .ExternalBox{
+        display: flex;
+        flex-direction:  row ;
+        justify-content:  space-between ;
+    }
+    .InternalBox{
+        display:  flex ;
+        flex-direction:  column ;
+        justify-content:  space-between ;
+        margin-right: unset;
+        margin-top:unset;
+        margin-left:unset;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .ExternalBox{
+        display:  flex ;
+        flex-direction:  column ;
+        justify-content:  space-between ;
+    }
+    .InternalBox{
+        display:  flex ;
+        flex-direction:  column ;
+        justify-content:  space-between ;
+        margin-right: unset;
+        margin-top: unset;
+        margin-left: unset;
+    }
+}
+
+@media only screen and (max-width: 280px) {
+    .ExternalBox{
+        display:  flex ;
+        flex-direction:  column ;
+        justify-content:  space-between ;
+    }
+    .InternalBox{
+        display:  flex ;
+        flex-direction:  column ;
+        justify-content:  space-between ;
+        margin-right: unset;
+        margin-top: unset;
+        margin-left:unset;
+    }
+}
