@@ -78,7 +78,6 @@ router.post('/create-account', async (req, res) => {
     });
     console.log('Created user: ', result.username);
     res.status(201).send("User created");
-    res.redirect("/");
   } catch (error) {
     res.send(error)
   }

@@ -45,7 +45,6 @@ router.get('/:counselor/rating', async (req, res) => {
   try {
     // Fetch rating from MongoDB
     const { counselor } = req.params;
-    console.log("COUNSELOR:", counselor)
     const reviews = await Reviews.getdetails({
       counselor_username: counselor
     });
@@ -54,10 +53,10 @@ router.get('/:counselor/rating', async (req, res) => {
     for (let i = 0; i < reviews.length; i += 1) {
       total += reviews[i].rating;
     }
+    console.log(reviews)
     // divide the total by the number of reviews to get the average
     const rating = total / reviews.length;
-    console.log("Rating:", rating);
-    res.json({ rating });
+    res.json({ rating, reviews });
   } catch (err) {
     res.send(err);
   }

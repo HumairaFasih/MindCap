@@ -1,19 +1,21 @@
-import * as React from 'react';
-import { useState } from 'react';
-import Rating from '@mui/material/Rating';
+import React from 'react';
+import { Rating } from '@mui/material';
 
-export default function MyRating({ rating }) {
-    const [value, setValue] = useState(rating);
-  
-    const handleRatingChange = (event, newValue) => {
-      setValue(newValue);
-    };
-  
-    return (
-      <Rating
-        name="simple-controlled"
-        value={value}
-        onChange={handleRatingChange}
-      />
-    );
-  }
+function MyRating({ name, value, readOnly, onChange }) {
+  const handleChange = (event, newValue) => {
+    if (!readOnly && onChange) {
+      onChange(event, newValue);
+    }
+  };
+
+  return (
+    <Rating
+      name={name}
+      value={value}
+      readOnly={readOnly}
+      onChange={handleChange}
+    />
+  );
+}
+
+export default MyRating;
