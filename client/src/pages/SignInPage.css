@@ -1,4 +1,4 @@
-.lefthalf {
+.left-half {
 /* covers half the screen with colour  */
     background-color: #DCE8D5;
     height: 100%;
@@ -9,19 +9,19 @@
     z-index: -1;
 }
 
-.logoheader{
+.logo-header{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.logoimg{
+.logo-img{
     height: 40px;
     padding-right:20px;
 }
 
-.circlelogo{
+.circle-logo{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -33,7 +33,7 @@
     z-index: -1;
 }
 
-.righthalf{
+.right-half{
     background-color: #FFFFFF;
     height: 100%;
     width: 50%;
@@ -42,14 +42,14 @@
     left: 50%;
 }
 
-.signinbox{
+.signin-box{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.bottomtext{
+.bottom-text{
     color:#3F51B5;
     text-align: center;
 }

@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
 import ProfileIcon from '../components/ProfileIcon';
-import Sidebar from '../components/SidebarStudent';
+import Sidebar from '../components/Sidebar';
 import { MyButton } from '../components/MyButton';
 import ReviewList from '../components/ReviewList';
 
@@ -107,7 +107,7 @@ function CounselorProfile(props) {
               </div>
               <div>{details.qualification}</div>
               <div>
-                {details.username} | {details.gender} | {details.experience}{' '}
+                {details.username} | {details.gender} | {details.experience}
                 years
               </div>
               <div>

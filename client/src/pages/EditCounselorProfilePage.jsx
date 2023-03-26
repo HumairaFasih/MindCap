@@ -1,7 +1,8 @@
+import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   TextField,
-  Typography,
   Divider,
   Button,
   FormControl,
@@ -10,18 +11,17 @@ import {
   FormLabel,
   FormControlLabel,
 } from '@mui/material';
-import axios from 'axios';
-import './UpdateCounselorAccount.css';
-import { useState } from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import './EditCounselorProfilePage.css';
+// import { LocalizationProvider } from '@mui/x-date-pickers';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { SignInButton } from '../components/SignInButton';
-import Sidebar from '../components/SidebarStudent';
+import Sidebar from '../components/Sidebar';
+import PageTitle from '../components/PageTitle';
 
 const drawerWidth = 270;
 
-function UpdateCounselorAccount(props) {
+function EditCounselorProfilePage() {
   // connect backend and add functionality to submit
 
   // setting up useState hooks for each variable
@@ -122,19 +122,14 @@ function UpdateCounselorAccount(props) {
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          <div className="MainScreen">
-            <Typography
-              variant="h4"
-              sx={{ fontWeight: 'bold', mb: '15px', ml: '20px' }}
-            >
-              Edit Profile
-            </Typography>
+          <Box sx={{ mt: '30px' }}>
+            <PageTitle text="Edit Profile" marginB="15px" marginL="20px" />
 
             <Divider
               variant="middle"
               sx={{ background: '#000', mt: '15px', mb: '15px' }}
             />
-          </div>
+          </Box>
 
           <Box
             // make responsive for mobile
@@ -180,13 +175,13 @@ function UpdateCounselorAccount(props) {
                 sx={{ m: 2 }}
               />
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   onChange={changeHandlerDOB}
                   sx={{ m: 2 }}
                   label="Date of Birth"
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
 
               <TextField
                 id="outlined-number"
@@ -223,7 +218,7 @@ function UpdateCounselorAccount(props) {
                 m: 1,
               }}
             >
-              <FormControl sx={{ m: 3, mb:0 }}>
+              <FormControl sx={{ m: 3, mb: 0 }}>
                 <FormLabel
                   id="demo-radio-buttons-group-label"
                   sx={{ fontWeight: 'bold' }}
@@ -261,7 +256,7 @@ function UpdateCounselorAccount(props) {
                 </RadioGroup>
               </FormControl>
 
-              <FormControl sx={{ m: 3, mb:0 }}>
+              <FormControl sx={{ m: 3, mb: 0 }}>
                 <FormLabel
                   id="demo-radio-buttons-group-label"
                   sx={{ fontWeight: 'bold' }}
@@ -292,7 +287,7 @@ function UpdateCounselorAccount(props) {
                 </RadioGroup>
               </FormControl>
 
-              <FormControl sx={{ m: 3, mb:0 }}>
+              <FormControl sx={{ m: 3, mb: 0 }}>
                 <FormLabel
                   id="demo-radio-buttons-group-label"
                   sx={{ fontWeight: 'bold' }}
@@ -368,7 +363,6 @@ function UpdateCounselorAccount(props) {
                 </RadioGroup>
               </FormControl>
 
-
               <SignInButton
                 onClick={onSubmitHandler}
                 sx={{ ml: 3, width: 300 }}
@@ -382,4 +376,4 @@ function UpdateCounselorAccount(props) {
     </div>
   );
 }
-export default UpdateCounselorAccount;
+export default EditCounselorProfilePage;

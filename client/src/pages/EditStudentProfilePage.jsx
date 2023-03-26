@@ -1,28 +1,30 @@
-// eslint-disable-next-line import/order
-import Sidebar from '../components/SidebarStudent';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import Card from '@mui/joy/Card';
-import './student.css';
-import FormControl from '@mui/material/FormControl';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormLabel from '@mui/material/FormLabel';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { styled } from '@mui/material/styles';
+import {
+  Box,
+  Card,
+  Button,
+  TextField,
+  Typography,
+  Divider,
+  Radio,
+  RadioGroup,
+  FormLabel,
+  FormControl,
+  FormControlLabel,
+} from '@mui/material';
+
+// import { LocalizationProvider } from '@mui/x-date-pickers';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Uploadimg from '../assets/images/Uploadimg.png';
+import Sidebar from '../components/Sidebar';
+import PageTitle from '../components/PageTitle';
 
 const drawerWidth = 270;
 
-function UpdateStudentAccount(props) {
+function EditStudentProfilePage() {
   const [fname, setfname] = useState('');
   const [lname, setlname] = useState('');
   const [dob, setdob] = useState(null);
@@ -103,7 +105,7 @@ function UpdateStudentAccount(props) {
     },
   });
 
-  const Browsebuttom = styled(Button)({
+  const BrowseButton = styled(Button)({
     boxShadow: 'none',
     textTransform: 'none',
     fontSize: 18,
@@ -146,19 +148,14 @@ function UpdateStudentAccount(props) {
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          <div className="MainScreen">
-            <Typography
-              variant="h4"
-              sx={{ fontWeight: 'bold', mb: '15px', ml: '20px' }}
-            >
-              Edit Profile
-            </Typography>
+          <Box sx={{ mt: '30px' }}>
+            <PageTitle text="Edit Profile" marginB="15px" marginL="20px" />
 
             <Divider
               variant="middle"
               sx={{ background: '#000', mt: '15px', mb: '15px' }}
             />
-          </div>
+          </Box>
 
           <Box
             sx={{
@@ -185,13 +182,13 @@ function UpdateStudentAccount(props) {
                 sx={{ width: 400, m: 3 }}
               />
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   onChange={changeHandlerDOB}
                   sx={{ width: 400, m: 3 }}
                   label="Date of Birth"
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
 
               <FormControl sx={{ m: 3 }}>
                 <FormLabel
@@ -228,7 +225,7 @@ function UpdateStudentAccount(props) {
                 >
                   Drag & Drop files to Upload or
                 </Typography>
-                <Browsebuttom variant="contained">Browse</Browsebuttom>
+                <BrowseButton variant="contained">Browse</BrowseButton>
                 <Typography
                   variant="h10"
                   sx={{
@@ -325,4 +322,4 @@ function UpdateStudentAccount(props) {
     </div>
   );
 }
-export default UpdateStudentAccount;
+export default EditStudentProfilePage;

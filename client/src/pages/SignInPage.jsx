@@ -4,8 +4,8 @@ import axios from 'axios';
 import { TextField, Typography } from '@mui/material';
 import tree from '../assets/images/tree.png';
 import logo from '../assets/images/logo.png';
-import './SignInPage.css';
 import { SignInButton } from '../components/SignInButton';
+import './SignInPage.css';
 
 function SignInPage() {
   const [username, setUsername] = useState('');
@@ -45,16 +45,16 @@ function SignInPage() {
 
   return (
     <div>
-      <div className="lefthalf">
-        <div className="circlelogo">
+      <div className="left-half">
+        <div className="circle-logo">
           <img src={tree} alt="tree" />
         </div>
       </div>
 
-      <div className="righthalf">
-        <div className="signinbox">
-          <div className="logoheader">
-            <img src={logo} className="logoimg" alt="logo" />
+      <div className="right-half">
+        <div className="signin-box">
+          <div className="logo-header">
+            <img src={logo} className="logo-img" alt="logo" />
             <h1>MindCap</h1>
           </div>
 
@@ -87,8 +87,17 @@ function SignInPage() {
           <SignInButton variant="contained" onClick={handleSubmit}>
             SIGN IN
           </SignInButton>
-          <Typography className="bottomtext">
-            Are you a student? <a href="./SignUp">Sign Up</a>
+          <Typography
+            className="bottom-text"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: 3,
+            }}
+          >
+            Are you a student?
+            <Link to="/signup">Sign Up</Link>
           </Typography>
         </div>
       </div>

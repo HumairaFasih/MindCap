@@ -3,83 +3,83 @@
     flex-direction: column;
     align-items: center;
   }
-  
-  .user-profile-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-right: 3%;
-  }
-  
-  .user-profile-icon {
-    margin-right: 2%;
-    margin-left: 1%;
-  }
-  
-  .user-profile-title {
-    flex-grow: 1;
-  }
-  
-  .user-profile-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .user-profile-name {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .availability {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
 
-  .availability-day-text {
-    margin-left: 10px;
-    /* set font to Roboto */
-    font-family: 'Roboto', sans-serif;
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-right: 3%;
+}
 
-  }
-  .content{
-    /* margin-left: 15px; */
-    margin-bottom: 20px;
-  }
-  .review{
-    display: flex;
-    /* margin-left: 15px; */
-    margin-bottom: 20px;
-  }
-  .review-text{
-    margin-right: 10px;
-    /* make the color black but 80% transparent */
-    color: rgba(0, 0, 0, 0.8);
-    font-weight: bold;
-  }
-  .review-button{
-    /* move the button to right end of screen. margin-left: auto; does NOT work */
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    margin-right: 20px;
-  }
-  /* .TodayIcon {
-    margin-left: 10px;
-  } */
-  .review-list{
-    /* margin-left: 15px; */
-    margin-bottom: 20px;
-  }
+.user-profile-icon {
+  margin-right: 2%;
+  margin-left: 1%;
+}
 
-  .review-content{
-    margin-top: 2px;
-    margin-bottom: 5px;
-    margin-left: 5px;
-  }
+.user-profile-title {
+  flex-grow: 1;
+}
 
-  .subsections{
-    margin-left: 15px;
-    padding-right: 15px;
-  }
+.user-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-profile-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.availability {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.availability-day-text {
+  margin-left: 10px;
+  /* set font to Roboto */
+  font-family: 'Roboto', sans-serif;
+
+}
+.content{
+  /* margin-left: 15px; */
+  margin-bottom: 20px;
+}
+.review{
+  display: flex;
+  /* margin-left: 15px; */
+  margin-bottom: 20px;
+}
+.review-text{
+  margin-right: 10px;
+  /* make the color black but 80% transparent */
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+}
+.review-button{
+  /* move the button to right end of screen. margin-left: auto; does NOT work */
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-right: 20px;
+}
+/* .TodayIcon {
+  margin-left: 10px;
+} */
+.review-list{
+  /* margin-left: 15px; */
+  margin-bottom: 20px;
+}
+
+.review-content{
+  margin-top: 2px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+
+.subsections{
+  margin-left: 15px;
+  padding-right: 15px;
+}
