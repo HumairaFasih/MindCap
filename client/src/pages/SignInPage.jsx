@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { TextField, Typography } from '@mui/material';
 import tree from '../assets/images/tree.png';
-import logo from '../assets/images/logo.png';
+import logo from '../assets/images/logo-no-bg.png';
 import { SignInButton } from '../components/SignInButton';
 import './SignInPage.css';
 

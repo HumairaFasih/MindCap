@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
@@ -21,6 +22,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Uploadimg from '../assets/images/Uploadimg.png';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
+import { MyButton } from '../components/MyButton';
+import { SignInButton } from '../components/SignInButton';
 
 const drawerWidth = 270;
 
@@ -29,7 +32,6 @@ function EditStudentProfilePage() {
   const [lname, setlname] = useState('');
   const [dob, setdob] = useState(null);
   const [gender, setgender] = useState('');
-
   const [file, setFile] = useState();
 
   const handleFileChange = (e) => {
@@ -52,9 +54,7 @@ function EditStudentProfilePage() {
           'http://localhost:3003/api/profile/updateprofile',
           formData,
           {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true,
           }
         );
@@ -67,35 +67,8 @@ function EditStudentProfilePage() {
       } catch (err) {
         console.log(err);
       }
-    } else {
-      try {
-        /* axios presents some issues when it comes to setting cookies.
-      If headers and credentials become an issue we should simply
-      use fetch instead */
-        const result = await axios({
-          method: 'post',
-          url: 'http://localhost:3003/api/profile/updateprofile',
-          withCredentials: true,
-          data: JSON.stringify({
-            newfirstname: fname,
-            newlastname: lname,
-            newdob: dob,
-            newgender: gender,
-          }),
-          headers: { 'Content-Type': 'application/json' },
-        });
-        // Redirect to other screen when it is made
-        if (result.status === 200) {
-          console.log('Submit Successful, ...Redirect');
-        } else {
-          console.log('Submit Failed!');
-        }
-      } catch (err) {
-        console.log(err);
-      }
     }
   };
-  const fileTypes = ['PDF', 'DOCX', 'DOC'];
 
   const changeHandlerFirstName = (e) => {
     setfname(e.target.value);
@@ -112,67 +85,6 @@ function EditStudentProfilePage() {
   const changeHandlerGender = (e) => {
     setgender(e.target.value);
   };
-
-  const Signinbutton = styled(Button)({
-    boxShadow: 'none',
-    textTransform: 'none',
-    fontSize: 18,
-    padding: '6px 12px',
-    width: 400,
-    lineHeight: 2,
-    fontWeight: 'bold',
-    backgroundColor: '#93B77D',
-    color: '#FFFFFF',
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-    '&:hover': {
-      backgroundColor: '#93B77D',
-    },
-    '&:active': {
-      backgroundColor: '#93B77D',
-    },
-  });
-
-  const BrowseButton = styled(Button)({
-    boxShadow: 'none',
-    textTransform: 'none',
-    fontSize: 18,
-    padding: '1px 12px',
-    width: 100,
-    lineHeight: 2,
-    fontWeight: 'bold',
-    borderRadius: 10,
-    backgroundColor: '#93B77D',
-    color: '#FFFFFF',
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-    '&:hover': {
-      backgroundColor: '#93B77D',
-    },
-    '&:active': {
-      backgroundColor: '#93B77D',
-    },
-  });
 
   return (
     <div>
@@ -263,9 +175,8 @@ function EditStudentProfilePage() {
                 >
                   Drag & Drop files to Upload or
                 </Typography>
-                <Browsebutton variant="contained" component="label">
+                <MyButton variant="contained" component="label">
                   Browse
-                  {/* <FileUploader name = 'pdf' types = {fileTypes} onChange = {handleFileChange} hidden /></Browsebuttom> */}
                   <input
                     type="file"
                     name="pdf"
@@ -273,7 +184,7 @@ function EditStudentProfilePage() {
                     onChange={handleFileChange}
                     hidden
                   />
-                </Browsebuttom>
+                </MyButton>
                 {file == null ? (
                   <Typography
                     variant="h10"
@@ -375,9 +286,9 @@ function EditStudentProfilePage() {
                 </RadioGroup>
               </FormControl>
 
-              <Signinbutton onClick={onSubmitHandler} sx={{ ml: 3 }}>
+              <SignInButton onClick={onSubmitHandler} sx={{ ml: 3 }}>
                 Save Changes
-              </Signinbutton>
+              </SignInButton>
             </Box>
           </Box>
         </Box>

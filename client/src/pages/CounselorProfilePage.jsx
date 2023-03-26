@@ -16,9 +16,8 @@ import './profile.css';
 
 const drawerWidth = 270;
 
-function CounselorProfile(props) {
+function CounselorProfilePage() {
   const { counselor } = useParams();
-  const [reviewsList, setReviewsList] = useState([]);
   const [newReview, setNewReview] = useState({
     content: '',
     rating: null,
@@ -43,7 +42,7 @@ function CounselorProfile(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await axios({
+      const _ = await axios({
         method: 'post',
         url: `http://localhost:3003/api/rate/addreview`,
         withCredentials: true,
@@ -187,4 +186,4 @@ function CounselorProfile(props) {
   );
 }
 
-export default CounselorProfile;
+export default CounselorProfilePage;

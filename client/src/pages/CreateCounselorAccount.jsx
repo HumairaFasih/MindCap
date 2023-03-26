@@ -9,7 +9,7 @@ import Sidebar from '../components/Sidebar';
 
 const drawerWidth = 270;
 
-function CreateCounselorAccount(props) {
+function CreateCounselorAccount() {
   const [values, setValues] = useState({
     username: '',
     firstName: '',
@@ -28,7 +28,7 @@ function CreateCounselorAccount(props) {
     e.preventDefault();
     console.log('handling submit');
     try {
-      const result = await axios({
+      const _ = await axios({
         method: 'post',
         url: 'http://localhost:3003/api/authenticate/create-account',
         data: JSON.stringify(values),

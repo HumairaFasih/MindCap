@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -83,7 +84,15 @@ function Sidebar(props) {
         variant="middle"
         sx={{ background: '#B0ADAD', mt: '15px', mb: '15px' }}
       />
-      <div className="SpaceBetween">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '90vh',
+        }}
+      >
         <List>
           {[
             'Dashboard',
@@ -94,7 +103,9 @@ function Sidebar(props) {
           ].map((text, index) => (
             <ListItem key={text} disablePadding disableGutters>
               <ListItemButton sx={{ py: 1 }}>
-                <Box sx={{ m: 1, pr: 1 }}>{iconMap[index]}</Box>
+                <Box sx={{ m: 1, pr: 1 }}>
+                  {iconMap[index]}
+                </Box>
 
                 <Typography
                   variant="h8"
@@ -159,7 +170,7 @@ function Sidebar(props) {
             </Typography>
           </Box>
         </List>
-      </div>
+      </Box>
     </div>
   );
 
