@@ -8,6 +8,7 @@ export const SignInButton = styled(Button)({
   padding: '6px 12px',
   width: 400,
   lineHeight: 1.5,
+  color: '#FFFFFF',
   backgroundColor: '#93B77D',
   fontFamily: [
     '-apple-system',

@@ -17,6 +17,7 @@ router.post('/updateprofile', async (req, res) => {
   // get id and usertype from the decoded token
   const { id } = jwtDecoded;
   const { usertype } = jwtDecoded;
+  const { username } = jwtDecoded;
 
   // if student, then update student profile, else update counselor profile
   if (usertype === 'Student') {
@@ -31,6 +32,46 @@ router.post('/updateprofile', async (req, res) => {
           last_name: newlastname,
           dob: newdob,
           gender: newgender,
+        }
+      );
+      res.send('Success');
+    } catch (error) {
+      res.send(error);
+    }
+  } else if (usertype === 'Counselor') {
+    try {
+      // get counselor data and update the record
+      const {
+        newfirstname,
+        newlastname,
+        newdob,
+        newexperience,
+        newqualification,
+        newbio,
+        newgender,
+        newdaytype,
+        newtime,
+        newmeridian,
+      } = req.body;
+      await Counselor.update(
+        { _id: id },
+        {
+          first_name: newfirstname,
+          last_name: newlastname,
+          date_of_birth: newdob,
+          gender: newgender,
+          bio: newbio,
+          qualification: newqualification,
+          experience: newexperience,
+        }
+      );
+      // update counselor availibility
+      const newslot = newtime + newmeridian;
+      await Availability.update(
+        { counselor_username: username },
+        {
+          day_type: newdaytype,
+          time: newslot,
         }
       );
       res.send('Success');
@@ -79,7 +120,7 @@ router.get('/viewprofile', async (req, res) => {
         availabilitytime: availability.time,
         revs: [...reviews],
       }
-      
+
       res.send(returnObj);
     }
     catch (err) {
