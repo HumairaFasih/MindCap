@@ -12,9 +12,9 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import './EditCounselorProfilePage.css';
-// import { LocalizationProvider } from '@mui/x-date-pickers';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { SignInButton } from '../components/SignInButton';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
@@ -175,13 +175,13 @@ function EditCounselorProfilePage() {
                 sx={{ m: 2 }}
               />
 
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   onChange={changeHandlerDOB}
                   sx={{ m: 2 }}
                   label="Date of Birth"
                 />
-              </LocalizationProvider> */}
+              </LocalizationProvider>
 
               <TextField
                 id="outlined-number"

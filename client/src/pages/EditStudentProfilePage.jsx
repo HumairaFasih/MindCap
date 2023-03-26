@@ -15,9 +15,9 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
-// import { LocalizationProvider } from '@mui/x-date-pickers';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Uploadimg from '../assets/images/Uploadimg.png';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
@@ -182,13 +182,13 @@ function EditStudentProfilePage() {
                 sx={{ width: 400, m: 3 }}
               />
 
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   onChange={changeHandlerDOB}
                   sx={{ width: 400, m: 3 }}
                   label="Date of Birth"
                 />
-              </LocalizationProvider> */}
+              </LocalizationProvider>
 
               <FormControl sx={{ m: 3 }}>
                 <FormLabel
