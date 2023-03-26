@@ -37,6 +37,7 @@ const logout = (
 );
 
 function Sidebar(props) {
+  // eslint-disable-next-line react/prop-types
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -46,7 +47,7 @@ function Sidebar(props) {
   const drawerWidth = 270;
 
   const drawer = (
-    <Box>
+    <div>
       <Box
         sx={{
           display: 'flex',
@@ -56,7 +57,14 @@ function Sidebar(props) {
           mt: '20px',
         }}
       >
-        <img src={MindCapLogo} alt="Logo" border="0" width="45px" />
+        <img
+          src={MindCapLogo}
+          alt="Logo"
+          border="0"
+          width="45px"
+          // eslint-disable-next-line react/no-unknown-property
+          margin="22px"
+        />
         <Typography sx={{ fontWeight: 'bold', fontSize: '30px', m: 1, mt: 2 }}>
           MindCap
         </Typography>
@@ -65,7 +73,14 @@ function Sidebar(props) {
         variant="middle"
         sx={{ background: '#B0ADAD', mt: '15px', mb: '15px' }}
       />
-      <div className="SpaceBetween">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '90vh',
+        }}
+      >
         <List>
           {[
             'Dashboard',
@@ -150,8 +165,8 @@ function Sidebar(props) {
             </Typography>
           </Box>
         </List>
-      </div>
-    </Box>
+      </Box>
+    </div>
   );
 
   const container =
