@@ -30,34 +30,72 @@ function EditStudentProfilePage() {
   const [dob, setdob] = useState(null);
   const [gender, setgender] = useState('');
 
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      /* axios presents some issues when it comes to setting cookies.
-      If headers and credentials become an issue we should simply
-      use fetch instead */
-      const result = await axios({
-        method: 'post',
-        url: 'http://localhost:3003/api/profile/updateprofile',
-        withCredentials: true,
-        data: JSON.stringify({
-          newfirstname: fname,
-          newlastname: lname,
-          newdob: dob,
-          newgender: gender,
-        }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      // Redirect to other screen when it is made
-      if (result.status === 200) {
-        console.log('Submit Successful, ...Redirect');
-      } else {
-        console.log('Submit Failed!');
-      }
-    } catch (err) {
-      console.log(err);
+  const [file, setFile] = useState();
+
+  const handleFileChange = (e) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
     }
   };
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    if (file != null) {
+      const formData = new FormData();
+      formData.append('pdf', file);
+      formData.append('newfirstname', fname);
+      formData.append('newlastname', lname);
+      formData.append('newdob', dob);
+      formData.append('newgender', gender);
+      try {
+        const result = await axios.post(
+          'http://localhost:3003/api/profile/updateprofile',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+          }
+        );
+        // Redirect to other screen when it is made
+        if (result.status === 200) {
+          console.log('Submit Successful, ...Redirect');
+        } else {
+          console.log('Submit Failed!');
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      try {
+        /* axios presents some issues when it comes to setting cookies.
+      If headers and credentials become an issue we should simply
+      use fetch instead */
+        const result = await axios({
+          method: 'post',
+          url: 'http://localhost:3003/api/profile/updateprofile',
+          withCredentials: true,
+          data: JSON.stringify({
+            newfirstname: fname,
+            newlastname: lname,
+            newdob: dob,
+            newgender: gender,
+          }),
+          headers: { 'Content-Type': 'application/json' },
+        });
+        // Redirect to other screen when it is made
+        if (result.status === 200) {
+          console.log('Submit Successful, ...Redirect');
+        } else {
+          console.log('Submit Failed!');
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+  const fileTypes = ['PDF', 'DOCX', 'DOC'];
 
   const changeHandlerFirstName = (e) => {
     setfname(e.target.value);
@@ -225,19 +263,44 @@ function EditStudentProfilePage() {
                 >
                   Drag & Drop files to Upload or
                 </Typography>
-                <BrowseButton variant="contained">Browse</BrowseButton>
-                <Typography
-                  variant="h10"
-                  sx={{
-                    color: '#6B6766',
-                    width: 200,
-                    textAlign: 'center',
-                    fontSize: 14,
-                    m: 2,
-                  }}
-                >
-                  Supported file formats: PDF, .doc, .docx
-                </Typography>
+                <Browsebutton variant="contained" component="label">
+                  Browse
+                  {/* <FileUploader name = 'pdf' types = {fileTypes} onChange = {handleFileChange} hidden /></Browsebuttom> */}
+                  <input
+                    type="file"
+                    name="pdf"
+                    accept=".pdf, .docx, .doc|application/*"
+                    onChange={handleFileChange}
+                    hidden
+                  />
+                </Browsebuttom>
+                {file == null ? (
+                  <Typography
+                    variant="h10"
+                    sx={{
+                      color: '#6B6766',
+                      width: 200,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      m: 2,
+                    }}
+                  >
+                    Supported file formats: PDF, .doc, .docx
+                  </Typography>
+                ) : (
+                  <Typography
+                    variant="h10"
+                    sx={{
+                      color: '#6B6766',
+                      width: 200,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      m: 2,
+                    }}
+                  >
+                    Selected File: {file.name}
+                  </Typography>
+                )}
               </Card>
             </Box>
 
