@@ -35,7 +35,6 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use('/api/authenticate', authenticateRouter);
 app.use('/api/profile', profileRouter);
 
-
 // Connect to database
 mongoose
   .connect(process.env.MONGO_CONN_URI, { dbName: 'mindcap' })
