@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { TextField } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import tree from '../assets/images/tree.png';
 import logo from '../assets/images/logo.png';
 import './SignInPage.css';
 import { SignInButton } from '../components/SignInButton';
 
-function SignIn() {
+function SignInPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -21,9 +22,6 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      /* axios presents some issues when it comes to setting cookies.
-      If headers and credentials become an issue we should simply
-      use fetch instead */
       const result = await axios({
         method: 'post',
         url: 'http://localhost:3003/api/authenticate/login',
@@ -31,9 +29,12 @@ function SignIn() {
         data: JSON.stringify({ username, password }),
         headers: { 'Content-Type': 'application/json' },
       });
-      // Redirect to other screen when it is made
+
+      // Redirect to appropriate screen
       if (result.data.id != null) {
-        console.log('Login Successful, ...Redirect');
+        console.log('Login Successful, Redirecting to Dashboard...');
+        console.log(result.data);
+        // <Link to={`user/:${result.data.username}`} />
       } else {
         console.log('Login Failed!');
       }
@@ -86,13 +87,13 @@ function SignIn() {
           <SignInButton variant="contained" onClick={handleSubmit}>
             SIGN IN
           </SignInButton>
-          <h5 className="bottomtext">
+          <Typography className="bottomtext">
             Are you a student? <a href="./SignUp">Sign Up</a>
-          </h5>
+          </Typography>
         </div>
       </div>
     </div>
   );
 }
 
-export default SignIn;
+export default SignInPage;

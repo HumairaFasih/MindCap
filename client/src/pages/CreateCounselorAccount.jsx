@@ -1,26 +1,16 @@
-import * as React from 'react';
-
-// eslint-disable-next-line import/order
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Card from '@mui/joy/Card';
-
-import Grid from '@mui/material/Grid';
-
+import React,  { useState }  from 'react';
 import axios from 'axios';
 
-
-import { useState } from 'react';
-
-import './student.css';
+import { Box, Divider, Card, Grid } from '@mui/material';
+import { SignInButton } from '../components/SignInButton';
 import FormField from '../components/FormField';
 import PageTitle from '../components/PageTitle';
-import { SignInButton } from '../components/SignInButton';
 import Sidebar from '../components/SidebarStudent';
+import './student.css';
 
 const drawerWidth = 270;
 
-function CreateAccount(props) {
+function CreateCounselorAccount(props) {
 
   const [values, setValues] = useState({
     username: '',
@@ -86,7 +76,6 @@ function CreateAccount(props) {
                   boxShadow: '2px 2px 2px #00000055',
                   borderRadius: 30,
                   padding: '30px',
-
                 }}
               >
 
@@ -162,4 +151,4 @@ function CreateAccount(props) {
     </div>
   );
 }
-export default CreateAccount;
+export default CreateCounselorAccount;
