@@ -78,4 +78,3 @@ StudentSchema.statics.getdetails = async function(filter) {
 const Student = mongoose.model('Student', StudentSchema, 'Student');
 
 module.exports = Student
-

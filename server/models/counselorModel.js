@@ -8,6 +8,7 @@ const CounselorSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   email: {
     type: String,
@@ -62,23 +63,21 @@ CounselorSchema.statics.login = async function (username, password) {
   }
 };
 
-CounselorSchema.statics.update = async function(filter, update) {
-  try{
-  await this.findOneAndUpdate(filter, update);
+CounselorSchema.statics.update = async function (filter, update) {
+  try {
+    await this.findOneAndUpdate(filter, update);
+  } catch (err) {
+    throw Error('Failed');
   }
-  catch(err){
-    throw Error('Failed')
-  }
-}
+};
 
-CounselorSchema.statics.getdetails = async function(filter) {
+CounselorSchema.statics.getdetails = async function (filter) {
   try {
     return await this.findOne(filter).lean();
+  } catch (err) {
+    throw Error('Failed');
   }
-  catch(err) {
-    throw Error('Failed')
-  }
-}
+};
 
 const Counselor = mongoose.model('Counselor', CounselorSchema, 'Counselor');
 
