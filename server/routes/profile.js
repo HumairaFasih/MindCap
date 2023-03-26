@@ -1,5 +1,6 @@
 const express = require('express');
 const jwtDecode = require('jwt-decode');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const multer = require('multer');
 const Student = require('../models/studentModel');
 const Counselor = require('../models/counselorModel');
@@ -100,9 +101,10 @@ router.get('/viewprofile', async (req, res) => {
   const { usertype } = jwtDecoded;
   const { username } = jwtDecoded;
 
-  if (usertype === 'Student') {
+  if(usertype === 'Student') {
     // javeria's usecase - view my profile for student
-  } else if (usertype === 'Counselor') {
+  }
+  else if (usertype === 'Counselor') {
     try {
       const counselor = await Counselor.getdetails({ _id: id });
       console.log(counselor);
@@ -140,7 +142,7 @@ router.get('/users/:username', async (req, res) => {
   console.log(token);
   const jwtDecoded = jwtDecode(token);
   console.log(jwtDecoded);
-  const { id, usertype } = jwtDecoded;
+  const { usertype } = jwtDecoded;
 
   // // if user type is student and searchUsername is not empty, then search for counselor profile with that username
   const { username } = req.params;
