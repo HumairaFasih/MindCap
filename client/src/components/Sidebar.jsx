@@ -1,10 +1,9 @@
-import React from 'react';
+import * as React from 'react';
+import PropTypes from 'prop-types';
 import {
   Avatar,
   Box,
   CssBaseline,
-  Toolbar,
-  Typography,
   Divider,
   Drawer,
   Icon,
@@ -12,10 +11,9 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
+  Toolbar,
+  Typography,
 } from '@mui/material';
-
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SearchIcon from '@mui/icons-material/Search';
@@ -24,20 +22,25 @@ import EditIcon from '@mui/icons-material/Edit';
 import MindCapLogo from '../assets/images/logo-no-bg.png';
 import UpdatePass from '../assets/images/Key.svg';
 import Logout from '../assets/images/logout.svg';
+import MyProfile from '../assets/images/MyProfile.svg';
 
 const keysvg = (
   <Icon sx={{ ml: 0.5, width: 28 }}>
-    <img src={UpdatePass} alt="Update Pass logo" />
+    <img alt="change password" src={UpdatePass} />
   </Icon>
 );
 const logout = (
   <Icon sx={{ ml: 0.5, width: 25 }}>
-    <img src={Logout} alt="Logout" />
+    <img alt="logout" src={Logout} />
+  </Icon>
+);
+const myprofile = (
+  <Icon sx={{ mb: 1.5, width: 25 }}>
+    <img alt="logout" src={MyProfile} />
   </Icon>
 );
 
 function Sidebar(props) {
-  // eslint-disable-next-line react/prop-types
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -45,6 +48,14 @@ function Sidebar(props) {
     setMobileOpen(!mobileOpen);
   };
   const drawerWidth = 270;
+
+  const iconMap = {
+    0: <DashboardIcon htmlColor="white" />,
+    1: myprofile,
+    2: <SearchIcon htmlColor="white" />,
+    3: <EditIcon htmlColor="white" />,
+    4: <NotificationsActiveIcon htmlColor="white" />,
+  };
 
   const drawer = (
     <div>
@@ -58,12 +69,11 @@ function Sidebar(props) {
         }}
       >
         <img
+          className="MindCapLogo"
           src={MindCapLogo}
           alt="Logo"
           border="0"
           width="45px"
-          // eslint-disable-next-line react/no-unknown-property
-          margin="22px"
         />
         <Typography sx={{ fontWeight: 'bold', fontSize: '30px', m: 1, mt: 2 }}>
           MindCap
@@ -73,14 +83,7 @@ function Sidebar(props) {
         variant="middle"
         sx={{ background: '#B0ADAD', mt: '15px', mb: '15px' }}
       />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          height: '90vh',
-        }}
-      >
+      <div className="SpaceBetween">
         <List>
           {[
             'Dashboard',
@@ -89,25 +92,13 @@ function Sidebar(props) {
             'Lodge Complaint',
             'Notifications',
           ].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton sx={{ mt: 1 }}>
-                <ListItemIcon>
-                  {/* If statement to display the rightful icons */}
-                  {index === 0 ? (
-                    <DashboardIcon htmlColor="white" />
-                  ) : index === 1 ? (
-                    <InboxIcon htmlColor="white" />
-                  ) : index === 2 ? (
-                    <SearchIcon htmlColor="white" />
-                  ) : index === 3 ? (
-                    <EditIcon htmlColor="white" />
-                  ) : (
-                    <NotificationsActiveIcon htmlColor="white" />
-                  )}
-                </ListItemIcon>
+            <ListItem key={text} disablePadding disableGutters>
+              <ListItemButton sx={{ py: 1 }}>
+                <Box sx={{ m: 1, pr: 1 }}>{iconMap[index]}</Box>
+
                 <Typography
                   variant="h8"
-                  sx={{ fontWeight: '500', fontSize: '18px' }}
+                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
                 >
                   {text}
                 </Typography>
@@ -119,11 +110,14 @@ function Sidebar(props) {
         <List>
           {['Update Password', 'Sign Out'].map((text, index) => (
             <ListItem key={text} disablePadding>
-              <ListItemButton sx={{ mt: 1 }}>
-                <ListItemIcon>{index % 2 === 0 ? logout : keysvg}</ListItemIcon>
+              <ListItemButton sx={{ pt: 1 }}>
+                <Box sx={{ m: 1, pr: 1 }}>
+                  {index % 2 === 0 ? logout : keysvg}
+                </Box>
+
                 <Typography
                   variant="h8"
-                  sx={{ fontWeight: '500', fontSize: '18px' }}
+                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
                 >
                   {text}
                 </Typography>
@@ -165,7 +159,7 @@ function Sidebar(props) {
             </Typography>
           </Box>
         </List>
-      </Box>
+      </div>
     </div>
   );
 
@@ -192,7 +186,6 @@ function Sidebar(props) {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <br />
       </Box>
 
       <Box
@@ -240,5 +233,9 @@ function Sidebar(props) {
     </div>
   );
 }
+
+Sidebar.propTypes = {
+  window: PropTypes.func,
+};
 
 export default Sidebar;
