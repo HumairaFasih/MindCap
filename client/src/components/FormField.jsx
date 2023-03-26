@@ -1,9 +1,14 @@
-import React from 'react'; 
+import React from 'react';
 import { FormControl, InputLabel, OutlinedInput } from '@mui/material';
 
-export default function FormField({ id, label, value, onChange, width, type}) {
+export default function FormField({ id, label, value, onChange, height, width, type }) {
   return (
-    <FormControl fullWidth required sx={{ mb: 2, width: width || undefined }} variant="outlined">
+    <FormControl
+      fullWidth
+      required
+      sx={{ mb: 2, width: width || undefined }}
+      variant="outlined"
+    >
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <OutlinedInput
         id={id}

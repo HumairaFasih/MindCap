@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { TextField, Typography } from '@mui/material';
+import { Typography, Box, TextField } from '@mui/material';
 import tree from '../assets/images/tree.png';
 import logo from '../assets/images/logo-no-bg.png';
 import { SignInButton } from '../components/SignInButton';
+import SignInFormField from '../components/SignInFormField';
 import './SignInPage.css';
 
 function SignInPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [signInFormData, setSignInFormData] = useState({
+    username: '',
+    password: '',
+  });
 
-  const handleChangeUsername = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handleChangePassword = (event) => {
-    setPassword(event.target.value);
+  const handleChange = (name, value) => {
+    setSignInFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const { username, password } = signInFormData;
       const result = await axios({
         method: 'post',
         url: 'http://localhost:3003/api/authenticate/login',
@@ -34,7 +34,7 @@ function SignInPage() {
       if (result.data.id != null) {
         console.log('Login Successful, Redirecting to Dashboard...');
         console.log(result.data);
-        // <Link to={`user/:${result.data.username}`} />
+        <Link to={`user/:${result.data.username}`} />;
       } else {
         console.log('Login Failed!');
       }
@@ -44,51 +44,45 @@ function SignInPage() {
   };
 
   return (
-    <div>
-      <div className="left-half">
-        <div className="circle-logo">
+    <Box>
+      <Box className="left-half">
+        <Box className="circle-logo">
           <img src={tree} alt="tree" />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="right-half">
-        <div className="signin-box">
-          <div className="logo-header">
+      <Box className="right-half">
+        <Box className="signin-box">
+          <Box className="logo-header">
             <img src={logo} className="logo-img" alt="logo" />
             <h1>MindCap</h1>
-          </div>
+          </Box>
 
-          <h1>Welcome!</h1>
-          <TextField
-            sx={{
-              '& > :not(style)': { my: 1, width: '400px', height: '50px' },
-            }}
-            id="outlined-basic"
-            value={username}
-            onChange={handleChangeUsername}
+          <h1 style={{ alignSelf: 'flex-start' }}>Welcome!</h1>
+          <SignInFormField
+            key={1}
+            width="500px"
+            label="Username"
             name="username"
-            variant="outlined"
-            required
+            type="text"
+            value={signInFormData.username}
+            onChangeHandler={handleChange}
+            autoFocus
           />
-
-          <TextField
-            sx={{
-              '& > :not(style)': { my: 2, width: '400px', height: '50px' },
-            }}
-            id="outlined-basic"
-            value={password}
-            onChange={handleChangePassword}
+          <SignInFormField
+            key={2}
+            width="500px"
+            label="Password"
             name="password"
-            variant="outlined"
             type="password"
-            required
+            value={signInFormData.password}
+            onChangeHandler={handleChange}
           />
 
           <SignInButton variant="contained" onClick={handleSubmit}>
             SIGN IN
           </SignInButton>
-          <Typography
-            className="bottom-text"
+          <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -96,12 +90,16 @@ function SignInPage() {
               mt: 3,
             }}
           >
-            Are you a student?
-            <Link to="/signup">Sign Up</Link>
-          </Typography>
-        </div>
-      </div>
-    </div>
+            <Typography sx={{ padding: 1 }}>
+              Don't have a student account?
+            </Typography>
+            <Link to="/signup">
+              <Typography sx={{ fontWeight: 'bold' }}>Sign Up</Typography>
+            </Link>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 

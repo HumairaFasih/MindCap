@@ -2,12 +2,11 @@ import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const SignInButton = styled(Button)({
-  boxShadow: 'none',
-  textTransform: 'none',
+  boxShadow: '2px',
   fontSize: 16,
   padding: '6px 12px',
-  width: 400,
-  lineHeight: 1.5,
+  width: 500,
+  marginTop: 2,
   color: '#FFFFFF',
   backgroundColor: '#93B77D',
   fontFamily: [
@@ -18,9 +17,6 @@ export const SignInButton = styled(Button)({
     '"Helvetica Neue"',
     'Arial',
     'sans-serif',
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
   ].join(','),
   '&:hover': {
     backgroundColor: '#93B77D',
