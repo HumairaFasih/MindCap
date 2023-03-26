@@ -19,8 +19,6 @@ helps with code modularity and division of work thus making merging easier */
 
 // connect routers to the main express app
 const authenticateRouter = require('./routes/authenticate');
-const notificationRouter = require('./routes/notification');
-const userRouter = require('./routes/user');
 const profileRouter = require('./routes/profile');
 
 // intilaise express app
