@@ -5,6 +5,9 @@ import CreateAccount from './pages/CreateCounselorAccount';
 import CounselorProfilePage from './pages/CounselorProfilePage';
 import EditStudentProfilePage from './pages/EditStudentProfilePage';
 import EditCounselorProfilePage from './pages/EditCounselorProfilePage';
+import StudentProfilePage from './pages/StudentProfilePage';
+import StudentProfileForCounselorPage from './pages/StudentProfileForCounselor';
+// import BookAppointment from './pages/BookAppointment';
 
 function App() {
   return (
@@ -19,6 +22,14 @@ function App() {
       <Route
         path="/edit-counselor-profile"
         element={<EditCounselorProfilePage />}
+      />
+      <Route
+        path="users/student-profile" 
+        element = {<StudentProfilePage/>}
+      />
+      <Route
+        path="/view-student-profile"
+        element = {<StudentProfileForCounselorPage/>}
       />
     </Routes>
   );
