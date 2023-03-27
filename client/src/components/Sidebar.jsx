@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import {
@@ -7,7 +9,6 @@ import {
   CssBaseline,
   Divider,
   Drawer,
-  Icon,
   IconButton,
   List,
   ListItem,
@@ -16,30 +17,9 @@ import {
   Typography,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import SearchIcon from '@mui/icons-material/Search';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import EditIcon from '@mui/icons-material/Edit';
 import MindCapLogo from '../assets/images/logo-no-bg.png';
-import UpdatePass from '../assets/images/Key.svg';
-import Logout from '../assets/images/logout.svg';
-import MyProfile from '../assets/images/MyProfile.svg';
-
-const keysvg = (
-  <Icon sx={{ ml: 0.5, width: 28 }}>
-    <img alt="change password" src={UpdatePass} />
-  </Icon>
-);
-const logout = (
-  <Icon sx={{ ml: 0.5, width: 25 }}>
-    <img alt="logout" src={Logout} />
-  </Icon>
-);
-const myprofile = (
-  <Icon sx={{ mb: 1.5, width: 25 }}>
-    <img alt="logout" src={MyProfile} />
-  </Icon>
-);
+import TopSidebarNav from './TopSidebarNav';
+import BottomSidebarNav from './BottomSidebarNav';
 
 function Sidebar(props) {
   const { window } = props;
@@ -48,15 +28,34 @@ function Sidebar(props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const drawerWidth = 270;
 
-  const iconMap = {
-    0: <DashboardIcon htmlColor="white" />,
-    1: myprofile,
-    2: <SearchIcon htmlColor="white" />,
-    3: <EditIcon htmlColor="white" />,
-    4: <NotificationsActiveIcon htmlColor="white" />,
-  };
+  const [userDetails, setUserDetails] = useState({
+    usertype: '',
+    username: '',
+  });
+
+  const getUserTypeAndName = useCallback(async () => {
+    try {
+      const result = await axios({
+        method: 'get',
+        withCredentials: true,
+        url: `http://localhost:3003/api/profile/currentuser`,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log(result.data);
+      if (result.data) {
+        setUserDetails(result.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getUserTypeAndName();
+  }, [getUserTypeAndName]);
+
+  const drawerWidth = 270;
 
   const drawer = (
     <div>
@@ -94,46 +93,58 @@ function Sidebar(props) {
         }}
       >
         <List>
-          {[
-            'Dashboard',
-            'My Profile',
-            'Search Counselors',
-            'Lodge Complaint',
-            'Notifications',
-          ].map((text, index) => (
-            <ListItem key={text} disablePadding disableGutters>
-              <ListItemButton sx={{ py: 1 }}>
-                <Box sx={{ m: 1, pr: 1 }}>
-                  {iconMap[index]}
-                </Box>
-
-                <Typography
-                  variant="h8"
-                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
+          {TopSidebarNav.map(({ route, icon, label }) =>
+            userDetails.usertype === 'Counselor' &&
+            (label === 'Search Counselors' ||
+              label === 'Lodge Complaint') ? null : (
+              <ListItem key={label} disablePadding disableGutters>
+                <Link
+                  to={route}
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    width: 'fullWidth',
+                  }}
                 >
-                  {text}
-                </Typography>
-              </ListItemButton>
-            </ListItem>
-          ))}
+                  <ListItemButton sx={{ py: 1 }}>
+                    <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
+
+                    <Typography
+                      variant="h8"
+                      sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
+                    >
+                      {label}
+                    </Typography>
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            )
+          )}
         </List>
 
         <List>
-          {['Update Password', 'Sign Out'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton sx={{ pt: 1 }}>
-                <Box sx={{ m: 1, pr: 1 }}>
-                  {index % 2 === 0 ? logout : keysvg}
-                </Box>
+          {BottomSidebarNav.map(({ route, icon, label }) => (
+            <Link
+              to={route}
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+                width: 'fullWidth',
+              }}
+            >
+              <ListItem key={label} disablePadding>
+                <ListItemButton sx={{ pt: 1 }}>
+                  <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
 
-                <Typography
-                  variant="h8"
-                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
-                >
-                  {text}
-                </Typography>
-              </ListItemButton>
-            </ListItem>
+                  <Typography
+                    variant="h8"
+                    sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
+                  >
+                    {label}
+                  </Typography>
+                </ListItemButton>
+              </ListItem>
+            </Link>
           ))}
           <Divider
             variant="middle"
@@ -166,7 +177,7 @@ function Sidebar(props) {
               variant="h8"
               sx={{ fontWeight: '500', fontSize: '18px' }}
             >
-              Summer Ijaz
+              {userDetails.username}
             </Typography>
           </Box>
         </List>
