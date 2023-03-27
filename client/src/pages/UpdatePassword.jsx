@@ -1,16 +1,23 @@
 import * as React from 'react';
 // eslint-disable-next-line import/order
-import Sidebar from '../components/SidebarStudent';
-import { Box, Typography, Divider, Card, OutlinedInput, InputLabel, FormControl} from '@mui/material';
+import Sidebar from '../components/Sidebar';
+import {
+  Box,
+  Typography,
+  Divider,
+  Card,
+  OutlinedInput,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 import './Student.css';
 import axios from 'axios';
 import { useState } from 'react';
-import { SignInButton } from '../components/SignInButton'
+import { SignInButton } from '../components/SignInButton';
 
 const drawerWidth = 270;
 
-function UpdatePassword(props) {
-
+function UpdatePassword() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [password, setPassword] = useState();
@@ -19,13 +26,12 @@ function UpdatePassword(props) {
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
-    
   };
 
   const handlePassChange = (e) => {
     setPassword(e.target.value);
-  }
-  
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     const result = await axios({
@@ -37,8 +43,7 @@ function UpdatePassword(props) {
     });
 
     console.log(result);
-
-  }
+  };
 
   return (
     <div>
@@ -86,19 +91,18 @@ function UpdatePassword(props) {
                 }}
               >
                 <Box>
-                <Typography
-                  sx={{
-                    fontSize: 20,
-                    mr: 5,
-                    ml: 5,
-                    mt: 2,
-                    textAlign: 'center',
-                    mb: 3,
-                  }}
-                >
-                  Password should be and must contain:
-                </Typography>
-                
+                  <Typography
+                    sx={{
+                      fontSize: 20,
+                      mr: 5,
+                      ml: 5,
+                      mt: 2,
+                      textAlign: 'center',
+                      mb: 3,
+                    }}
+                  >
+                    Password should be and must contain:
+                  </Typography>
                 </Box>
                 <Box
                   display="flex"
@@ -157,19 +161,18 @@ function UpdatePassword(props) {
                   >
                     123 Number
                   </Typography>
-
                 </Box>
-                
+
                 <Divider
-                    variant="middle"
-                    sx={{
-                      background: '#000000',
-                      mt: '20px',
-                      mb: '20px',
-                      width: '450px',
-                      alignItems: 'center',
-                    }}
-                  />
+                  variant="middle"
+                  sx={{
+                    background: '#000000',
+                    mt: '20px',
+                    mb: '20px',
+                    width: '450px',
+                    alignItems: 'center',
+                  }}
+                />
                 <Box
                   sx={{
                     alignItems: 'center',
@@ -178,39 +181,43 @@ function UpdatePassword(props) {
                     ml: 10,
                   }}
                 >
-                <Box>
-                  <FormControl
-                    sx={{ mt: 2, mb: 2, width: '400px' }}
-                    variant="outlined"
+                  <Box>
+                    <FormControl
+                      sx={{ mt: 2, mb: 2, width: '400px' }}
+                      variant="outlined"
+                    >
+                      <InputLabel htmlFor="outlined-adornment-password">
+                        New Password
+                      </InputLabel>
+                      <OutlinedInput
+                        id="outlinedpassword"
+                        type={showPassword ? 'text' : 'password'}
+                        label="New Password"
+                      />
+                    </FormControl>
+                  </Box>
+                  <Box>
+                    <FormControl
+                      sx={{ mb: 2, width: '400px' }}
+                      variant="outlined"
+                    >
+                      <InputLabel htmlFor="outlined-adornment-password">
+                        Confirm Password
+                      </InputLabel>
+                      <OutlinedInput
+                        onChange={handlePassChange}
+                        id="outlinedpassword"
+                        type={showPassword ? 'text' : 'password'}
+                        label="Confirm Password"
+                      />
+                    </FormControl>
+                  </Box>
+
+                  <SignInButton
+                    onClick={handleUpdate}
+                    variant="contained"
+                    sx={{ mb: 1 }}
                   >
-                    <InputLabel htmlFor="outlined-adornment-password">
-                      New Password
-                    </InputLabel>
-                    <OutlinedInput
-                      id="outlinedpassword"
-                      type={showPassword ? 'text' : 'password'}
-                      label="New Password"
-                    />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl
-                    sx={{ mb: 2, width: '400px' }}
-                    variant="outlined"
-                  >
-                    <InputLabel htmlFor="outlined-adornment-password">
-                      Confirm Password
-                    </InputLabel>
-                    <OutlinedInput
-                      onChange={handlePassChange}
-                      id="outlinedpassword"
-                      type={showPassword ? 'text' : 'password'}
-                      label="Confirm Password"
-                    />
-                  </FormControl>
-                </Box>
-                  
-                  <SignInButton onClick={handleUpdate} variant="contained" sx={{ mb: 1 }}>
                     Update Password
                   </SignInButton>
                 </Box>
