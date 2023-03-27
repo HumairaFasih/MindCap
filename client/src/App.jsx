@@ -7,7 +7,7 @@ import EditStudentProfilePage from './pages/EditStudentProfilePage';
 import EditCounselorProfilePage from './pages/EditCounselorProfilePage';
 import StudentProfilePage from './pages/StudentProfilePage';
 import StudentProfileForCounselorPage from './pages/StudentProfileForCounselor';
-// import BookAppointment from './pages/BookAppointment';
+import BookAppointmentPage from './pages/BookAppointmentPage';
 
 function App() {
   return (
@@ -30,6 +30,10 @@ function App() {
       <Route
         path="/view-student-profile"
         element = {<StudentProfileForCounselorPage/>}
+      />
+      <Route 
+        path="/book-appointment"
+        element = {<BookAppointmentPage/>}
       />
     </Routes>
   );
