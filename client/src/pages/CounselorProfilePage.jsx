@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { IconButton, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
 import WestIcon from '@mui/icons-material/West';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 
 import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
@@ -35,6 +35,11 @@ function CounselorProfilePage() {
     revs: [],
   });
 
+  const [userTypeAndName, setUserTypeAndName] = useState({
+    usertype: '',
+    username: '',
+  });
+
   const handleChange = (prop) => (event) => {
     setNewReview({ ...newReview, [prop]: event.target.value });
   };
@@ -59,7 +64,7 @@ function CounselorProfilePage() {
     }
   };
 
-  const getData = React.useCallback(async () => {
+  const getData = useCallback(async () => {
     try {
       const result = await axios({
         method: 'get',
@@ -74,9 +79,28 @@ function CounselorProfilePage() {
     }
   }, [counselor]);
 
+  const getUserTypeAndName = useCallback(async () => {
+    try {
+      const result = await axios({
+        method: 'get',
+        withCredentials: true,
+        url: `http://localhost:3003/api/profile/currentuser`,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log(result.data);
+      if (result.data) {
+        setUserTypeAndName(result.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   useEffect(() => {
     getData();
-  }, [getData]);
+    getUserTypeAndName();
+  }, [getData, getUserTypeAndName]);
+
   return (
     <div>
       <Box sx={{ display: 'flex' }}>
@@ -115,6 +139,7 @@ function CounselorProfilePage() {
                 )}
               </div>
             </div>
+
             <MyButton
               newWidth="200px"
               paddingLR="10px"
@@ -122,7 +147,11 @@ function CounselorProfilePage() {
               variant="contained"
               sx={{ mb: 9, ml: 'auto' }}
             >
-              Book Appointment
+              <Link to="../../edit-counselor-profile">
+                {userTypeAndName.usertype === 'Student'
+                  ? 'Book Appointment'
+                  : 'Edit Profile'}
+              </Link>
             </MyButton>
           </div>
           <div>
@@ -142,39 +171,41 @@ function CounselorProfilePage() {
               <SubSecHeading text="Bio" />
               <div className="content">{details.bio}</div>
               <SubSecHeading text="Reviews" />
-              <div className="review">
-                <div className="review-text">Rate Counselor:</div>
-                {/* onChange={(event, newValue) => { }}  */}
-                <Rating
-                  name="rating"
-                  value={newReview.rating}
-                  onChange={handleChange('rating')}
-                />
-              </div>
-              <div className="review">
-                <TextField
-                  id="outlined-multiline-static"
-                  label="Write a review"
-                  value={newReview.content}
-                  multiline
-                  rows={4}
-                  variant="outlined"
-                  style={{ width: '98%' }}
-                  onChange={handleChange('content')}
-                />
-              </div>
-              <div className="review-button">
-                <MyButton
-                  newWidth="100px"
-                  paddingLR="5px"
-                  paddingTB="5px"
-                  variant="contained"
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </MyButton>
-              </div>
-
+              {userTypeAndName.usertype !== 'Student' ? null : (
+                <Box>
+                  <div className="review">
+                    <div className="review-text">Rate Counselor:</div>
+                    <Rating
+                      name="rating"
+                      value={newReview.rating}
+                      onChange={handleChange('rating')}
+                    />
+                  </div>
+                  <div className="review">
+                    <TextField
+                      id="outlined-multiline-static"
+                      label="Write a review"
+                      value={newReview.content}
+                      multiline
+                      rows={4}
+                      variant="outlined"
+                      style={{ width: '98%' }}
+                      onChange={handleChange('content')}
+                    />
+                  </div>
+                  <div className="review-button">
+                    <MyButton
+                      newWidth="100px"
+                      paddingLR="5px"
+                      paddingTB="5px"
+                      variant="contained"
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </MyButton>
+                  </div>
+                </Box>
+              )}
               <div className="review-list">
                 <ReviewList reviews={details.revs} />
               </div>
