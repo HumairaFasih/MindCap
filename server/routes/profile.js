@@ -8,7 +8,7 @@ const Availability = require('../models/availabilityModel');
 const Reviews = require('../models/reviewsModel');
 const MedicalRecord = require('../models/medicalModel');
 
-const upload = multer()
+const upload = multer();
 // create a router
 const router = express.Router();
 
@@ -101,10 +101,9 @@ router.get('/viewprofile', async (req, res) => {
   const { usertype } = jwtDecoded;
   const { username } = jwtDecoded;
 
-  if(usertype === 'Student') {
+  if (usertype === 'Student') {
     // javeria's usecase - view my profile for student
-  }
-  else if (usertype === 'Counselor') {
+  } else if (usertype === 'Counselor') {
     try {
       const counselor = await Counselor.getdetails({ _id: id });
       console.log(counselor);
@@ -136,52 +135,61 @@ router.get('/viewprofile', async (req, res) => {
   }
 });
 
+router.get('/currentuser', async (req, res) => {
+  // get currently logged in user's details using their token
+  const token = req.cookies.jwt;
+  const jwtDecoded = jwtDecode(token);
+  console.log('Printing jwtDecoded');
+  console.log(jwtDecoded);
+  const { usertype, username } = jwtDecoded;
+  res.json({ usertype, username });
+});
+
 router.get('/users/:username', async (req, res) => {
   // access and decode token
   const token = req.cookies.jwt;
   console.log(token);
   const jwtDecoded = jwtDecode(token);
   console.log(jwtDecoded);
-  const { usertype } = jwtDecoded;
+  // const { usertype } = jwtDecoded;
 
-  // // if user type is student and searchUsername is not empty, then search for counselor profile with that username
+  // if user type is student and searchUsername is not empty, then search for counselor profile with that username
   const { username } = req.params;
-  if (usertype === 'Student') {
-    // javeria's usecase - view my profile for student
-    try {
-      const counselor = await Counselor.getdetails({ username });
-      let availability = await Availability.getdetails({
-        counselor_username: username,
-      });
-      if (availability === null) {
-        availability = { day_type: '', time: '' };
-      }
-      const reviews = await Reviews.getdetails({
-        counselor_username: username,
-      });
-      // go over each review and add the rating to the total
-      let total = 0;
-      for (let i = 0; i < reviews.length; i += 1) {
-        total += reviews[i].rating;
-      }
-      const rating = total / reviews.length;
-      console.log(rating);
-      const returnObj = {
-        name: `${counselor.first_name} ${counselor.last_name}`,
-        qualification: counselor.qualification,
-        username: counselor.username,
-        gender: counselor.gender,
-        experience: counselor.experience,
-        bio: counselor.bio,
-        availabilityday: availability.day_type,
-        availabilitytime: availability.time,
-        rating,
-        revs: [...reviews],
-      };
-      res.send(returnObj);
-    } catch (err) {
-      res.send(err);
+  // javeria's usecase - view my profile for student
+  // todo
+  try {
+    const counselor = await Counselor.getdetails({ username });
+    let availability = await Availability.getdetails({
+      counselor_username: username,
+    });
+    if (availability === null) {
+      availability = { day_type: '', time: '' };
     }
+    const reviews = await Reviews.getdetails({
+      counselor_username: username,
+    });
+    // go over each review and add the rating to the total
+    let total = 0;
+    for (let i = 0; i < reviews.length; i += 1) {
+      total += reviews[i].rating;
+    }
+    const rating = total / reviews.length;
+    console.log(rating);
+    const returnObj = {
+      name: `${counselor.first_name} ${counselor.last_name}`,
+      qualification: counselor.qualification,
+      username: counselor.username,
+      gender: counselor.gender,
+      experience: counselor.experience,
+      bio: counselor.bio,
+      availabilityday: availability.day_type,
+      availabilitytime: availability.time,
+      rating,
+      revs: [...reviews],
+    };
+    res.send(returnObj);
+  } catch (err) {
+    res.send(err);
   }
 });
 
