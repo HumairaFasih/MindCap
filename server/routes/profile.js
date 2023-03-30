@@ -1,6 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const express = require('express');
 const jwtDecode = require('jwt-decode');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const multer = require('multer');
 const Student = require('../models/studentModel');
 const Counselor = require('../models/counselorModel');
@@ -18,9 +18,7 @@ router.post('/updateprofile', upload.single('pdf'), async (req, res) => {
   const jwtDecoded = jwtDecode(token);
 
   // get id and usertype from the decoded token
-  const { id } = jwtDecoded;
-  const { usertype } = jwtDecoded;
-  const { username } = jwtDecoded;
+  const { id, usertype, username } = jwtDecoded;
 
   // if student, then update student profile, else update counselor profile
   if (usertype === 'Student') {

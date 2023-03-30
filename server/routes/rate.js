@@ -21,7 +21,7 @@ router.post('/addreview', async (req, res) => {
       await Reviews.create({
         counselor_username: counselorusername,
         rating,
-        review: content
+        review: content,
       });
       res.send('Success!');
     } catch (err) {
@@ -43,22 +43,19 @@ router.get('/getreviews', async (req, res) => {
 
   let counselorUsername;
   // if student or admin is accessing reviews, then counselor's username is in the request, otherwise the username is in the token.
-  if(usertype === 'Student' || usertype === 'Admin') {
+  if (usertype === 'Student' || usertype === 'Admin') {
     counselorUsername = req.body.counselorusername;
-  }
-  else {
+  } else {
     counselorUsername = username;
   }
   try {
     const reviews = await Reviews.getdetails({
       counselor_username: counselorUsername,
-    })
+    });
     res.send([...reviews]);
-  }
-  catch (err) {
+  } catch (err) {
     res.send(err);
   }
-
 });
 
 module.exports = router;

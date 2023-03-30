@@ -39,7 +39,7 @@ function SignInPage() {
         console.log('Login Failed!');
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

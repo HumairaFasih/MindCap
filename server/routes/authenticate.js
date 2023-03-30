@@ -29,9 +29,9 @@ router.post('/login', async (req, res) => {
     const student = await Student.login(username, password);
     console.log(student);
     const jwtToken = createToken(student.id, student.username, 'Student');
-    console.log(jwtToken);
+    // console.log(jwtToken);
     const jwtDecoded = jwtDecode(jwtToken);
-    console.log(jwtDecoded);
+    // console.log(jwtDecoded);
     res.cookie('jwt', jwtToken, { maxAge: expireTime * 1000 });
     res.json({ id: student.id });
   } catch (_) {
@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
         res.cookie('jwt', jwtToken, { maxAge: expireTime * 1000 });
         res.json({ id: admin.id });
       } catch (err) {
-        res.send(err);
+        console.log(err);
       }
     }
   }

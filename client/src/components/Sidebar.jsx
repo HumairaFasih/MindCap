@@ -124,6 +124,7 @@ function Sidebar(props) {
 
         <List>
           {BottomSidebarNav.map(({ route, icon, label }) => (
+<<<<<<< Updated upstream
             <Link
               to={route}
               style={{
@@ -145,6 +146,25 @@ function Sidebar(props) {
                 </ListItemButton>
               </ListItem>
             </Link>
+=======
+            <ListItem key={label} disablePadding>
+              <ListItemButton
+                sx={{ pt: 1 }}
+                component={Link}
+                to={route}
+                onClick={label === 'Sign Out' && signOut()}
+              >
+                <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
+
+                <Typography
+                  variant="h8"
+                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
+                >
+                  {label}
+                </Typography>
+              </ListItemButton>
+            </ListItem>
+>>>>>>> Stashed changes
           ))}
           <Divider
             variant="middle"

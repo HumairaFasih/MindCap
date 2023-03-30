@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 // eslint-disable-next-line prefer-destructuring
 const StudentSchema = new mongoose.Schema({
     username: {
-        type: String,    
+        type: String,
         required: true,
     },
     email: {
@@ -19,7 +19,7 @@ const StudentSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true, 
+        required: true,
         trim: true,
     },
     first_name: {
@@ -28,7 +28,7 @@ const StudentSchema = new mongoose.Schema({
     },
     last_name: {
       type: String,
-      required: true, 
+      required: true,
       trim: true,
     },
     date_of_birth: {
