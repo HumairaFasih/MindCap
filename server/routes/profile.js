@@ -8,7 +8,7 @@ const Availability = require('../models/availabilityModel');
 const Reviews = require('../models/reviewsModel');
 const MedicalRecord = require('../models/medicalModel');
 
-const upload = multer()
+const upload = multer();
 // create a router
 const router = express.Router();
 
@@ -95,16 +95,30 @@ router.get('/viewprofile', async (req, res) => {
   const token = req.cookies.jwt;
   console.log(token);
   const jwtDecoded = jwtDecode(token);
+  console.log(jwtDecoded)
 
   // get id and usertype from the decoded token
   const { id } = jwtDecoded;
   const { usertype } = jwtDecoded;
   const { username } = jwtDecoded;
 
-  if(usertype === 'Student') {
+  if (usertype === 'Student') {
     // javeria's usecase - view my profile for student
-  }
-  else if (usertype === 'Counselor') {
+    try {
+      const student = await Student.getdetails({ _id: id });
+      const returnObj = {
+        name: `${student.first_name} ${student.last_name}`,
+        rollnumber: student.username,
+        gender: student.gender,
+        dob: student.date_of_birth,
+        // add medical record here
+      };
+
+      res.send(returnObj);
+    } catch (error) {
+      res.send(error);
+    }
+  } else if (usertype === 'Counselor') {
     try {
       const counselor = await Counselor.getdetails({ _id: id });
       console.log(counselor);

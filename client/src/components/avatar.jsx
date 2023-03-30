@@ -9,8 +9,9 @@ function LetterAvatars(props) {
     height: '80px',
     width: '80px',
   }
+  const {name} = props
   return (
-      <Avatar sx = {avatarStyle}>S</Avatar>
+      <Avatar sx = {avatarStyle}>{name}</Avatar>
   );
 }
 
