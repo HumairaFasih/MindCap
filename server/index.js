@@ -21,6 +21,7 @@ helps with code modularity and division of work thus making merging easier */
 const authenticateRouter = require('./routes/authenticate');
 const rateRouter = require('./routes/rate');
 const profileRouter = require('./routes/profile');
+const userRouter = require('./routes/user')
 
 // intilaise express app
 const app = express();
@@ -36,6 +37,7 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use('/api/authenticate', authenticateRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/rate', rateRouter);
+app.use('/api/user', userRouter)
 
 // Connect to database
 mongoose
