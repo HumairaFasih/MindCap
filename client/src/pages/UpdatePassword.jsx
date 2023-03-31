@@ -10,7 +10,6 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import './Student.css';
 import axios from 'axios';
 import { useState } from 'react';
 import { SignInButton } from '../components/SignInButton';
@@ -46,7 +45,7 @@ function UpdatePassword() {
   };
 
   return (
-    <div>
+    <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
@@ -57,7 +56,7 @@ function UpdatePassword() {
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          <div className="MainScreen">
+          <Box sx={{ marginTop: '30px' }}>
             <Typography
               variant="h4"
               sx={{ fontWeight: 'bold', mb: '15px', ml: '20px' }}
@@ -223,10 +222,10 @@ function UpdatePassword() {
                 </Box>
               </Card>
             </Box>
-          </div>
+          </Box>
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 }
 export default UpdatePassword;

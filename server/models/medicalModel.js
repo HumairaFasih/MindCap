@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 
-// eslint-disable-next-line prefer-destructuring
 const MedicalRecordsSchema = new mongoose.Schema({
-  student_username: {
+  username: {
     type: String,
     required: true,
+    unique: true,
   },
+  filename: String,
   data: Buffer,
   contentType: String,
   visible_to: {
@@ -14,8 +15,9 @@ const MedicalRecordsSchema = new mongoose.Schema({
 });
 
 MedicalRecordsSchema.statics.getDetails = async function (filter) {
+  console.log('printing filter in medi model: ', filter);
   try {
-    return await this.findOne(filter);
+    return await this.findOne(filter).lean();
   } catch (err) {
     throw Error('Failed');
   }

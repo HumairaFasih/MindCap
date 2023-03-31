@@ -1,8 +1,6 @@
 // Router that handles requests sent to the /api/authenticate route
 const express = require('express');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const jwtDecode = require('jwt-decode');
 const Admin = require('../models/adminModel');
 const Counselor = require('../models/counselorModel');
 const Student = require('../models/studentModel');
@@ -30,7 +28,7 @@ router.post('/login', async (req, res) => {
     console.log(student);
     const jwtToken = createToken(student.id, student.username, 'Student');
     // console.log(jwtToken);
-    const jwtDecoded = jwtDecode(jwtToken);
+    // const jwtDecoded = jwtDecode(jwtToken);
     // console.log(jwtDecoded);
     res.cookie('jwt', jwtToken, { maxAge: expireTime * 1000 });
     res.json({ id: student.id });
@@ -55,35 +53,6 @@ router.post('/login', async (req, res) => {
       }
     }
   }
-});
-
-router.post('/create-account', async (req, res) => {
-  const { username, firstName, lastName, email, password, confirmPassword } =
-    req.body;
-  if (password !== confirmPassword) {
-    return res.status(400).send('Passwords do not match');
-  }
-  const existingUser = await Counselor.findOne({ username });
-  if (existingUser) {
-    return res.status(400).send('Username already exists');
-  }
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  try {
-    const result = await Counselor.create({
-      username,
-      email,
-      password: hashedPassword,
-      first_name: firstName,
-      last_name: lastName,
-    });
-    console.log('Created user: ', result.username);
-    res.status(201).send('User created');
-  } catch (error) {
-    res.send(error);
-  }
-  return null;
 });
 
 module.exports = router;

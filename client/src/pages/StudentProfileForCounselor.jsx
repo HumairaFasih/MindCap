@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Sidebar from '../components/Sidebar';
-import './Student.css';
 import LetterAvatars from '../components/avatar';
 
 const drawerWidth = 270;
@@ -15,7 +14,7 @@ function StudentProfileForCounselor(props) {
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
-          component='main'
+          component="main"
           sx={{
             flexGrow: 1,
             p: 3,
@@ -24,14 +23,14 @@ function StudentProfileForCounselor(props) {
         >
           <div>
             <Typography
-              variant='h4'
+              variant="h4"
               sx={{ fontWeight: 'bold', mb: '15px', ml: '20px' }}
             >
               Student Profile
             </Typography>
 
             <Divider
-              variant='middle'
+              variant="middle"
               sx={{ background: '#000', mt: '15px', mb: '15px' }}
             />
 
@@ -45,7 +44,7 @@ function StudentProfileForCounselor(props) {
             >
               <LetterAvatars />
               <Typography
-                variant='h3'
+                variant="h3"
                 sx={{ fontWeight: 'bold', padding: '14px 20px' }}
               >
                 Summer Ijaz
@@ -53,10 +52,10 @@ function StudentProfileForCounselor(props) {
             </Box>
 
             <Box
-              display='flex'
-              justifyContent='center'
-              alignItems='center'
-              minHeight='70vh'
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              minHeight="70vh"
             >
               <Box
                 sx={{
@@ -66,7 +65,7 @@ function StudentProfileForCounselor(props) {
               >
                 <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -76,7 +75,7 @@ function StudentProfileForCounselor(props) {
                     Full Name
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -88,7 +87,7 @@ function StudentProfileForCounselor(props) {
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -100,7 +99,7 @@ function StudentProfileForCounselor(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -110,7 +109,7 @@ function StudentProfileForCounselor(props) {
                     Roll Number
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{ display: 'inline-flex', padding: '5px' }}
                   >
                     24100002
@@ -118,7 +117,7 @@ function StudentProfileForCounselor(props) {
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -130,7 +129,7 @@ function StudentProfileForCounselor(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -140,7 +139,7 @@ function StudentProfileForCounselor(props) {
                     Gender
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{ display: 'inline-flex', padding: '5px' }}
                   >
                     Male
@@ -148,7 +147,7 @@ function StudentProfileForCounselor(props) {
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -160,7 +159,7 @@ function StudentProfileForCounselor(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -170,7 +169,7 @@ function StudentProfileForCounselor(props) {
                     Date of Birth
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{ display: 'inline-flex', padding: '5px' }}
                   >
                     31/02/1782
@@ -178,7 +177,7 @@ function StudentProfileForCounselor(props) {
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -190,7 +189,7 @@ function StudentProfileForCounselor(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -200,14 +199,14 @@ function StudentProfileForCounselor(props) {
                     Medical Report
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
                       margin: '0px 64px 0px 0px',
                     }}
                   >
-                    <a href='https://www.google.com'>
+                    <a href="https://www.google.com">
                       24100002-MedicalReport.pdf
                     </a>
                   </Typography>

@@ -58,7 +58,7 @@ function Sidebar(props) {
   const drawerWidth = 270;
 
   const drawer = (
-    <div>
+    <Box>
       <Box
         sx={{
           display: 'flex',
@@ -93,7 +93,7 @@ function Sidebar(props) {
         }}
       >
         <List>
-          {TopSidebarNav.map(({ route, icon, label }) =>
+          {TopSidebarNav(userDetails).map(({ route, icon, label }) =>
             userDetails.usertype === 'Counselor' &&
             (label === 'Search Counselors' ||
               label === 'Lodge Complaint') ? null : (
@@ -124,7 +124,6 @@ function Sidebar(props) {
 
         <List>
           {BottomSidebarNav.map(({ route, icon, label }) => (
-<<<<<<< Updated upstream
             <Link
               to={route}
               style={{
@@ -146,25 +145,6 @@ function Sidebar(props) {
                 </ListItemButton>
               </ListItem>
             </Link>
-=======
-            <ListItem key={label} disablePadding>
-              <ListItemButton
-                sx={{ pt: 1 }}
-                component={Link}
-                to={route}
-                onClick={label === 'Sign Out' && signOut()}
-              >
-                <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
-
-                <Typography
-                  variant="h8"
-                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
-                >
-                  {label}
-                </Typography>
-              </ListItemButton>
-            </ListItem>
->>>>>>> Stashed changes
           ))}
           <Divider
             variant="middle"
@@ -202,13 +182,13 @@ function Sidebar(props) {
           </Box>
         </List>
       </Box>
-    </div>
+    </Box>
   );
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
   return (
-    <div>
+    <Box>
       <CssBaseline />
       <Box
         position="fixed"
@@ -272,7 +252,7 @@ function Sidebar(props) {
           {drawer}
         </Drawer>
       </Box>
-    </div>
+    </Box>
   );
 }
 

@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-// eslint-disable-next-line prefer-destructuring
-// eslint-disable-next-line prefer-destructuring
 const ReviewsSchema = mongoose.Schema({
   counselor_username: {
     type: String,
@@ -17,7 +15,7 @@ const ReviewsSchema = mongoose.Schema({
   },
 });
 
-ReviewsSchema.statics.getdetails = async function (filter) {
+ReviewsSchema.statics.getDetails = async function (filter) {
   try {
     return await this.find(filter).lean();
   } catch (err) {

@@ -1,31 +1,79 @@
-import * as React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import './Student.css';
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { Box, Typography, Divider, Icon } from '@mui/material';
 import EditProfileIcon from '@mui/icons-material/ManageAccounts';
-import { SvgIcon } from '@mui/material';
-import LetterAvatars from '../components/avatar';
+import LetterAvatar from '../components/LetterAvatar';
 import Sidebar from '../components/Sidebar';
 import { MyButton } from '../components/MyButton';
 
 const drawerWidth = 270;
 
-function StudentProfilePage(props) {
+function StudentProfile() {
+  const { username } = useParams();
   const navigate = useNavigate();
-  const clickHandlerEP = () => {
-    navigate('/edit-student-profile');
-  };
-  const buttonWidth = 187;
-  const paddingLR = 10;
-  const paddingTB = 10;
+  const location = useLocation();
+  const editProfileRoute = `${location.pathname
+    .split('/')
+    .slice(0, -1)
+    .join('/')}/edit-profile`;
+
+  const [studentDetails, setStudentDetails] = useState({
+    name: '',
+    roll_num: '',
+    gender: '',
+    dob: '',
+    // med_filename: '',
+  });
+
+  const [userTypeAndName, setUserTypeAndName] = useState({
+    usertype: '',
+    username: '',
+  });
+
+  const getStudentData = useCallback(async () => {
+    try {
+      const result = await axios({
+        method: 'get',
+        withCredentials: true,
+        url: `http://localhost:3003/api/user/student/${username}`,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log(result);
+      console.log('hello i am in getdata');
+      setStudentDetails(result.data);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }, [username]);
+
+  const getUserTypeAndName = useCallback(async () => {
+    try {
+      const result = await axios({
+        method: 'get',
+        withCredentials: true,
+        url: `http://localhost:3003/api/profile/currentuser`,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (result.data) {
+        setUserTypeAndName(result.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getStudentData();
+    getUserTypeAndName();
+  }, [getStudentData, getUserTypeAndName]);
+
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
-          component='main'
+          component="main"
           sx={{
             flexGrow: 1,
             p: 3,
@@ -34,14 +82,14 @@ function StudentProfilePage(props) {
         >
           <Box sx={{ marginTop: '30px' }}>
             <Typography
-              variant='h4'
+              variant="h4"
               sx={{ fontWeight: 'bold', mb: '10px', ml: '16px' }}
             >
               My Profile
             </Typography>
 
             <Divider
-              variant='middle'
+              variant="middle"
               sx={{ background: '#000', mt: '15px', mb: '15px' }}
             />
 
@@ -53,9 +101,14 @@ function StudentProfilePage(props) {
                 justifyContent: 'space-between',
               }}
             >
-              <LetterAvatars />
+              <LetterAvatar
+                fontSize="40px"
+                width="60px"
+                height="60px"
+                username="Humaira"
+              />
               <Typography
-                variant='h3'
+                variant="h3"
                 sx={{
                   display: 'inline-flex',
                   fontWeight: 'bold',
@@ -63,7 +116,7 @@ function StudentProfilePage(props) {
                   margin: '0px 18px',
                 }}
               >
-                Summer Ijaz
+                {studentDetails.name}
               </Typography>
               <Box
                 sx={{
@@ -72,29 +125,30 @@ function StudentProfilePage(props) {
                   margin: '20px 30px 20px 650px',
                 }}
               >
-                <MyButton
-                  newWidth={buttonWidth}
-                  paddingLR={paddingLR}
-                  paddingTB={paddingTB}
-                  variant='contained'
-                  sx={{ mb: 2, justifyContent: '', variant: 'contained' }}
-                  onClick={clickHandlerEP}
-                >
-                  <SvgIcon
-                    component={EditProfileIcon}
-                    alt='Icon'
-                    sx={{ width: '50px', height: '32px' }}
-                  />
-                  Edit Profile
-                </MyButton>
+                {userTypeAndName.usertype === 'Student' && (
+                  <MyButton
+                    width="187px"
+                    paddinghorizontal="10px"
+                    paddingvertical="10px"
+                    variant="contained"
+                    sx={{ mb: 2, justifyContent: '', variant: 'contained' }}
+                    onClick={() => navigate(editProfileRoute)}
+                  >
+                    <Icon
+                      component={EditProfileIcon}
+                      sx={{ width: '50px', height: '32px' }}
+                    />
+                    Edit Profile
+                  </MyButton>
+                )}
               </Box>
             </Box>
 
             <Box
-              display='flex'
-              justifyContent='center'
-              alignItems='center'
-              minHeight='65vh'
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              minHeight="65vh"
             >
               <Box
                 sx={{
@@ -110,9 +164,9 @@ function StudentProfilePage(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
-                      display: 'inline-flex',
+                      display: 'flex',
                       padding: '5px',
                       margin: '15px 182px 0px 50px',
                     }}
@@ -120,19 +174,18 @@ function StudentProfilePage(props) {
                     Full Name
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
-                      display: 'inline-flex',
+                      display: 'flex',
                       padding: '5px',
-                      margin: '15px 0px 0px 0px',
                     }}
                   >
-                    Summer Ijaz
+                    {studentDetails.name}
                   </Typography>
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -144,25 +197,25 @@ function StudentProfilePage(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
-                      display: 'inline-flex',
+                      display: 'flex',
                       padding: '5px',
-                      margin: '0px 155px 0px 50px',
+                      margin: '15px 182px 0px 50px',
                     }}
                   >
-                    Roll Number
+                    Roll Number/Username
                   </Typography>
                   <Typography
-                    variant='h5'
-                    sx={{ display: 'inline-flex', padding: '5px' }}
+                    variant="h5"
+                    sx={{ display: 'flex', padding: '5px' }}
                   >
-                    24100002
+                    {studentDetails.roll_num}
                   </Typography>
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -174,7 +227,7 @@ function StudentProfilePage(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -184,15 +237,15 @@ function StudentProfilePage(props) {
                     Gender
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{ display: 'inline-flex', padding: '5px' }}
                   >
-                    Male
+                    {studentDetails.gender}
                   </Typography>
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -204,7 +257,7 @@ function StudentProfilePage(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -214,15 +267,15 @@ function StudentProfilePage(props) {
                     Date of Birth
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{ display: 'inline-flex', padding: '5px' }}
                   >
-                    31/02/1782
+                    {studentDetails.dob}
                   </Typography>
                 </Box>
 
                 <Divider
-                  variant='middle'
+                  variant="middle"
                   sx={{ background: '#000', mt: '15px', mb: '15px' }}
                 />
 
@@ -234,7 +287,7 @@ function StudentProfilePage(props) {
                   }}
                 >
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
@@ -244,15 +297,15 @@ function StudentProfilePage(props) {
                     Medical Report
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       display: 'inline-flex',
                       padding: '5px',
                       margin: '0px 64px 0px 0px',
                     }}
                   >
-                    <a href='https://www.google.com'>
-                      24100002-MedicalReport.pdf
+                    <a href="#random" target="_blank" rel="noreferrer">
+                      Not-dynamic filename
                     </a>
                   </Typography>
                 </Box>
@@ -264,4 +317,4 @@ function StudentProfilePage(props) {
     </Box>
   );
 }
-export default StudentProfilePage;
+export default StudentProfile;

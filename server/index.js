@@ -10,8 +10,10 @@ require('dotenv').config();
 
 // connect routers to the main express app (all routers handle a full category of API endpoints related to that functionality)
 const authenticateRouter = require('./routes/authenticate');
-const rateRouter = require('./routes/rate');
 const profileRouter = require('./routes/profile');
+const userRouter = require('./routes/user');
+const rateRouter = require('./routes/rate');
+const adminRouter = require('./routes/admin');
 
 // intilaise express app
 const app = express();
@@ -25,7 +27,9 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 // routes (all requests made to these endpoints will be forwaded to the respective routers)
 app.use('/api/authenticate', authenticateRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/user', userRouter);
 app.use('/api/rate', rateRouter);
+app.use('/api/admin', adminRouter);
 
 // Connect to database
 mongoose

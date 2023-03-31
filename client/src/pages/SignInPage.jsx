@@ -7,7 +7,7 @@ import logo from '../assets/images/logo-no-bg.png';
 import { SignInButton } from '../components/SignInButton';
 import './SignInPage.css';
 
-function SignInPage() {
+function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -105,4 +105,4 @@ function SignInPage() {
   );
 }
 
-export default SignInPage;
+export default SignIn;

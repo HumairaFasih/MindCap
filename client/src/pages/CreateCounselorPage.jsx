@@ -9,7 +9,7 @@ import Sidebar from '../components/Sidebar';
 
 const drawerWidth = 270;
 
-function CreateCounselorAccount() {
+function CreateCounselor() {
   const [values, setValues] = useState({
     username: '',
     firstName: '',
@@ -30,12 +30,12 @@ function CreateCounselorAccount() {
     try {
       const _ = await axios({
         method: 'post',
-        url: 'http://localhost:3003/api/authenticate/create-account',
+        url: 'http://localhost:3003/api/admin/create-counselor',
         data: JSON.stringify(values),
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -152,4 +152,4 @@ function CreateCounselorAccount() {
     </Box>
   );
 }
-export default CreateCounselorAccount;
+export default CreateCounselor;

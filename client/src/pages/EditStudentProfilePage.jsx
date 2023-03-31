@@ -19,7 +19,7 @@ import {
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Uploadimg from '../assets/images/Uploadimg.png';
+import UploadImg from '../assets/images/upload-img.png';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
 import { MyButton } from '../components/MyButton';
@@ -27,31 +27,31 @@ import { SignInButton } from '../components/SignInButton';
 
 const drawerWidth = 270;
 
-function EditStudentProfilePage() {
+function EditStudentProfile() {
   const [fname, setfname] = useState('');
   const [lname, setlname] = useState('');
-  const [dob, setdob] = useState(null);
+  const [dob, setdob] = useState(new Date().toLocaleDateString('en-US'));
   const [gender, setgender] = useState('');
-  const [file, setFile] = useState();
+  const [fileData, setFileData] = useState('');
 
   const handleFileChange = (e) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      setFileData(e.target.files[0]);
     }
   };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (file != null) {
+    if (fileData != null) {
       const formData = new FormData();
-      formData.append('pdf', file);
+      formData.append('pdf', fileData);
       formData.append('newfirstname', fname);
       formData.append('newlastname', lname);
       formData.append('newdob', dob);
       formData.append('newgender', gender);
       try {
         const result = await axios.post(
-          'http://localhost:3003/api/profile/updateprofile',
+          'http://localhost:3003/api/user/student/edit-profile',
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
@@ -78,16 +78,19 @@ function EditStudentProfilePage() {
     setlname(e.target.value);
   };
 
-  const changeHandlerDOB = (e) => {
-    setdob(new Date(e.$d));
-  };
+  // const changeHandlerDOB = (e) => {
+  //   setdob(new Date(e.$d));
+  //   console.log(dob);
+  // };
+
+  // useEffect(() => {}, [third]);
 
   const changeHandlerGender = (e) => {
     setgender(e.target.value);
   };
 
   return (
-    <div>
+    <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
@@ -132,13 +135,17 @@ function EditStudentProfilePage() {
                 sx={{ width: 400, m: 3 }}
               />
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  onChange={changeHandlerDOB}
+                  value={dob}
+                  onChange={(e) => {
+                    setdob(new Date(e.$d));
+                    console.log(dob);
+                  }}
                   sx={{ width: 400, m: 3 }}
                   label="Date of Birth"
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
 
               <FormControl sx={{ m: 3 }}>
                 <FormLabel
@@ -161,7 +168,7 @@ function EditStudentProfilePage() {
                   ml: 3,
                 }}
               >
-                <img height="80px" src={Uploadimg} alt="puls agai puls" />
+                <img height="80px" src={UploadImg} alt="puls agai puls" />
                 <Typography
                   variant="h7"
                   sx={{
@@ -185,7 +192,7 @@ function EditStudentProfilePage() {
                     hidden
                   />
                 </MyButton>
-                {file == null ? (
+                {fileData == null ? (
                   <Typography
                     variant="h10"
                     sx={{
@@ -209,7 +216,7 @@ function EditStudentProfilePage() {
                       m: 2,
                     }}
                   >
-                    Selected File: {file.name}
+                    Selected File: {fileData.name}
                   </Typography>
                 )}
               </Card>
@@ -293,7 +300,7 @@ function EditStudentProfilePage() {
           </Box>
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 }
-export default EditStudentProfilePage;
+export default EditStudentProfile;

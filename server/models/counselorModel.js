@@ -71,7 +71,7 @@ CounselorSchema.statics.update = async function (filter, update) {
   }
 };
 
-CounselorSchema.statics.getdetails = async function (filter) {
+CounselorSchema.statics.getDetails = async function (filter) {
   try {
     return await this.findOne(filter).lean();
   } catch (err) {

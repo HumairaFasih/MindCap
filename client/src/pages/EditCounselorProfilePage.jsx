@@ -21,7 +21,7 @@ import PageTitle from '../components/PageTitle';
 
 const drawerWidth = 270;
 
-function EditCounselorProfilePage() {
+function EditCounselorProfile() {
   // connect backend and add functionality to submit
 
   // setting up useState hooks for each variable
@@ -42,7 +42,7 @@ function EditCounselorProfilePage() {
     try {
       const result = await axios({
         method: 'post',
-        url: 'http://localhost:3003/api/profile/updateprofile',
+        url: 'http://localhost:3003/api/user/counselor/edit-profile',
         withCredentials: true,
         data: JSON.stringify({
           newfirstname: fname,
@@ -111,7 +111,7 @@ function EditCounselorProfilePage() {
 
   // design
   return (
-    <div>
+    <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
@@ -373,7 +373,7 @@ function EditCounselorProfilePage() {
           </Box>
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 }
-export default EditCounselorProfilePage;
+export default EditCounselorProfile;

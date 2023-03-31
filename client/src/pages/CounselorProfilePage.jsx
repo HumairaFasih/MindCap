@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { IconButton, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
 import WestIcon from '@mui/icons-material/West';
@@ -16,13 +16,29 @@ import './profile.css';
 
 const drawerWidth = 270;
 
-function CounselorProfilePage() {
-  const { counselor } = useParams();
-  const [newReview, setNewReview] = useState({
+function CounselorProfile() {
+  const { username } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const editProfileRoute = `${location.pathname
+    .split('/')
+    .slice(0, -1)
+    .join('/')}/edit-profile`;
+
+  const conditionalNavigate = () => {
+    if (userTypeAndName.usertype === 'Student') {
+      navigate('/book-appointment');
+    } else if (userTypeAndName.usertype === 'Counselor') {
+      navigate(editProfileRoute);
+    }
+  };
+
+  const [review, setNewReview] = useState({
     content: '',
     rating: null,
   });
-  const [details, setDetails] = useState({
+
+  const [counselorDetails, setCounselorDetails] = useState({
     username: '',
     name: '',
     gender: '',
@@ -41,7 +57,7 @@ function CounselorProfilePage() {
   });
 
   const handleChange = (prop) => (event) => {
-    setNewReview({ ...newReview, [prop]: event.target.value });
+    setNewReview({ ...review, [prop]: event.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -49,35 +65,34 @@ function CounselorProfilePage() {
     try {
       const _ = await axios({
         method: 'post',
-        url: `http://localhost:3003/api/rate/addreview`,
+        url: `http://localhost:3003/api/rate/add-review`,
         withCredentials: true,
-        data: JSON.stringify({ ...newReview, counselorusername: counselor }),
+        data: JSON.stringify({ ...review, username }),
         headers: { 'Content-Type': 'application/json' },
       });
       setNewReview({
         content: '',
         rating: null,
       });
-      getData();
+      getCounselorData();
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
-  const getData = useCallback(async () => {
+  const getCounselorData = useCallback(async () => {
     try {
       const result = await axios({
         method: 'get',
         withCredentials: true,
-        url: `http://localhost:3003/api/profile/users/${counselor}`,
+        url: `http://localhost:3003/api/user/counselor/${username}`,
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log(result.data);
-      setDetails(result.data);
+      setCounselorDetails(result.data);
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
-  }, [counselor]);
+  }, [username]);
 
   const getUserTypeAndName = useCallback(async () => {
     try {
@@ -88,6 +103,7 @@ function CounselorProfilePage() {
         headers: { 'Content-Type': 'application/json' },
       });
       console.log(result.data);
+      console.log('hello i am in getusertype');
       if (result.data) {
         setUserTypeAndName(result.data);
       }
@@ -97,12 +113,12 @@ function CounselorProfilePage() {
   }, []);
 
   useEffect(() => {
-    getData();
+    getCounselorData();
     getUserTypeAndName();
-  }, [getData, getUserTypeAndName]);
+  }, [getCounselorData, getUserTypeAndName]);
 
   return (
-    <div>
+    <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
@@ -115,106 +131,110 @@ function CounselorProfilePage() {
         >
           <IconButton
             onClick={() => {
-              console.log('Clicked!');
+              navigate(-1);
             }}
           >
             <WestIcon style={{ fontSize: '2.5rem', color: '#000000' }} />
           </IconButton>
-          <div className="user-profile-header">
-            <div className="user-profile-icon">
-              <ProfileIcon accountName={details.name} />
-            </div>
-            <div className="user-profile-fields">
-              <div className="user-profile-title">
-                <PageTitle text={details.name} marginL="0rem" />
-              </div>
-              <div>{details.qualification}</div>
-              <div>
-                {details.username} | {details.gender} | {details.experience}
-                years
-              </div>
-              <div>
-                {details.rating !== null && (
-                  <Rating name="rating" value={details.rating} readOnly />
+          <Box className="user-profile-header">
+            <Box className="user-profile-icon">
+              <ProfileIcon accountName={counselorDetails.name} />
+            </Box>
+            <Box className="user-profile-fields">
+              <Box className="user-profile-title">
+                <PageTitle text={counselorDetails.name} marginL="0rem" />
+              </Box>
+              <Box>{counselorDetails.qualification}</Box>
+              <Box>
+                {counselorDetails.username} | {counselorDetails.gender} |{' '}
+                {counselorDetails.experience} years
+              </Box>
+              <Box>
+                {counselorDetails.rating !== null && (
+                  <Rating
+                    name="rating"
+                    value={counselorDetails.rating}
+                    readOnly
+                  />
                 )}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
             <MyButton
-              newWidth="200px"
-              paddingLR="10px"
-              paddingTB="10px"
+              width="200px"
+              paddinghorizontal="10px"
+              paddingvertical="10px"
               variant="contained"
               sx={{ mb: 9, ml: 'auto' }}
+              onClick={conditionalNavigate}
             >
-              <Link to="../../edit-counselor-profile">
-                {userTypeAndName.usertype === 'Student'
-                  ? 'Book Appointment'
-                  : 'Edit Profile'}
-              </Link>
+              {userTypeAndName.usertype === 'Student'
+                ? 'Book Appointment'
+                : 'Edit Profile'}
             </MyButton>
-          </div>
-          <div>
+          </Box>
+          <Box>
             {/* Change font color of Typography to black.  */}
-            <div className="subsections">
+            <Box className="subsections">
               <SubSecHeading text="Availability" />
-              <div className="availability">
+              <Box className="availability">
                 <TodayIcon
                   style={{ fontSize: '1.8rem', color: '#000000' }}
                   className="TodayIcon"
                 />
-                <div className="availability-day-text">
-                  {details.availabilityday} | {details.availabilitytime}
-                </div>
-              </div>
+                <Box className="availability-day-text">
+                  {counselorDetails.availabilityday} |{' '}
+                  {counselorDetails.availabilitytime}
+                </Box>
+              </Box>
 
               <SubSecHeading text="Bio" />
-              <div className="content">{details.bio}</div>
+              <Box className="content">{counselorDetails.bio}</Box>
               <SubSecHeading text="Reviews" />
               {userTypeAndName.usertype !== 'Student' ? null : (
                 <Box>
-                  <div className="review">
-                    <div className="review-text">Rate Counselor:</div>
+                  <Box className="review">
+                    <Box className="review-text">Rate Counselor:</Box>
                     <Rating
                       name="rating"
-                      value={newReview.rating}
+                      value={review.rating}
                       onChange={handleChange('rating')}
                     />
-                  </div>
-                  <div className="review">
+                  </Box>
+                  <Box className="review">
                     <TextField
                       id="outlined-multiline-static"
                       label="Write a review"
-                      value={newReview.content}
+                      value={review.content}
                       multiline
                       rows={4}
                       variant="outlined"
                       style={{ width: '98%' }}
                       onChange={handleChange('content')}
                     />
-                  </div>
-                  <div className="review-button">
+                  </Box>
+                  <Box className="review-button">
                     <MyButton
-                      newWidth="100px"
-                      paddingLR="5px"
-                      paddingTB="5px"
+                      width="100px"
+                      paddinghorizontal="5px"
+                      paddingvertical="5px"
                       variant="contained"
                       onClick={handleSubmit}
                     >
                       Submit
                     </MyButton>
-                  </div>
+                  </Box>
                 </Box>
               )}
-              <div className="review-list">
-                <ReviewList reviews={details.revs} />
-              </div>
-            </div>
-          </div>
+              <Box className="review-list">
+                <ReviewList reviews={counselorDetails.revs} />
+              </Box>
+            </Box>
+          </Box>
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 }
 
-export default CounselorProfilePage;
+export default CounselorProfile;

@@ -27,23 +27,21 @@ const AvailabilitySchema = new mongoose.Schema({
   },
 });
 
-AvailabilitySchema.statics.getdetails = async function(filter) {
+AvailabilitySchema.statics.getDetails = async function (filter) {
   try {
     return await this.findOne(filter).lean();
+  } catch (err) {
+    throw Error('Failed');
   }
-  catch(err) {
-    throw Error('Failed')
-  }
-}
+};
 
-AvailabilitySchema.statics.update = async function(filter, update) {
-  try{
-    await this.findOneAndUpdate(filter, update, {upsert: true});
+AvailabilitySchema.statics.update = async function (filter, update) {
+  try {
+    await this.findOneAndUpdate(filter, update, { upsert: true });
+  } catch (err) {
+    throw Error('Failed');
   }
-  catch(err){
-    throw Error('Failed')
-  }
-}
+};
 
 const Availability = mongoose.model(
   'Availability',
