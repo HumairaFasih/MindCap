@@ -1,36 +1,35 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SignInPage from './pages/SignInPage';
-import CreateAccount from './pages/CreateCounselorAccount';
-import CounselorProfilePage from './pages/CounselorProfilePage';
-import EditStudentProfilePage from './pages/EditStudentProfilePage';
-import EditCounselorProfilePage from './pages/EditCounselorProfilePage';
+import CreateCounselor from './pages/CreateCounselorPage';
+import CounselorProfile from './pages/CounselorProfilePage';
+import EditStudentProfile from './pages/EditStudentProfilePage';
+import EditCounselorProfile from './pages/EditCounselorProfilePage';
 import UpdatePassword from './pages/UpdatePassword';
-import StudentProfilePage from './pages/StudentProfilePage';
-import StudentProfileForCounselorPage from './pages/StudentProfileForCounselor';
-import BookAppointmentPage from './pages/BookAppointmentPage';
+import StudentProfile from './pages/StudentProfilePage';
+import PageNotFound from './pages/PageNotFound';
+// import StudentProfileForCounselor from './pages/StudentProfileForCounselor';
+import BookAppointment from './pages/BookAppointmentPage';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<SignInPage />} />
-      <Route path="/users/:counselor" element={<CounselorProfilePage />} />
-      <Route path="/create-counselor-account" element={<CreateAccount />} />
-      <Route
-        path="/edit-student-profile"
-        element={<EditStudentProfilePage />}
-      />
-      <Route
-        path="/edit-counselor-profile"
-        element={<EditCounselorProfilePage />}
-      />
-      <Route path="/update-password" element={<UpdatePassword />} />
-      <Route path="/users/student-profile" element={<StudentProfilePage />} />
-      <Route
-        path="/view-student-profile"
-        element={<StudentProfileForCounselorPage />}
-      />
-      <Route path="/book-appointment" element={<BookAppointmentPage />} />
+      <Route index element={<PageNotFound />} />
+      <Route path="login" element={<SignInPage />} />
+      <Route path="update-password" element={<UpdatePassword />} />
+      <Route path="create-counselor" element={<CreateCounselor />} />
+      <Route path="user">
+        <Route path="student">
+          <Route path=":username" element={<StudentProfile />} />
+          <Route path="edit-profile" element={<EditStudentProfile />} />
+        </Route>
+        <Route path="counselor">
+          <Route path=":username" element={<CounselorProfile />} />
+          <Route path="edit-profile" element={<EditCounselorProfile />} />
+        </Route>
+      </Route>
+      <Route path="book-appointment" element={<BookAppointment />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 }
