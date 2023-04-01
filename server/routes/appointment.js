@@ -4,6 +4,7 @@ const Appointments = require('../models/appointmentsModel');
 const Notifications = require('../models/notificationsModel');
 const Counselor = require('../models/counselorModel');
 const Availability = require('../models/availabilityModel');
+const MedicalRecord = require('../models/medicalModel');
 
 const router = express.Router();
 
@@ -17,10 +18,10 @@ router.post('/book', async (req, res) => {
   if (usertype === 'Student') {
     try {
       // get data from request, add to appointment table, and generate notification as well for the counselor
-      const { counselorUsername, meetingMode, date, time } = req.body;
+      const { counselorUsername, meetingMode, date, time, share } = req.body;
 
-      const dateFinal = new Date(new Date(date).getTime() + 300*60000);
-      const timeFinal = new Date(new Date(time).getTime() + 300*60000);
+      const dateFinal = new Date(new Date(date).getTime() + 300 * 60000);
+      const timeFinal = new Date(new Date(time).getTime() + 300 * 60000);
 
       // insert share medical record with counselor logic here using the share variable
       await Appointments.create({
@@ -38,6 +39,9 @@ router.post('/book', async (req, res) => {
         notification_type: 'Appointment Request',
         notification_details: `You have a new appointment request! A student, ${username} wishes to book an appointment with you on ${date}, ${time}`,
       });
+      if (share) {
+        await MedicalRecord.addToVisibleTo(username, counselorUsername);
+      }
       res.send('Appointment made!');
     } catch (err) {
       console.log(err);
