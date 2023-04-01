@@ -20,7 +20,7 @@ function CreateCounselor() {
     showPassword: false,
   });
 
-  const handleChange = (prop) => (event) => {
+  const handleChange = (prop) => (event) => { 
     setValues({ ...values, [prop]: event.target.value });
   };
 

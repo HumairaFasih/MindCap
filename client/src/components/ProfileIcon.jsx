@@ -6,9 +6,13 @@ function ProfileIcon({ accountName }) {
   return (
     <Box className="profile-icon">
       <span className="profile-icon-text">
-        <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+        <div>
+        <Typography variant="h3" sx={{ fontWeight: 'bold'}}>
           {accountName.charAt(0)}
         </Typography>
+
+        </div>
+        
       </span>
     </Box>
   );

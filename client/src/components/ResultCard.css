@@ -1,0 +1,16 @@
+.profile-icon-card{
+    transform: scale(0.7);
+}
+
+.account-name{
+    margin-bottom: 0;
+}
+p {
+    margin: 0px;
+    margin-right: 0.4rem;
+    padding: 0px;
+  }
+
+.account-username, .account-rating{
+    margin-left: 0.4rem;
+}

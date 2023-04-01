@@ -10,6 +10,7 @@ import StudentProfile from './pages/StudentProfilePage';
 import PageNotFound from './pages/PageNotFound';
 // import StudentProfileForCounselor from './pages/StudentProfileForCounselor';
 import BookAppointment from './pages/BookAppointmentPage';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   return (
@@ -27,6 +28,10 @@ function App() {
           <Route path=":username" element={<CounselorProfile />} />
           <Route path="edit-profile" element={<EditCounselorProfile />} />
         </Route>
+      </Route>
+      <Route path="search">
+          <Route path="search-counselor" element={<SearchPage />} />
+          <Route path="search-account" element={<SearchPage />} />
       </Route>
       <Route path="book-appointment" element={<BookAppointment />} />
       <Route path="*" element={<PageNotFound />} />

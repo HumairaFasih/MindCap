@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@mui/material';
-import UpdatePassword from '../assets/images/key.svg';
-import SignOut from '../assets/images/logout.svg';
+import UpdatePassword from '../assets/images/Key.svg';
+import SignOut from '../assets/images/Logout.svg';
 
 const UpdatePasswordIcon = (
   <Icon sx={{ ml: 0.5, width: 28 }}>

@@ -1,9 +1,7 @@
 .profile-icon {
     background-color: #6b6766;
     border-radius: 50%;
-    /* set width in rem=100px*/
     width: 6.25rem;
-    /* set height in rem=100px*/
     height: 6.25rem;
     display: flex;
     justify-content: center;
