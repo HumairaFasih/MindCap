@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 
 // eslint-disable-next-line prefer-destructuring
 const NotificationsSchema = new mongoose.Schema({
-  notification_id: {
-    type: Number,
-    required: true,
-  },
   username: {
     type: String,
     required: true,

@@ -79,6 +79,14 @@ CounselorSchema.statics.getDetails = async function (filter) {
   }
 };
 
+CounselorSchema.statics.getAll = async function(){
+  try{
+    return await this.find().lean();
+  } catch (err) {
+    throw Error('Failed');
+  }
+} 
+
 const Counselor = mongoose.model('Counselor', CounselorSchema, 'Counselor');
 
 module.exports = Counselor;

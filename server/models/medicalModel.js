@@ -10,7 +10,7 @@ const MedicalRecordsSchema = new mongoose.Schema({
   data: Buffer,
   contentType: String,
   visible_to: {
-    type: String,
+    type: [String],
   },
 });
 
@@ -19,6 +19,19 @@ MedicalRecordsSchema.statics.getDetails = async function (filter) {
   try {
     return await this.findOne(filter).lean();
   } catch (err) {
+    throw Error('Failed');
+  }
+};
+
+MedicalRecordsSchema.statics.addToVisibleTo = async function (
+  username,
+  counselor
+) {
+  try {
+    console.log(username, counselor);
+    return await this.findOneAndUpdate({ username }, { $push: {'visible_to': counselor }});
+  } catch (err) {
+    console.log(err)
     throw Error('Failed');
   }
 };
