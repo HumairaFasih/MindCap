@@ -21,7 +21,7 @@ function SearchBar({ onData}) {
                 data: JSON.stringify({ query, day, gender }),
                 headers: { 'Content-Type': 'application/json' },
             });
-            console.log(result.data)
+            console.log('Hello:', result.data)
             onData(result.data);
         } catch (err) {
             console.log(err.message);

@@ -82,9 +82,11 @@ router.post("/search-counselors", async (req, res) => {
               });
             }
           }
+          console.log("finalResponse", finalResponse);
           return finalResponse;
         })
       );
+      console.log("returnObj", returnObj);
       res.send(returnObj);
     } catch (err) {
       res.send(err);

@@ -19,7 +19,11 @@ export default function SearchPage() {
     ])
   const handleData = (data) => {
     console.log('data: ', data);
-    setSearchResults(data);
+    // set search results if data length is not 0
+    if (data.length !== 0)
+    {
+        setSearchResults(data);
+    }
 
   }
   return (
