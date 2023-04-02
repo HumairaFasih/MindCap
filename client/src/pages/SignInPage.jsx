@@ -4,7 +4,7 @@ import axios from 'axios';
 import { TextField, Typography } from '@mui/material';
 import tree from '../assets/images/tree.png';
 import logo from '../assets/images/logo-no-bg.png';
-import { SignInButton } from '../components/SignInButton';
+import { LongButton } from '../components/LongButton';
 import './SignInPage.css';
 
 function SignIn() {
@@ -84,9 +84,9 @@ function SignIn() {
             required
           />
 
-          <SignInButton variant="contained" onClick={handleSubmit}>
+          <LongButton variant="contained" onClick={handleSubmit}>
             SIGN IN
-          </SignInButton>
+          </LongButton>
           <Typography
             className="bottom-text"
             sx={{

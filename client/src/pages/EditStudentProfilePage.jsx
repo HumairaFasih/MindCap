@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { styled } from '@mui/material/styles';
 import {
   Box,
   Card,
-  Button,
+  Container,
   TextField,
   Typography,
   Divider,
@@ -16,23 +16,29 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import UploadImg from '../assets/images/upload-img.png';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
 import { MyButton } from '../components/MyButton';
-import { SignInButton } from '../components/SignInButton';
+import { LongButton } from '../components/LongButton';
+import { AuthContext } from '../context/AuthContext';
 
 const drawerWidth = 270;
 
 function EditStudentProfile() {
-  const [fname, setfname] = useState('');
-  const [lname, setlname] = useState('');
-  const [dob, setdob] = useState(new Date().toLocaleDateString('en-US'));
-  const [gender, setgender] = useState('');
+  const [dob, setdob] = useState(null);
+  const { username } = useContext(AuthContext);
   const [fileData, setFileData] = useState('');
+  const [studentDetails, setStudentDetails] = useState({
+    fname: '',
+    lname: '',
+    roll_num: '',
+    gender: '',
+    dob: null,
+    email: '',
+    // med_filename: '',
+  });
 
   const handleFileChange = (e) => {
     if (e.target.files) {
@@ -40,18 +46,44 @@ function EditStudentProfile() {
     }
   };
 
-  const onSubmitHandler = async (e) => {
+  const getStudentData = useCallback(async () => {
+    try {
+      const result = await axios({
+        method: 'get',
+        withCredentials: true,
+        url: `http://localhost:3003/api/user/student/${username}`,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log(result);
+      console.log('hello i am in getdata for student edit page');
+      if (result.data) {
+        setStudentDetails(result.data);
+      } else {
+        console.log('No data fetched from database');
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }, [username]);
+
+  useEffect(() => {
+    if (username) {
+      getStudentData();
+    }
+  }, [username, getStudentData]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (fileData != null) {
       const formData = new FormData();
       formData.append('pdf', fileData);
-      formData.append('newfirstname', fname);
-      formData.append('newlastname', lname);
+      formData.append('newfirstname', studentDetails.fname);
+      formData.append('newlastname', studentDetails.lname);
       formData.append('newdob', dob);
-      formData.append('newgender', gender);
+      formData.append('newgender', studentDetails.gender);
       try {
         const result = await axios.post(
-          'http://localhost:3003/api/user/student/edit-profile',
+          `http://localhost:3003/api/user/student/edit-profile`,
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
@@ -70,233 +102,206 @@ function EditStudentProfile() {
     }
   };
 
-  const changeHandlerFirstName = (e) => {
-    setfname(e.target.value);
-  };
-
-  const changeHandlerLastName = (e) => {
-    setlname(e.target.value);
-  };
-
-  // const changeHandlerDOB = (e) => {
-  //   setdob(new Date(e.$d));
-  //   console.log(dob);
-  // };
-
-  // useEffect(() => {}, [third]);
-
-  const changeHandlerGender = (e) => {
-    setgender(e.target.value);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setStudentDetails({ ...studentDetails, [name]: value });
   };
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex' }}>
-        <Sidebar />
+    <Box sx={{ display: 'flex' }}>
+      <Sidebar />
+      <Box
+        component="form"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
+        onSubmit={handleSubmit}
+      >
+        <Box sx={{ mt: '30px' }}>
+          <PageTitle text="Edit Profile" marginB="15px" marginL="20px" />
+          <Divider
+            variant="middle"
+            sx={{ background: '#000', marginVertical: '15px' }}
+          />
+        </Box>
+
         <Box
-          component="main"
           sx={{
-            flexGrow: 1,
-            p: 3,
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            display: 'flex',
+            flexDirection: 'row',
+            width: '100%',
+            height: '100%',
           }}
         >
-          <Box sx={{ mt: '30px' }}>
-            <PageTitle text="Edit Profile" marginB="15px" marginL="20px" />
-
-            <Divider
-              variant="middle"
-              sx={{ background: '#000', mt: '15px', mb: '15px' }}
-            />
-          </Box>
-
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'row',
-              width: '100%',
+              flexDirection: 'column',
+              width: '50%',
               height: '100%',
+              m: 1,
             }}
           >
-            <Box
+            <TextField
+              id="firstname-field"
+              label="First Name"
+              name="fname"
+              value={studentDetails.fname}
+              variant="outlined"
+              onChange={handleChange}
+              sx={{ width: 400, m: 3 }}
+            />
+
+            <DatePicker
+              value={dob}
+              onChange={(newdob) => setdob(newdob)}
+              sx={{ width: 400, m: 3 }}
+              label="Date of Birth"
+            />
+
+            <FormControl sx={{ m: 3 }}>
+              <FormLabel
+                id="demo-radio-buttons-group-label"
+                sx={{ color: '#ADADAD', fontWeight: 'bold' }}
+              >
+                Upload Medical Reports
+              </FormLabel>
+            </FormControl>
+
+            <Card
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '50%',
-                height: '100%',
-                m: 1,
+                borderStyle: 'dotted',
+                color: '#969696',
+                borderRadius: 30,
+                width: 400,
+                height: 300,
+                alignItems: 'center',
+                p: 2,
+                ml: 3,
               }}
             >
-              <TextField
-                id="outlined-basic"
-                label="First Name"
-                variant="outlined"
-                onChange={changeHandlerFirstName}
-                sx={{ width: 400, m: 3 }}
-              />
-
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={dob}
-                  onChange={(e) => {
-                    setdob(new Date(e.$d));
-                    console.log(dob);
-                  }}
-                  sx={{ width: 400, m: 3 }}
-                  label="Date of Birth"
-                />
-              </LocalizationProvider> */}
-
-              <FormControl sx={{ m: 3 }}>
-                <FormLabel
-                  id="demo-radio-buttons-group-label"
-                  sx={{ color: '#ADADAD', fontWeight: 'bold' }}
-                >
-                  Upload Medical Reports
-                </FormLabel>
-              </FormControl>
-
-              <Card
+              <img height="80px" src={UploadImg} alt="upload-file-icon" />
+              <Typography
+                variant="h7"
                 sx={{
-                  borderStyle: 'dotted',
-                  color: '#969696',
-                  borderRadius: 30,
-                  width: 400,
-                  height: 300,
-                  alignItems: 'center',
-                  p: 2,
-                  ml: 3,
+                  color: '#000',
+                  width: 250,
+                  textAlign: 'center',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  m: 2,
                 }}
               >
-                <img height="80px" src={UploadImg} alt="puls agai puls" />
-                <Typography
-                  variant="h7"
-                  sx={{
-                    color: '#000',
-                    width: 250,
-                    textAlign: 'center',
-                    fontSize: 18,
-                    fontWeight: 'bold',
-                    m: 2,
-                  }}
-                >
-                  Drag & Drop files to Upload or
-                </Typography>
-                <MyButton variant="contained" component="label">
-                  Browse
-                  <input
-                    type="file"
-                    name="pdf"
-                    accept=".pdf, .docx, .doc|application/*"
-                    onChange={handleFileChange}
-                    hidden
-                  />
-                </MyButton>
-                {fileData == null ? (
-                  <Typography
-                    variant="h10"
-                    sx={{
-                      color: '#6B6766',
-                      width: 200,
-                      textAlign: 'center',
-                      fontSize: 14,
-                      m: 2,
-                    }}
-                  >
-                    Supported file formats: PDF, .doc, .docx
-                  </Typography>
-                ) : (
-                  <Typography
-                    variant="h10"
-                    sx={{
-                      color: '#6B6766',
-                      width: 200,
-                      textAlign: 'center',
-                      fontSize: 14,
-                      m: 2,
-                    }}
-                  >
-                    Selected File: {fileData.name}
-                  </Typography>
-                )}
-              </Card>
-            </Box>
+                Drag & Drop files to Upload or
+              </Typography>
+              <MyButton variant="contained" component="label">
+                Browse
+                <input
+                  type="file"
+                  name="pdf"
+                  accept=".pdf, .docx, .doc|application/*"
+                  onChange={handleFileChange}
+                  hidden
+                />
+              </MyButton>
+              <Typography
+                variant="h10"
+                sx={{
+                  color: '#6B6766',
+                  width: 200,
+                  textAlign: 'center',
+                  fontSize: 14,
+                  m: 2,
+                }}
+              >
+                {fileData
+                  ? `Selected File: ${fileData.name}`
+                  : 'Supported file formats: PDF, .doc, .docx'}
+              </Typography>
+            </Card>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '50%',
+              height: '100%',
+              m: 1,
+            }}
+          >
+            <TextField
+              id="last-name-field"
+              label="Last Name"
+              name="lname"
+              value={studentDetails.lname}
+              onChange={handleChange}
+              variant="outlined"
+              sx={{ width: 400, m: 3 }}
+            />
+            <TextField
+              disabled
+              id="username-field"
+              label="Username/Roll Number"
+              name="roll_num"
+              value={studentDetails.roll_num}
+              onChange={handleChange}
+              variant="filled"
+              sx={{ width: 400, m: 3 }}
+            />
+            <TextField
+              disabled
+              id="email-field"
+              label="Email"
+              name="email"
+              value={studentDetails.email}
+              onChange={handleChange}
+              variant="filled"
+              sx={{ width: 400, m: 3 }}
+            />
 
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '50%',
-                height: '100%',
-                m: 1,
-              }}
-            >
-              <TextField
-                id="outlined-basic"
-                label="Last Name"
-                onChange={changeHandlerLastName}
-                variant="outlined"
-                sx={{ width: 400, m: 3 }}
-              />
-              <TextField
-                disabled
-                id="outlined-basic"
-                label="Username/User ID"
-                variant="filled"
-                defaultValue="0000000"
-                sx={{ width: 400, m: 3 }}
-              />
-              <TextField
-                disabled
-                id="outlined-basic"
-                label="Email"
-                variant="filled"
-                defaultValue="example@gmail.com"
-                sx={{ width: 400, m: 3 }}
-              />
+            <FormControl sx={{ m: 3 }}>
+              <FormLabel
+                id="demo-radio-buttons-group-label"
+                sx={{ color: '#ADADAD', fontWeight: 'bold' }}
+              >
+                Gender
+              </FormLabel>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                name="radio-buttons-group"
+                value={studentDetails.gender}
+                onChange={handleChange}
+                sx={{ m: 1, ml: 2 }}
+              >
+                <FormControlLabel
+                  value="Female"
+                  control={
+                    <Radio sx={{ '&.Mui-checked': { color: '#93B77D' } }} />
+                  }
+                  label="Female"
+                />
+                <FormControlLabel
+                  value="Male"
+                  control={
+                    <Radio sx={{ '&.Mui-checked': { color: '#93B77D' } }} />
+                  }
+                  label="Male"
+                />
+                <FormControlLabel
+                  value="Prefer not to say"
+                  control={
+                    <Radio sx={{ '&.Mui-checked': { color: '#93B77D' } }} />
+                  }
+                  label="Prefer not to say"
+                />
+              </RadioGroup>
+            </FormControl>
 
-              <FormControl sx={{ m: 3 }}>
-                <FormLabel
-                  id="demo-radio-buttons-group-label"
-                  sx={{ color: '#ADADAD', fontWeight: 'bold' }}
-                >
-                  Gender
-                </FormLabel>
-                <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="Female"
-                  name="radio-buttons-group"
-                  onChange={changeHandlerGender}
-                  sx={{ m: 1, ml: 2 }}
-                >
-                  <FormControlLabel
-                    value="Female"
-                    control={
-                      <Radio sx={{ '&.Mui-checked': { color: '#93B77D' } }} />
-                    }
-                    label="Female"
-                  />
-                  <FormControlLabel
-                    value="Male"
-                    control={
-                      <Radio sx={{ '&.Mui-checked': { color: '#93B77D' } }} />
-                    }
-                    label="Male"
-                  />
-                  <FormControlLabel
-                    value="Prefer not to say"
-                    control={
-                      <Radio sx={{ '&.Mui-checked': { color: '#93B77D' } }} />
-                    }
-                    label="Prefer not to say"
-                  />
-                </RadioGroup>
-              </FormControl>
-
-              <SignInButton onClick={onSubmitHandler} sx={{ ml: 3 }}>
-                Save Changes
-              </SignInButton>
-            </Box>
+            <LongButton type="submit" sx={{ ml: 3 }}>
+              Save Changes
+            </LongButton>
           </Box>
         </Box>
       </Box>

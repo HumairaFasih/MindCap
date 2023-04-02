@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import { Box, Divider, Card, Grid } from '@mui/material';
-import { SignInButton } from '../components/SignInButton';
+import { LongButton } from '../components/LongButton';
 import FormField from '../components/FormField';
 import PageTitle from '../components/PageTitle';
 import Sidebar from '../components/Sidebar';
@@ -136,13 +136,13 @@ function CreateCounselor() {
                     type={values.showPassword ? 'text' : 'password'}
                   />
 
-                  <SignInButton
+                  <LongButton
                     onClick={handleSubmit}
                     variant="contained"
                     sx={{ mb: 2 }}
                   >
                     Create Account
-                  </SignInButton>
+                  </LongButton>
                 </Box>
               </Card>
             </Box>

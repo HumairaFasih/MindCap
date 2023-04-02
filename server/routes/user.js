@@ -52,8 +52,8 @@ router.get('/counselor/:username', async (req, res) => {
     };
     // console.log(returnObj);
     res.send(returnObj);
-  } catch (err) {
-    res.send(err);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -65,25 +65,27 @@ router.get('/student/:username', async (req, res) => {
     const student = await Student.getDetails({ username });
     console.log('Printing student object', student);
 
-    // const medicalFile = await MedicalRecord.getDetails({ username });
-    // console.log('user ki medical', medicalFile);
+    const medicalFile = await MedicalRecord.getDetails({ username });
+    console.log('user ki medical file', medicalFile.filename);
 
     const returnObj = {
-      name: `${student.first_name} ${student.last_name}`,
+      fname: student.first_name,
+      lname: student.last_name,
       roll_num: student.username,
       gender: student.gender,
-      dob: student.date_of_birth.toLocaleDateString(),
-      // med_filename: medicalFile.filename,
+      dob: student.date_of_birth.toLocaleDateString('en-US'),
+      email: student.email,
+      med_filename: medicalFile.filename,
     };
     console.log(returnObj);
     res.send(returnObj);
-  } catch (err) {
-    res.send(err);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
 // get counselor data and update the record
-router.patch('/counselor/edit-profile', async (req, res) => {
+router.post('/counselor/edit-profile', async (req, res) => {
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
@@ -126,7 +128,7 @@ router.patch('/counselor/edit-profile', async (req, res) => {
     );
     res.send('Success!');
   } catch (error) {
-    res.send(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -137,6 +139,7 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
 
   try {
     const { newfirstname, newlastname, newdob, newgender } = req.body;
+    console.log(newdob);
     await Student.update(
       { _id: id },
       {
@@ -152,7 +155,6 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
         buffer: data,
         mimetype: contentType,
       } = req.file;
-      console.log(req.file);
       await MedicalRecord.create({
         username,
         filename,
@@ -160,9 +162,11 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
         contentType,
       });
     }
-    res.send('Success');
+
+    // sets status to 200
+    res.send('Edited profile successfully');
   } catch (error) {
-    res.send(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 module.exports = router;

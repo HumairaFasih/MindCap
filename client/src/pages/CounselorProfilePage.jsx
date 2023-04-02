@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { IconButton, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
 import WestIcon from '@mui/icons-material/West';
@@ -11,13 +11,14 @@ import ProfileIcon from '../components/ProfileIcon';
 import Sidebar from '../components/Sidebar';
 import { MyButton } from '../components/MyButton';
 import ReviewList from '../components/ReviewList';
+import { AuthContext } from '../context/AuthContext';
 
 import './profile.css';
 
 const drawerWidth = 270;
 
 function CounselorProfile() {
-  const { username } = useParams();
+  const { usertype, username } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const editProfileRoute = `${location.pathname
@@ -26,9 +27,9 @@ function CounselorProfile() {
     .join('/')}/edit-profile`;
 
   const conditionalNavigate = () => {
-    if (userTypeAndName.usertype === 'Student') {
+    if (usertype === 'Student') {
       navigate('/book-appointment');
-    } else if (userTypeAndName.usertype === 'Counselor') {
+    } else if (usertype === 'Counselor') {
       navigate(editProfileRoute);
     }
   };
@@ -49,11 +50,6 @@ function CounselorProfile() {
     availabilitytime: '',
     rating: 0,
     revs: [],
-  });
-
-  const [userTypeAndName, setUserTypeAndName] = useState({
-    usertype: '',
-    username: '',
   });
 
   const handleChange = (prop) => (event) => {
@@ -94,28 +90,11 @@ function CounselorProfile() {
     }
   }, [username]);
 
-  const getUserTypeAndName = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        withCredentials: true,
-        url: `http://localhost:3003/api/profile/currentuser`,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      console.log(result.data);
-      console.log('hello i am in getusertype');
-      if (result.data) {
-        setUserTypeAndName(result.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
-
   useEffect(() => {
-    getCounselorData();
-    getUserTypeAndName();
-  }, [getCounselorData, getUserTypeAndName]);
+    if (username) {
+      getCounselorData();
+    }
+  }, [getCounselorData, username]);
 
   return (
     <Box>
@@ -168,9 +147,7 @@ function CounselorProfile() {
               sx={{ mb: 9, ml: 'auto' }}
               onClick={conditionalNavigate}
             >
-              {userTypeAndName.usertype === 'Student'
-                ? 'Book Appointment'
-                : 'Edit Profile'}
+              {usertype === 'Student' ? 'Book Appointment' : 'Edit Profile'}
             </MyButton>
           </Box>
           <Box>
@@ -191,7 +168,7 @@ function CounselorProfile() {
               <SubSecHeading text="Bio" />
               <Box className="content">{counselorDetails.bio}</Box>
               <SubSecHeading text="Reviews" />
-              {userTypeAndName.usertype !== 'Student' ? null : (
+              {usertype !== 'Student' ? null : (
                 <Box>
                   <Box className="review">
                     <Box className="review-text">Rate Counselor:</Box>

@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
-import { SignInButton } from '../components/SignInButton';
+import { LongButton } from '../components/LongButton';
 
 const drawerWidth = 270;
 
@@ -212,13 +212,13 @@ function UpdatePassword() {
                     </FormControl>
                   </Box>
 
-                  <SignInButton
+                  <LongButton
                     onClick={handleUpdate}
                     variant="contained"
                     sx={{ mb: 1 }}
                   >
                     Update Password
-                  </SignInButton>
+                  </LongButton>
                 </Box>
               </Card>
             </Box>

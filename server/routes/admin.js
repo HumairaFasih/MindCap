@@ -28,7 +28,7 @@ router.post('/create-counselor', async (req, res) => {
     console.log('Created user: ', result.username);
     res.status(201).send('User created');
   } catch (error) {
-    res.send(error);
+    res.status(500).json({ message: error.message });
   }
   return null;
 });

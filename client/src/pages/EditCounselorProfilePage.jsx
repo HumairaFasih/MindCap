@@ -15,7 +15,7 @@ import './EditCounselorProfilePage.css';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { SignInButton } from '../components/SignInButton';
+import { LongButton } from '../components/LongButton';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
 
@@ -363,12 +363,9 @@ function EditCounselorProfile() {
                 </RadioGroup>
               </FormControl>
 
-              <SignInButton
-                onClick={onSubmitHandler}
-                sx={{ ml: 3, width: 300 }}
-              >
+              <LongButton onClick={onSubmitHandler} sx={{ ml: 3, width: 300 }}>
                 Save Changes
-              </SignInButton>
+              </LongButton>
             </Box>
           </Box>
         </Box>

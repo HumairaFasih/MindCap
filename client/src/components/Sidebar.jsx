@@ -1,7 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -20,6 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MindCapLogo from '../assets/images/logo-no-bg.png';
 import TopSidebarNav from './TopSidebarNav';
 import BottomSidebarNav from './BottomSidebarNav';
+import { AuthContext } from '../context/AuthContext';
 
 function Sidebar(props) {
   const { window } = props;
@@ -28,32 +27,11 @@ function Sidebar(props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  const [userDetails, setUserDetails] = useState({
-    usertype: '',
-    username: '',
-  });
-
-  const getUserTypeAndName = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        withCredentials: true,
-        url: `http://localhost:3003/api/profile/currentuser`,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      console.log(result.data);
-      if (result.data) {
-        setUserDetails(result.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+  const { usertype, username } = useContext(AuthContext);
 
   useEffect(() => {
-    getUserTypeAndName();
-  }, [getUserTypeAndName]);
+    console.log(`Printing usertype in sidebar: ${usertype}`);
+  }, [usertype]);
 
   const drawerWidth = 270;
 
@@ -93,8 +71,8 @@ function Sidebar(props) {
         }}
       >
         <List>
-          {TopSidebarNav(userDetails).map(({ route, icon, label }) =>
-            userDetails.usertype === 'Counselor' &&
+          {TopSidebarNav(usertype, username).map(({ route, icon, label }) =>
+            usertype === 'Counselor' &&
             (label === 'Search Counselors' ||
               label === 'Lodge Complaint') ? null : (
               <ListItem key={label} disablePadding disableGutters>
@@ -177,7 +155,7 @@ function Sidebar(props) {
               variant="h8"
               sx={{ fontWeight: '500', fontSize: '18px' }}
             >
-              {userDetails.username}
+              {username}
             </Typography>
           </Box>
         </List>

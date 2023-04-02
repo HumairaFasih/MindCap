@@ -53,8 +53,8 @@ router.get('/getreviews', async (req, res) => {
       counselor_username: counselorUsername,
     });
     res.send([...reviews]);
-  } catch (err) {
-    res.send(err);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
