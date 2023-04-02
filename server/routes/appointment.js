@@ -9,7 +9,7 @@ router.post('/cancel-appointment', async (req, res) => {
     await Appointments.update({ _id: appointmentId }, { status: 'Cancelled' });
     res.send('Success');
   } catch (err) {
-    res.send('Failed');
+    res.status(500).json({message: 'Failed'});
   }
 });
 
