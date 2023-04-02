@@ -155,12 +155,20 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
         buffer: data,
         mimetype: contentType,
       } = req.file;
-      await MedicalRecord.create({
-        username,
-        filename,
-        data,
-        contentType,
-      });
+
+      await MedicalRecord.findOneAndUpdate(
+        { username },
+        {
+          username,
+          filename,
+          data,
+          contentType,
+        },
+        {
+          new: true,
+          upsert: true,
+        }
+      );
     }
 
     // sets status to 200
