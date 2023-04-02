@@ -139,13 +139,13 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
 
   try {
     const { newfirstname, newlastname, newdob, newgender } = req.body;
-    console.log(newdob);
+    const dateFinal = new Date(new Date(newdob).getTime() + 300 * 60000);
     await Student.update(
       { _id: id },
       {
         first_name: newfirstname,
         last_name: newlastname,
-        dob: newdob,
+        date_of_birth: dateFinal,
         gender: newgender,
       }
     );
