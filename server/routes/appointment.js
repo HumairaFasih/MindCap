@@ -2,12 +2,11 @@ const express = require('express');
 const jwtDecode = require('jwt-decode');
 
 const Appointments = require('../models/appointmentsModel');
-// const Notifications = require('../models/notificationsModel');
+const Notifications = require('../models/notificationsModel');
 
 const router = express.Router();
 
 router.get('/view', async (req, res) => {
-  // get and decode jwt token
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
@@ -38,8 +37,29 @@ router.post('/cancel', async (req, res) => {
   try {
     await Appointments.update({ _id: appointmentId }, { status: 'Cancelled' });
     res.send('Success');
-  } catch (err) {
-    res.status(500).json({ message: 'Failed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/set-status', async (req, res) => {
+  const token = req.cookies.jwt;
+  const { username } = jwtDecode(token);
+
+  const { appointmentId, studentUsername, userChoice } = req.body;
+  try {
+    await Appointments.update({ _id: appointmentId }, { status: userChoice });
+    // generate notification for student
+    await Notifications.create({
+      username: studentUsername,
+      date: new Date(),
+      time: new Date(),
+      notification_type: 'Appointment Status Update',
+      notification_details: `Your appointment request with ${username} has been ${userChoice}`,
+    });
+    res.send('Success');
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
