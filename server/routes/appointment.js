@@ -32,12 +32,19 @@ router.post('/book', async (req, res) => {
         mode: meetingMode,
         status: 'Pending',
       });
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateStr = dateFinal.toLocaleDateString('en-US', options);
+      const hours = timeFinal.getUTCHours();
+      const minutes = timeFinal.getUTCMinutes();
+      const meridian = hours >= 12 ? 'PM' : 'AM';
+      const hours12 = hours % 12 || 12; // convert hours to 12-hour format
+      const timeStr = `${hours12}:${minutes.toString().padStart(2, '0')} ${meridian}`;
       await Notifications.create({
         username: counselorUsername,
         date: new Date(),
         time: new Date(),
         notification_type: 'Appointment Request',
-        notification_details: `You have a new appointment request! A student, ${username} wishes to book an appointment with you on ${date}, ${time}`,
+        notification_details: `You have a new appointment request! A student, ${username} wishes to book an appointment with you on ${dateStr} at ${timeStr}.`,
       });
       if (share) {
         await MedicalRecord.addToVisibleTo(username, counselorUsername);
