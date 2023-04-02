@@ -173,8 +173,10 @@ function EditStudentProfile() {
             <Card
               sx={{
                 borderStyle: 'dotted',
+                display: 'flex',
+                flexDirection: 'column',
                 color: '#969696',
-                borderRadius: 30,
+                borderRadius: 10,
                 width: 400,
                 height: 300,
                 alignItems: 'center',
