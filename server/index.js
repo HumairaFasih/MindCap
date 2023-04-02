@@ -22,6 +22,7 @@ const authenticateRouter = require('./routes/authenticate');
 const rateRouter = require('./routes/rate');
 const profileRouter = require('./routes/profile');
 const userRouter = require('./routes/user')
+const appointmentRouter = require('./routes/appointment');
 
 // intilaise express app
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/authenticate', authenticateRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/rate', rateRouter);
 app.use('/api/user', userRouter)
+app.use('/api/appointment', appointmentRouter);
 
 // Connect to database
 mongoose
