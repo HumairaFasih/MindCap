@@ -52,7 +52,7 @@ router.post('/book', async (req, res) => {
       res.send('Appointment made!');
     } catch (err) {
       console.log(err);
-      res.send(err);
+      res.status(500).json({message: err});
     }
   }
 });
