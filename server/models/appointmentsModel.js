@@ -29,6 +29,14 @@ const AppointmentsSchema = new mongoose.Schema({
   },
 });
 
+AppointmentsSchema.statics.update = async function (filter, update) {
+  try {
+    await this.findOneAndUpdate(filter, update);
+  } catch (err) {
+    throw Error('Failed');
+  }
+};
+
 const Appointments = mongoose.model(
   'Appointments',
   AppointmentsSchema,
