@@ -33,4 +33,14 @@ router.get('/view', async (req, res) => {
   }
 });
 
+router.post('/cancel', async (req, res) => {
+  const { appointmentId } = req.body;
+  try {
+    await Appointments.update({ _id: appointmentId }, { status: 'Cancelled' });
+    res.send('Success');
+  } catch (err) {
+    res.status(500).json({ message: 'Failed' });
+  }
+});
+
 module.exports = router;
