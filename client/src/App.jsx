@@ -13,6 +13,7 @@ import PageNotFound from './pages/PageNotFound';
 // import StudentProfileForCounselor from './pages/StudentProfileForCounselor';
 import BookAppointment from './pages/BookAppointmentPage';
 import { AuthProvider } from './context/AuthContext';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -20,21 +21,22 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Routes>
           <Route index element={<PageNotFound />} />
-          <Route path="login" element={<SignInPage />} />
-          <Route path="update-password" element={<UpdatePassword />} />
-          <Route path="create-counselor" element={<CreateCounselor />} />
-          <Route path="user">
-            <Route path="student">
-              <Route path=":username" element={<StudentProfile />} />
-              <Route path="edit-profile" element={<EditStudentProfile />} />
+          <Route path='dashboard' element={<Dashboard/>}/>
+          <Route path='login' element={<SignInPage />} />
+          <Route path='update-password' element={<UpdatePassword />} />
+          <Route path='create-counselor' element={<CreateCounselor />} />
+          <Route path='user'>
+            <Route path='student'>
+              <Route path=':username' element={<StudentProfile />} />
+              <Route path='edit-profile' element={<EditStudentProfile />} />
             </Route>
-            <Route path="counselor">
-              <Route path=":username" element={<CounselorProfile />} />
-              <Route path="edit-profile" element={<EditCounselorProfile />} />
+            <Route path='counselor'>
+              <Route path=':username' element={<CounselorProfile />} />
+              <Route path='edit-profile' element={<EditCounselorProfile />} />
             </Route>
           </Route>
-          <Route path="book-appointment" element={<BookAppointment />} />
-          <Route path="*" element={<PageNotFound />} />
+          <Route path='book-appointment' element={<BookAppointment />} />
+          <Route path='*' element={<PageNotFound />} />
         </Routes>
       </LocalizationProvider>
     </AuthProvider>

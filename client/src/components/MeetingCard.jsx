@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { Box, Typography} from '@mui/material';
+import React from 'react';
+import { Box, Typography } from '@mui/material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import InterpreterModeIcon from '@mui/icons-material/InterpreterMode';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import LongMenu from './Menu';
 import LetterAvatar from './LetterAvatar';
-
 
 function MeetingCard({
   appointmentId,
@@ -17,17 +17,27 @@ function MeetingCard({
   status,
   cancelAppointment,
 }) {
-  
-const getStatusColor = statusColour => {
+  const getIcon = (statusIcon) => {
+    switch (statusIcon) {
+      case 'Approved':
+        return <EventAvailableIcon />;
+      case 'Pending':
+        return <PendingActionsIcon />;
+      default:
+        return <PendingActionsIcon />;
+    }
+  };
+
+  const getStatusColor = (statusColour) => {
     switch (statusColour) {
-        case 'Approved':
+      case 'Approved':
         return '#0A7800';
-        case 'Pending':
-        return '#F3A705'
-        default:
-        return '#000'
-    }   
-    };
+      case 'Pending':
+        return '#F3A705';
+      default:
+        return '#000';
+    }
+  };
 
   return (
     <Box>
@@ -44,53 +54,90 @@ const getStatusColor = statusColour => {
           border: '2px solid #B0C9A1',
         }}
       >
-        <Box display='flex' flexDirection='row' justifyContent='space-between' sx={{ marginBottom: '7px' }}>
+        <Box
+          display='flex'
+          flexDirection='row'
+          justifyContent='space-between'
+          sx={{ marginBottom: '7px' }}
+        >
           <Box display='flex' flexDirection='row'>
-          <LetterAvatar
-            fontSize={20}
-            height={36}
-            width={36}
-            username={counselorName}
-          />
-          <Typography
-            variant='h5'
-            fontWeight='bold'
-            marginTop='3px'
-            marginLeft='12px'
-          >
-            {counselorName}
-          </Typography>
+            <LetterAvatar
+              fontSize={20}
+              height={36}
+              width={36}
+              username={counselorName}
+            />
+            <Typography
+              variant='h5'
+              fontWeight='bold'
+              marginTop='3px'
+              marginLeft='12px'
+            >
+              {counselorName}
+            </Typography>
           </Box>
 
-          <LongMenu counselorName={counselorName} cancelAppointment={cancelAppointment} entity='student'/>
+          <LongMenu
+            counselorName={counselorName}
+            cancelAppointment={cancelAppointment}
+            entity='student'
+          />
         </Box>
 
         <Box display='flex' flexDirection='row'>
-          <Typography sx={{ marginLeft: '5px', marginRight: '20px', marginBottom:'-2px'}}>
+          <Typography
+            sx={{
+              marginLeft: '5px',
+              marginRight: '20px',
+              marginBottom: '-2px',
+            }}
+          >
             <DateRangeIcon />
           </Typography>
           <Typography>{date}</Typography>
         </Box>
 
         <Box display='flex' flexDirection='row'>
-          <Typography sx={{ marginLeft: '5px', marginRight: '20px', marginBottom:'-2px' }}>
+          <Typography
+            sx={{
+              marginLeft: '5px',
+              marginRight: '20px',
+              marginBottom: '-2px',
+            }}
+          >
             <AccessTimeIcon />
           </Typography>
           <Typography>{time}</Typography>
         </Box>
 
         <Box display='flex' flexDirection='row'>
-          <Typography sx={{ marginLeft: '5px', marginRight: '20px', marginBottom:'-2px' }}>
+          <Typography
+            sx={{
+              marginLeft: '5px',
+              marginRight: '20px',
+              marginBottom: '-2px',
+            }}
+          >
             <InterpreterModeIcon />
           </Typography>
           <Typography>{mode}</Typography>
         </Box>
 
         <Box display='flex' flexDirection='row'>
-          <Typography sx={{ marginLeft: '5px', marginRight: '20px', marginBottom:'-2px' }}>
-            <EventAvailableIcon />
+          <Typography
+            sx={{
+              marginLeft: '5px',
+              marginRight: '20px',
+              marginBottom: '-2px',
+            }}
+          >
+            {getIcon(status)}
           </Typography>
-          <Typography sx={{ color: getStatusColor(status), fontWeight:'bold'}}>{status}</Typography>
+          <Typography
+            sx={{ color: getStatusColor(status), fontWeight: 'bold' }}
+          >
+            {status}
+          </Typography>
         </Box>
       </Box>
     </Box>

@@ -14,6 +14,8 @@ import BookAppointmentCard from '../components/BookAppointmentCard';
 import MeetingCard from '../components/MeetingCard';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import PastMeetingCard from '../components/PastMeetingCard';
+import ApproveAppointmentCard from '../components/ApproveAppointmentCard';
 
 const drawerWidth = 270;
 
@@ -77,22 +79,25 @@ function Dashboard() {
           </Box>
 
           <Box>
-            <Box sx={{ width: '100%', height: '100%', bgcolor: '#F5F5F5', borderRadius: '10px', p:'15px'}}>
-              <Typography sx={{fontSize:'20px', fontWeight:'bold', ml: '15px'}}>Upcoming Meetings</Typography>
+            <Box sx={{ width: '100%', height: '100%', bgcolor: '#F5F5F5', borderRadius: '10px', p:'15px', marginTop: '45px'}}>
+              <Typography sx={{fontSize:'30px', fontWeight:'bold', ml: '15px'}}>Upcoming Meetings</Typography>
               <Box>
                 <Slider {...settings}>
                   <BookAppointmentCard/>
+                  <ApproveAppointmentCard appointmentId='123' studentName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Pending'/>
                   <MeetingCard appointmentId='123' counselorName='Ahmed' date='25th February' time='12:00 PM' mode='In-person' status='Approved'/>
-                  <MeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Approved'/>
+                  <MeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Pending'/>
                 </Slider>
               </Box>
             </Box>
 
             <Box sx={{ width: '100%', height: '100%', minHeight:'250px', bgcolor: '#F5F5F5', borderRadius: '10px', p:'15px', mt:'20px'}}>
-              <Typography sx={{fontSize:'20px', fontWeight:'bold', ml: '15px'}}>Past Meetings</Typography>
+              <Typography sx={{fontSize:'30px', fontWeight:'bold', ml: '15px'}}>Past Meetings</Typography>
               <Box>
                 <Slider {...settings}>
-                
+                  <PastMeetingCard appointmentId='123' counselorName='Ahmed' date='25th February' time='12:00 PM' mode='In-person' status='Attended'/>
+                  <PastMeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Rejected'/>
+                  <PastMeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Cancelled'/>
                 </Slider>
               </Box>
             </Box>
