@@ -30,7 +30,7 @@ const isEqual = (day, daytype) => {
   return false;
 };
 
-/* 
+/*
 search and filter is required in these two areas:
     1. search + filter counselors by student
     2. search + filter students & counselors by admin
@@ -93,7 +93,7 @@ router.get('/search-counselors', async (req, res) => {
       );
       res.send(returnObj);
     } catch (err) {
-      res.send(err);
+      res.send(500).json({ message: err.message });
     }
   }
 });
@@ -173,7 +173,7 @@ router.get('/search-accounts', async (req, res) => {
         res.send([...returnStudents, ...returnCounselors]);
       }
     } catch (err) {
-      res.send(err);
+      res.send(500).json({ message: err.message });
     }
   }
 });
