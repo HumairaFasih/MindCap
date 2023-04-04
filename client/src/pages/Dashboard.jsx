@@ -67,6 +67,10 @@ function Dashboard() {
    
    // divide the meetings into future and past meetigns based on their times
    useEffect(() => {
+     if(meetings.length > 0) {
+        const sortedMeetings = [...meetings].sort((a, b) => new Date(a.date) - new Date(b.date));
+        setMeetings(sortedMeetings);
+      }
      setFutureMeetings(
        meetings.filter((item) => {
          if (
