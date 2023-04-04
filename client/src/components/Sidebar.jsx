@@ -149,7 +149,7 @@ function Sidebar(props) {
                 fontWeight: 'bold',
               }}
             >
-              S
+              {username && username.charAt(0)}
             </Avatar>
             <Typography
               variant="h8"

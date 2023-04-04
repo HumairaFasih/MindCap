@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { TextField, Typography } from '@mui/material';
 import tree from '../assets/images/tree.png';
@@ -10,6 +10,16 @@ import './SignInPage.css';
 function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const dashboardRoute = `${location.pathname
+  //   .split('/')
+  //   .slice(0, -1)
+  //   .join('/')}/dashboard`;
+
+  // const handleNavigation = () => {
+  //   navigate(dashboardRoute);
+  // };
 
   const handleChangeUsername = (event) => {
     setUsername(event.target.value);
@@ -34,7 +44,7 @@ function SignIn() {
       if (result.data.id != null) {
         console.log('Login Successful, Redirecting to Dashboard...');
         console.log(result.data);
-        // <Link to={`user/:${result.data.username}`} />
+        // handleNavigation();
       } else {
         console.log('Login Failed!');
       }
