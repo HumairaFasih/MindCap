@@ -1,10 +1,7 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable camelcase */
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
-import {
-  Box,
-  Typography,
-} from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import './EditCounselorProfilePage.css';
 import Slider from 'react-slick';
 import Sidebar from '../components/Sidebar';
@@ -17,29 +14,21 @@ import 'slick-carousel/slick/slick-theme.css';
 import PastMeetingCard from '../components/PastMeetingCard';
 import ApproveAppointmentCard from '../components/ApproveAppointmentCard';
 import { AuthContext } from '../context/AuthContext';
-import '../components/CardSlider.css' 
-
+import '../components/CardSlider.css';
 
 const drawerWidth = 270;
 
 function Dashboard() {
-   // get meeting data from backend
-   const [meetings, setMeetings] = useState([]);
-   const [futureMeetings, setFutureMeetings] = useState([]);
-   const [pastMeetings, setPastMeetings] = useState([]);
-   const [loaded, setLoaded] = useState(false);
-   const user = useContext(AuthContext);
-   const { usertype, username } = user;
+  const [meetings, setMeetings] = useState([]);
+  // const [isCancelled, setIsCancelled] = useState(false);
+  const [futureMeetings, setFutureMeetings] = useState([]);
+  const [pastMeetings, setPastMeetings] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+  const user = useContext(AuthContext);
+  const { usertype, username } = user;
 
-   useEffect(() => {
-    if (user) {
-      console.log(`Printing usertype received by sidebar: ${usertype}`);
-      console.log(`Printing username received by sidebar: ${username}`);
-    }
-   }, [user,usertype, username])
-
-   // connect to backend to get all the meetings
-   const getMeetingData = useCallback(async () => {
+  // connect to backend to get all the meetings
+  const getAllMeetings = useCallback(async () => {
     try {
       const result = await axios({
         method: 'get',
@@ -49,6 +38,7 @@ function Dashboard() {
       });
       if (result.status === 200) {
         setMeetings(result.data);
+        console.log('Printing loaded data for meeting');
         console.log(result.data);
         setLoaded(true);
       } else {
@@ -60,61 +50,67 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if(username) {
-      getMeetingData();
+    if (user) {
+      console.log(`Printing usertype received by sidebar: ${usertype}`);
+      console.log(`Printing username received by sidebar: ${username}`);
     }
-  }, [getMeetingData, username]);
-   
-   // divide the meetings into future and past meetigns based on their times
-   useEffect(() => {
-     setFutureMeetings(
-       meetings.filter((item) => {
-         if (
-           new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) >
-           new Date()
-         ) {
-           return true;
-         }
- 
-         return false;
-       })
-     );
-     setPastMeetings(
-       meetings.filter((item) => {
-         if (
-           new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) <=
-           new Date()
-         ) {
-           return true;
-         }
- 
-         return false;
-       })
-     );
-   }, [meetings]);
- 
-  
-  // used to make the slider responsive, don't touch
-  const [screenSize, setScreenSize] = useState('');
+  }, [user, usertype, username]);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 850) {
-        setScreenSize('small');
-      } else if (window.innerWidth <= 1130) {
-        setScreenSize('medium');
-      } else if (window.innerWidth<= 1400){
-        setScreenSize('large');
-      } else if (window.innerWidth<=1700){
-        setScreenSize('very large')
-      } else{
-        setScreenSize('Big boi')
-      }
-    };
+    if (username) {
+      getAllMeetings();
+    }
+  }, [getAllMeetings, username]);
+
+  // divide the meetings into future and past meetigns based on their times
+  useEffect(() => {
+    setFutureMeetings(
+      meetings.filter((item) => {
+        if (
+          new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) >
+          new Date()
+        ) {
+          return true;
+        }
+
+        return false;
+      })
+    );
+    setPastMeetings(
+      meetings.filter((item) => {
+        if (
+          new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) <=
+          new Date()
+        ) {
+          return true;
+        }
+
+        return false;
+      })
+    );
+  }, [meetings]);
+
+  // used to make the slider responsive, don't touch
+  const [screenSize, setScreenSize] = useState('');
+  const handleResize = useCallback(() => {
+    if (window.innerWidth <= 850) {
+      setScreenSize('small');
+    } else if (window.innerWidth <= 1130) {
+      setScreenSize('medium');
+    } else if (window.innerWidth <= 1400) {
+      setScreenSize('large');
+    } else if (window.innerWidth <= 1700) {
+      setScreenSize('very large');
+    } else {
+      setScreenSize('Big boi');
+    }
+  }, []);
+
+  useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [handleResize]);
 
   const numSlides = (size) => {
     switch (size) {
@@ -139,35 +135,54 @@ function Dashboard() {
     slidesToScroll: numSlides(screenSize),
     centerMode: false,
   };
-  
+
   // design
   if (!loaded) {
     return <div>Loading Screen</div>;
   }
-  
+
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
-          component='main'
+          component="main"
           sx={{
             flexGrow: 1,
             p: 3,
-            width: {xs: `calc(100% - ${drawerWidth}px)` },
+            width: { xs: `calc(100% - ${drawerWidth}px)` },
           }}
         >
           <Box sx={{ mt: '30px' }}>
-            <PageTitle text='Welcome Summer Ijaz!' marginB='15px' marginL='20px' />
-            <Box sx={{ml:'20px'}}><SubSecHeading text='We hope you are well'/></Box>
+            <PageTitle
+              text={`Welcome ${username}`}
+              marginB="15px"
+              marginL="20px"
+            />
+            <Box sx={{ ml: '20px' }}>
+              <SubSecHeading text="We hope you are well" />
+            </Box>
           </Box>
 
           <Box>
-            <Box sx={{ width: '100%', height: '100%', bgcolor: '#F5F5F5', borderRadius: '10px', p:'15px', marginTop: '45px'}}>
-              <Typography sx={{fontSize:'30px', fontWeight:'bold', ml: '15px'}}>Upcoming Meetings</Typography>
+            <Box
+              sx={{
+                width: '100%',
+                height: '100%',
+                bgcolor: '#F5F5F5',
+                borderRadius: '10px',
+                p: '15px',
+                marginTop: '45px',
+              }}
+            >
+              <Typography
+                sx={{ fontSize: '30px', fontWeight: 'bold', ml: '15px' }}
+              >
+                Upcoming Appointments
+              </Typography>
               <Box>
                 <Slider {...settings}>
-                  <BookAppointmentCard/>
+                  <BookAppointmentCard />
                   {/* render future meetings based on usertype */}
                   {usertype === 'Student'
                     ? futureMeetings.length !== 0
@@ -200,28 +215,41 @@ function Dashboard() {
               </Box>
             </Box>
 
-            <Box sx={{ width: '100%', height: '100%', minHeight:'250px', bgcolor: '#F5F5F5', borderRadius: '10px', p:'15px', mt:'20px'}}>
-              <Typography sx={{fontSize:'30px', fontWeight:'bold', ml: '15px'}}>Past Meetings</Typography>
+            <Box
+              sx={{
+                width: '100%',
+                height: '100%',
+                minHeight: '250px',
+                bgcolor: '#F5F5F5',
+                borderRadius: '10px',
+                p: '15px',
+                mt: '20px',
+              }}
+            >
+              <Typography
+                sx={{ fontSize: '30px', fontWeight: 'bold', ml: '15px' }}
+              >
+                Past Appointments
+              </Typography>
               <Box>
                 <Slider {...settings}>
-                {/* render past meetings */}
-                {pastMeetings.length !== 0
-                    ? pastMeetings.map((item) => (
-                        <PastMeetingCard
-                          key={item._id}
-                          appointmentId={item._id}
-                          name={
-                            usertype === 'Student'
-                              ? item.counselor_id
-                              : item.student_id
-                          }
-                          date={new Date(item.date).toLocaleDateString()}
-                          time={new Date(item.time).toLocaleDateString()}
-                          mode={item.mode}
-                          status={item.status}
-                        />
-                      ))
-                    : null}
+                  {/* render past meetings */}
+                  {pastMeetings.length !== 0 &&
+                    pastMeetings.map((item) => (
+                      <PastMeetingCard
+                        key={item._id}
+                        appointmentId={item._id}
+                        name={
+                          usertype === 'Student'
+                            ? item.counselor_id
+                            : item.student_id
+                        }
+                        date={new Date(item.date).toLocaleDateString()}
+                        time={new Date(item.time).toLocaleDateString()}
+                        mode={item.mode}
+                        status={item.status}
+                      />
+                    ))}
                 </Slider>
               </Box>
             </Box>

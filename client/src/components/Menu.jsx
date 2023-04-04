@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+/* eslint-disable camelcase */
+import React, { useState, useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { AuthContext } from '../context/AuthContext';
 
 const studentOptions = [
   { label: 'Cancel Appointment', value: 'Cancel Appointment' },
@@ -15,31 +17,37 @@ const counselorOptions = [
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu({counselorName, cancelAppointment, entity}) {
+function LongMenu({ handleMeetingCardMenu }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+  const { usertype } = useContext(AuthContext);
+  const options =
+    usertype && usertype === 'Student'
+      ? studentOptions
+      : usertype && counselorOptions;
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const options = entity === 'student' ? studentOptions : counselorOptions;
-  
+
   return (
     <div>
       <IconButton
-        aria-label='more'
-        id='long-button'
+        aria-label="more"
+        id="long-button"
         aria-controls={open ? 'long-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
-        aria-haspopup='true'
+        aria-haspopup="true"
         onClick={handleClick}
       >
         <MoreVertIcon />
       </IconButton>
       <Menu
-        id='long-menu'
+        id="long-menu"
         MenuListProps={{
           'aria-labelledby': 'long-button',
         }}
@@ -53,16 +61,18 @@ export default function LongMenu({counselorName, cancelAppointment, entity}) {
           },
         }}
       >
-        {options.map((option) => (
+        {options.map(({ label, value }) => (
           <MenuItem
-            key={option}
-            selected={option === 'Pyxis'}
-            onClick={handleClose}
+            key={label}
+            value={value}
+            onClick={() => handleMeetingCardMenu(value)}
           >
-            {option.value}
+            {value}
           </MenuItem>
         ))}
       </Menu>
     </div>
   );
 }
+
+export default LongMenu;
