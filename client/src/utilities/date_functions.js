@@ -53,8 +53,8 @@ export const convertMonth = (m) => {
   }
 };
 
-export const getDate = (d) => {
-  const date = new Date(d);
+export const getTime = (t) => {
+  const date = new Date(t);
   const hours = date.getUTCHours();
   const minutes = date.getUTCMinutes();
   const meridian = hours < 12 ? 'AM' : 'PM';
