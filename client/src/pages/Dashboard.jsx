@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -16,10 +16,83 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import PastMeetingCard from '../components/PastMeetingCard';
 import ApproveAppointmentCard from '../components/ApproveAppointmentCard';
+import { AuthContext } from '../context/AuthContext';
+import '../components/CardSlider.css' 
+
 
 const drawerWidth = 270;
 
 function Dashboard() {
+   // get meeting data from backend
+   const [meetings, setMeetings] = useState([]);
+   const [futureMeetings, setFutureMeetings] = useState([]);
+   const [pastMeetings, setPastMeetings] = useState([]);
+   const [loaded, setLoaded] = useState(false);
+   const user = useContext(AuthContext);
+   const { usertype, username } = user;
+
+   useEffect(() => {
+    if (user) {
+      console.log(`Printing usertype received by sidebar: ${usertype}`);
+      console.log(`Printing username received by sidebar: ${username}`);
+    }
+   }, [user,usertype, username])
+
+   // connect to backend to get all the meetings
+   const getMeetingData = useCallback(async () => {
+    try {
+      const result = await axios({
+        method: 'get',
+        url: 'http://localhost:3003/api/appointment/view',
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (result.status === 200) {
+        setMeetings(result.data);
+        console.log(result.data);
+        setLoaded(true);
+      } else {
+        console.log('error getting data');
+      }
+    } catch (error) {
+      console.log('error getting data', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if(username) {
+      getMeetingData();
+    }
+  }, [getMeetingData, username]);
+   
+   // divide the meetings into future and past meetigns based on their times
+   useEffect(() => {
+     setFutureMeetings(
+       meetings.filter((item) => {
+         if (
+           new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) >
+           new Date()
+         ) {
+           return true;
+         }
+ 
+         return false;
+       })
+     );
+     setPastMeetings(
+       meetings.filter((item) => {
+         if (
+           new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) <=
+           new Date()
+         ) {
+           return true;
+         }
+ 
+         return false;
+       })
+     );
+   }, [meetings]);
+ 
   
   // used to make the slider responsive, don't touch
   const [screenSize, setScreenSize] = useState('');
@@ -30,8 +103,12 @@ function Dashboard() {
         setScreenSize('small');
       } else if (window.innerWidth <= 1130) {
         setScreenSize('medium');
-      } else {
+      } else if (window.innerWidth<= 1400){
         setScreenSize('large');
+      } else if (window.innerWidth<=1700){
+        setScreenSize('very large')
+      } else{
+        setScreenSize('Big boi')
       }
     };
     handleResize();
@@ -47,8 +124,10 @@ function Dashboard() {
         return 2;
       case 'large':
         return 3;
+      case 'very large':
+        return 4;
       default:
-        return 3;
+        return 5;
     }
   };
 
@@ -58,9 +137,14 @@ function Dashboard() {
     speed: 1000,
     slidesToShow: numSlides(screenSize),
     slidesToScroll: numSlides(screenSize),
+    centerMode: false,
   };
   
   // design
+  if (!loaded) {
+    return <div>Loading Screen</div>;
+  }
+  
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
@@ -84,9 +168,34 @@ function Dashboard() {
               <Box>
                 <Slider {...settings}>
                   <BookAppointmentCard/>
-                  <ApproveAppointmentCard appointmentId='123' studentName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Pending'/>
-                  <MeetingCard appointmentId='123' counselorName='Ahmed' date='25th February' time='12:00 PM' mode='In-person' status='Approved'/>
-                  <MeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Pending'/>
+                  {/* render future meetings based on usertype */}
+                  {usertype === 'Student'
+                    ? futureMeetings.length !== 0
+                      ? futureMeetings.map((item) => (
+                          <MeetingCard
+                            key={item._id}
+                            appointmentId={item._id}
+                            counselorName={item.counselor_id}
+                            date={new Date(item.date).toLocaleDateString()}
+                            time={new Date(item.time).toLocaleDateString()}
+                            mode={item.mode}
+                            status={item.status}
+                          />
+                        ))
+                      : null
+                    : futureMeetings.length !== 0
+                    ? futureMeetings.map((item) => (
+                        <ApproveAppointmentCard
+                          key={item._id}
+                          appointmentId={item._id}
+                          studentName={item.student_id}
+                          date={new Date(item.date).toLocaleDateString()}
+                          time={new Date(item.time).toLocaleDateString()}
+                          mode={item.mode}
+                          status={item.status}
+                        />
+                      ))
+                    : null}
                 </Slider>
               </Box>
             </Box>
@@ -95,9 +204,24 @@ function Dashboard() {
               <Typography sx={{fontSize:'30px', fontWeight:'bold', ml: '15px'}}>Past Meetings</Typography>
               <Box>
                 <Slider {...settings}>
-                  <PastMeetingCard appointmentId='123' counselorName='Ahmed' date='25th February' time='12:00 PM' mode='In-person' status='Attended'/>
-                  <PastMeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Rejected'/>
-                  <PastMeetingCard appointmentId='123' counselorName='Ahmed' date='28th February' time='3:00 PM' mode='In-person' status='Cancelled'/>
+                {/* render past meetings */}
+                {pastMeetings.length !== 0
+                    ? pastMeetings.map((item) => (
+                        <PastMeetingCard
+                          key={item._id}
+                          appointmentId={item._id}
+                          name={
+                            usertype === 'Student'
+                              ? item.counselor_id
+                              : item.student_id
+                          }
+                          date={new Date(item.date).toLocaleDateString()}
+                          time={new Date(item.time).toLocaleDateString()}
+                          mode={item.mode}
+                          status={item.status}
+                        />
+                      ))
+                    : null}
                 </Slider>
               </Box>
             </Box>

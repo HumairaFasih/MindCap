@@ -1,0 +1,15 @@
+.slick-track {
+    margin-left:unset;
+  }
+
+  .slick-prev:before {
+    color: black;
+    font-size: 30px;
+    margin-right:-30px;
+  }
+  
+  .slick-next:before {
+    color: black;
+    font-size: 30px;
+    margin-left:-40px;
+  }
