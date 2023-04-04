@@ -6,7 +6,7 @@ import Person from '@mui/icons-material/Person';
 
 const TopSidebarNav = (usertype, username) => [
   {
-    route: '/user/dashboard',
+    route: '/dashboard',
     icon: <DashboardIcon htmlColor="white" />,
     label: 'Dashboard',
   },
