@@ -10,7 +10,6 @@ import EditCounselorProfile from './pages/EditCounselorProfilePage';
 import UpdatePassword from './pages/UpdatePassword';
 import StudentProfile from './pages/StudentProfilePage';
 import PageNotFound from './pages/PageNotFound';
-// import StudentProfileForCounselor from './pages/StudentProfileForCounselor';
 import BookAppointment from './pages/BookAppointmentPage';
 import { AuthProvider } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
