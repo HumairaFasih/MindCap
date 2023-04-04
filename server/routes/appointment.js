@@ -9,6 +9,15 @@ const MedicalRecord = require('../models/medicalModel');
 
 const router = express.Router();
 
+router.get('/get-all-counselors', async (req, res) => {
+  const result = await Counselor.getAll();
+  const usernames = [];
+  result.forEach((item) => {
+    usernames.push(item.username);
+  });
+  res.json(usernames);
+});
+
 router.get('/view', async (req, res) => {
   // get and decode jwt token
   const token = req.cookies.jwt;
@@ -34,6 +43,13 @@ router.get('/view', async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   }
+});
+
+router.post('/get-availability', async (req, res) => {
+  const result = await Availability.getDetails({
+    counselor_username: req.body.counselor,
+  });
+  res.json({ day: result.day_type, time: result.time });
 });
 
 router.post('/book', async (req, res) => {
@@ -107,20 +123,14 @@ router.post('/set-status', async (req, res) => {
   }
 });
 
-router.get('/get-all-counselors', async (req, res) => {
-  const result = await Counselor.getAll();
-  const usernames = [];
-  result.forEach((item) => {
-    usernames.push(item.username);
-  });
-  res.json(usernames);
-});
-
-router.post('/get-availability', async (req, res) => {
-  const result = await Availability.getDetails({
-    counselor_username: req.body.counselor,
-  });
-  res.json({ day: result.day_type, time: result.time });
+router.post('/cancel', async (req, res) => {
+  const { appointmentId } = req.body;
+  try {
+    await Appointments.update({ _id: appointmentId }, { status: 'Cancelled' });
+    res.send('Success');
+  } catch (err) {
+    res.send('Failed');
+  }
 });
 
 module.exports = router;
