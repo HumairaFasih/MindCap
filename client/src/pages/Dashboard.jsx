@@ -20,7 +20,6 @@ const drawerWidth = 270;
 
 function Dashboard() {
   const [meetings, setMeetings] = useState([]);
-  // const [isCancelled, setIsCancelled] = useState(false);
   const [futureMeetings, setFutureMeetings] = useState([]);
   const [pastMeetings, setPastMeetings] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -64,6 +63,12 @@ function Dashboard() {
 
   // divide the meetings into future and past meetigns based on their times
   useEffect(() => {
+    if (meetings.length > 0) {
+      const sortedMeetings = [...meetings].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+      setMeetings(sortedMeetings);
+    }
     setFutureMeetings(
       meetings.filter((item) => {
         if (
@@ -72,7 +77,6 @@ function Dashboard() {
         ) {
           return true;
         }
-
         return false;
       })
     );
@@ -84,7 +88,6 @@ function Dashboard() {
         ) {
           return true;
         }
-
         return false;
       })
     );
@@ -92,17 +95,14 @@ function Dashboard() {
 
   // used to make the slider responsive, don't touch
   const [screenSize, setScreenSize] = useState('');
+
   const handleResize = useCallback(() => {
     if (window.innerWidth <= 850) {
       setScreenSize('small');
     } else if (window.innerWidth <= 1130) {
       setScreenSize('medium');
-    } else if (window.innerWidth <= 1400) {
-      setScreenSize('large');
-    } else if (window.innerWidth <= 1700) {
-      setScreenSize('very large');
     } else {
-      setScreenSize('Big boi');
+      setScreenSize('large');
     }
   }, []);
 

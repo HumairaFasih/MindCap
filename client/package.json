@@ -35,6 +35,7 @@
     ],
     "rules": {
       "react/prop-types": "off",
+      "camelcase": "off",
       "no-nested-ternary": "off",
       "prettier/prettier": [
         "warn",
