@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import {
   Box,
   Typography,
@@ -103,6 +104,20 @@ function ApproveAppointmentCard({
     setIsChecked(true);
   };
 
+  const handleMeetingCardMenu = async (value) => {
+    if(value === 'View Medical Report'){
+      const result = await axios({
+        method: 'get',
+        url: `http://localhost:3003/api/user/medical-record?name=${(studentName)}`,
+        withCredentials: true,
+        responseType: 'blob'
+      });
+    const blob = new Blob([result.data], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank').focus();
+    }
+  };
+
   const getStatusColor = (statusColour) => {
     switch (statusColour) {
       case 'Approved':
@@ -168,7 +183,7 @@ function ApproveAppointmentCard({
             </Typography>
           </Box>
 
-          <LongMenu counselorName="" cancelAppointment="" entity="counselor" />
+          <LongMenu handleMeetingCardMenu={handleMeetingCardMenu} counselorName="" cancelAppointment="" entity="counselor" />
         </Box>
 
         <Box display="flex" flexDirection="row">

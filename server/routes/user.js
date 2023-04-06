@@ -178,5 +178,14 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
   }
 });
 
+router.get('/medical-record', async (req, res) => {
+  const username = req.query.name;
+  const resul = await MedicalRecord.getDetailsNonLean({
+    username,
+  });
+
+  res.send(resul.data);
+});
 
 module.exports = router;
+
