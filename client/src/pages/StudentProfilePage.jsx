@@ -38,6 +38,19 @@ function StudentProfile() {
     }
   }, [username]);
 
+  const viewMedicalRecord = async (e) => {
+    e.preventDefault();
+    const result = await axios({
+      method: 'get',
+      url: `http://localhost:3003/api/user/medical-record?name=${(username)}`,
+      withCredentials: true,
+      responseType: 'blob'
+    });
+  const blob = new Blob([result.data], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank').focus();
+  }
+
   useEffect(() => {
     if (username) {
       getStudentData();
@@ -275,7 +288,7 @@ function StudentProfile() {
                     margin: '0px 64px 0px 0px',
                   }}
                 >
-                  <a href="#random" target="_blank" rel="noreferrer">
+                  <a href="#random" target="_blank" rel="noreferrer" onClick={viewMedicalRecord}>
                     {studentDetails.med_filename}
                   </a>
                 </Typography>
