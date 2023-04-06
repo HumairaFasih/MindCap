@@ -21,6 +21,31 @@ function StudentProfile() {
     .join('/')}/edit-profile`;
 
   const [studentDetails, setStudentDetails] = useState('');
+  const handleDeactive = (userName, accType, accountStatus) => {
+    console.log(userName, accType, accountStatus);
+    let accStatus;
+    if (accountStatus === true) {
+      accStatus = false;
+    } else {
+      accStatus = true;
+    }
+    const result = axios({
+      method: 'POST',
+      url: `http://localhost:3003/api/admin/change-status`,
+      withCredentials: true,
+      data: JSON.stringify({ username: userName, accType, accStatus }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+  };
+  const handleClick = (userName, accType) => {
+    const result = axios({
+      method: 'POST',
+      url: `http://localhost:3003/api/admin/delete-account`,
+      withCredentials: true,
+      data: JSON.stringify({ username: userName, accType }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+  };
 
   const getStudentData = useCallback(async () => {
     try {
@@ -43,7 +68,6 @@ function StudentProfile() {
       getStudentData();
     }
   }, [getStudentData, username]);
-
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
@@ -96,22 +120,47 @@ function StudentProfile() {
                 margin: '20px 30px 20px 650px',
               }}
             >
-              {usertype === 'Student' && (
+              {usertype === 'Admin' ? (
+                <Box sx= {{ display: 'flex', flexDirection: 'column', marginLeft: 'auto' }}>  
                 <MyButton
-                  width="187px"
-                  paddinghorizontal="10px"
-                  paddingvertical="10px"
+                // 200px in rem are 12.5rem
+                  width="12.5rem"
                   variant="contained"
-                  sx={{ mb: 2, justifyContent: '', variant: 'contained' }}
-                  onClick={() => navigate(editProfileRoute)}
+                  sx={{ mb:1, ml: 'auto', padding: '10px'}}
+                  onClick={() => {
+                    handleDeactive(studentDetails.username, 'Student', studentDetails.status);
+                  }}
                 >
-                  <Icon
-                    component={EditProfileIcon}
-                    sx={{ width: '50px', height: '32px' }}
-                  />
-                  Edit Profile
+                  Deactivate Account
                 </MyButton>
-              )}
+                <MyButton
+                  width="12.5rem"
+                  variant="contained"
+                  sx={{ mt: 2, ml: 'auto', padding: '10px'  }}
+                  onClick={() => {
+                    handleClick(username, 'Student');
+                  }}
+                >
+                  Delete Account
+                </MyButton>
+              </Box>
+              ): usertype === 'Student' ? (
+                  <MyButton
+                    width="187px"
+                    paddinghorizontal="10px"
+                    paddingvertical="10px"
+                    variant="contained"
+                    sx={{ mb: 2, justifyContent: '', variant: 'contained' }}
+                    onClick={() => navigate(editProfileRoute)}
+                  >
+                    <Icon
+                      component={EditProfileIcon}
+                      sx={{ width: '50px', height: '32px' }}
+                    />
+                    Edit Profile
+                  </MyButton>
+              ) : null}
+
             </Box>
           </Box>
 

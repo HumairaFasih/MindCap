@@ -47,6 +47,10 @@ const CounselorSchema = new mongoose.Schema({
   experience: {
     type: String,
   },
+  status: {
+    type: Boolean,
+    default: true,
+  }
 });
 
 // search for username in Counselor collection, if found compare passwords

@@ -48,6 +48,7 @@ router.get('/counselor/:username', async (req, res) => {
       availabilityday: availability.day_type,
       availabilitytime: availability.time,
       rating: getRating(reviews),
+      status: counselor.status,
       revs: [...reviews],
     };
     // console.log(returnObj);
@@ -75,6 +76,7 @@ router.get('/student/:username', async (req, res) => {
       gender: student.gender,
       dob: student.date_of_birth.toLocaleDateString('en-US'),
       email: student.email,
+      status: student.status,
       med_filename: medicalFile.filename,
     };
     console.log(returnObj);

@@ -4,6 +4,7 @@ const cors = require('cors');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const searchRouter = require('./routes/search');
 
 // enables reading environment variables from .env file
 require('dotenv').config();
@@ -32,6 +33,7 @@ app.use('/api/user', userRouter);
 app.use('/api/rate', rateRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/appointment', appointmentRouter);
+app.use('/api/search', searchRouter);
 
 // Connect to database
 mongoose

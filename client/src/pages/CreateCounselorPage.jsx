@@ -42,7 +42,7 @@ function CreateCounselor() {
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
-        <Sidebar />
+        {/* <Sidebar /> */}
         <Box
           component="main"
           sx={{

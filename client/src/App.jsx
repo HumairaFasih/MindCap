@@ -13,6 +13,7 @@ import PageNotFound from './pages/PageNotFound';
 import BookAppointment from './pages/BookAppointmentPage';
 import { AuthProvider } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
           <Route path="login" element={<SignInPage />} />
           <Route path="update-password" element={<UpdatePassword />} />
           <Route path="create-counselor" element={<CreateCounselor />} />
+          <Route path="search">
+            <Route path="search-counselor" element={<SearchPage/>} />
+          </Route>
           <Route path="user">
             <Route path="student">
               <Route path=":username" element={<StudentProfile />} />

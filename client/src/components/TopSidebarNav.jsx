@@ -13,7 +13,7 @@ const TopSidebarNav = (usertype, username) => {
       label: 'Dashboard',
     },
     {
-      route: `/user/${usertype}/${username}`,
+      route: `/user/${user_type}/${username}`,
       icon: <Person />,
       label: 'My Profile',
     },
