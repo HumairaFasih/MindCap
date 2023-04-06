@@ -3,7 +3,6 @@ import { Box } from '@mui/system';
 import { Rating, IconButton, FormGroup, FormControlLabel, Switch, Typography } from '@mui/material';
 import RightIcon from '@mui/icons-material/KeyboardArrowRight';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Popup from 'reactjs-popup';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
