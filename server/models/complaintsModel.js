@@ -25,6 +25,14 @@ const ComplaintsSchema = new mongoose.Schema({
   },
 });
 
+ComplaintsSchema.statics.update = async function (filter, update) {
+  try {
+    await this.findOneAndUpdate(filter, update);
+  } catch (err) {
+    throw Error('Failed');
+  }
+};
+
 const Complaints = mongoose.model('Complaints', ComplaintsSchema, 'Complaints');
 
 module.exports = Complaints;
