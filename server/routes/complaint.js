@@ -10,7 +10,7 @@ router.post('/lodge', async (req, res) => {
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
-  const { usertype } = jwtDecoded;
+  const { username, usertype } = jwtDecoded;
 
   if (usertype === 'Student') {
     try {
@@ -22,6 +22,14 @@ router.post('/lodge', async (req, res) => {
         filed_date: date,
         details: complaintDetails,
         status: 'Pending',
+      });
+      // create notification for student
+      await Notification.create({
+        username,
+        date: new Date(),
+        time: new Date(),
+        notification_type: 'New Complaint Lodged',
+        notification_details: `Your complaint against counselor ${counselor} has been received. Please wait while our administrative staff handles the case. We apologize for the inconvenience.`,
       });
       // create notification for admin
       await Notification.create({
