@@ -101,8 +101,12 @@ function Dashboard() {
       setScreenSize('small');
     } else if (window.innerWidth <= 1130) {
       setScreenSize('medium');
-    } else {
+    } else if (window.innerWidth<= 1400){
       setScreenSize('large');
+    } else if (window.innerWidth<=1700){
+      setScreenSize('very large')
+    } else{
+      setScreenSize('Big boi')
     }
   }, []);
 
