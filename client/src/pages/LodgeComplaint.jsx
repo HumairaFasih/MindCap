@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect, useCallback, useContext } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   TextField,
@@ -11,12 +10,12 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AuthContext } from '../context/AuthContext';
 
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
 import { MyButton } from '../components/MyButton';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
@@ -25,48 +24,37 @@ function LodgeComplaint() {
   const [chosenCounselor, setChosenCounselor] = useState('');
   const [complaintType, setComplaintType] = useState('');
   const [complaintDetails, setComplaintDetails] = useState('');
-  const {
-    auth: {
-      authDetails: { usertype, username },
-    },
-  } = useContext(AuthContext);
-
-  const submitHandler = async () => {
-    const result = await axios({
-      method: 'post',
-      url: 'http://localhost:3003/api/complaint/lodge',
-      withCredentials: true,
-      data: JSON.stringify({
-        counselor: chosenCounselor,
-        complaintType,
-        complaintDetails,
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    });
-    console.log(result);
-  };
-
-  const handleCounselorSelect = async (e) => {
-    setChosenCounselor(e.target.value);
-  };
-
-  const handleComplaintTypeSelect = async (e) => {
-    setComplaintType(e.target.value);
-  };
-
-  const handleComplaintDetailsChange = async (e) => {
-    setComplaintDetails(e.target.value);
-  };
 
   useEffect(() => {
-    async function fetchData() {
-      const result = await axios.get(
-        'http://localhost:3003/api/appointment/get-all-counselors'
-      );
-      setCounselorNames(result.data);
-    }
-    fetchData();
+    instance
+      .get('/appointment/get-all-counselors')
+      .then((result) => {
+        setCounselorNames(result.data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('handling submit for lodge complaint');
+    instance
+      .post(
+        '/complaint/lodge',
+        JSON.stringify({
+          counselor: chosenCounselor,
+          complaint_type: complaintType,
+          complaint_details: complaintDetails,
+        })
+      )
+      .then(() => {
+        console.log('Succcessfully lodged complaint!');
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -78,6 +66,7 @@ function LodgeComplaint() {
           p: 3,
           width: { xs: `calc(100% - ${drawerWidth}px)` },
         }}
+        onSubmit={handleSubmit}
       >
         <Box sx={{ mt: '30px' }}>
           <PageTitle text="Lodge Complaint" marginB="10px" marginL="20px" />
@@ -108,17 +97,19 @@ function LodgeComplaint() {
             <InputLabel>Counselor Name</InputLabel>
             <Select
               label="Counselor Name *"
-              onChange={handleCounselorSelect}
-              default
+              value={chosenCounselor}
+              onChange={(e) => {
+                setChosenCounselor(e.target.value);
+              }}
               color="success"
+              defaultValue=""
             >
-              {counselorNames.length !== 0
-                ? counselorNames.map((counselor) => (
-                    <MenuItem value={counselor} sx={{ minWidth: 300 }}>
-                      {counselor}
-                    </MenuItem>
-                  ))
-                : null}
+              {counselorNames &&
+                counselorNames.map((counselor) => (
+                  <MenuItem value={counselor} sx={{ minWidth: 300 }}>
+                    {counselor}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
 
@@ -129,15 +120,18 @@ function LodgeComplaint() {
             <InputLabel>Complaint Type</InputLabel>
             <Select
               label="Complaint Type *"
-              onChange={handleComplaintTypeSelect}
-              default
+              value={complaintType}
+              onChange={(e) => {
+                setComplaintType(e.target.value);
+              }}
               color="success"
+              defaultValue=""
             >
+              <MenuItem value="" disabled>
+                Select Complaint Type
+              </MenuItem>
               <MenuItem value="Ethical Violation">Ethical Violation</MenuItem>
               <MenuItem value="Sexual Harrasment">Sexual Harrasment</MenuItem>
-              <MenuItem value="Professional Misconduct">
-                Professional Misconduct
-              </MenuItem>
               <MenuItem value="Negligence or malpractice">
                 Negligence or malpractice
               </MenuItem>
@@ -158,16 +152,16 @@ function LodgeComplaint() {
             multiline
             sx={{ ml: '20px', width: '90%' }}
             rows={6}
-            maxRows={20}
             value={complaintDetails}
-            onChange={handleComplaintDetailsChange}
+            onChange={(e) => {
+              setComplaintDetails(e.target.value);
+            }}
           />
 
           <Box
             sx={{ mt: 2, display: 'flex', justifyContent: 'right', mr: '8%' }}
           >
             <MyButton
-              onClick={submitHandler}
               type="submit"
               sx={{ color: 'white !important', width: '100px' }}
             >

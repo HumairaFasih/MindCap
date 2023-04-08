@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const express = require('express');
 const jwtDecode = require('jwt-decode');
 const Complaints = require('../models/complaintsModel');
@@ -14,13 +15,14 @@ router.post('/lodge', async (req, res) => {
 
   if (usertype === 'Student') {
     try {
-      const { counselor, complaintType, complaintDetails } = req.body;
+      const { counselor, complaint_type, complaint_details } = req.body;
+
       // create complaint
       await Complaints.create({
         counselor_username: counselor,
-        type: complaintType,
+        type: complaint_type,
         filed_date: new Date(),
-        details: complaintDetails,
+        details: complaint_details,
         status: 'Pending',
       });
       // create notification for student
@@ -37,11 +39,11 @@ router.post('/lodge', async (req, res) => {
         date: new Date(),
         time: new Date(),
         notification_type: 'New Complaint Lodged',
-        notification_details: `A ${complaintType} complaint has been lodged against counselor ${counselor}.`,
+        notification_details: `A ${complaint_type} complaint has been lodged against counselor ${counselor}.`,
       });
       res.send('Complaint created!');
     } catch (err) {
-      res.status(500).json({ message: err });
+      res.status(500).json({ message: err.message });
     }
   }
 });
@@ -57,7 +59,7 @@ router.get('/view', async (req, res) => {
       const result = await Complaints.find({});
       res.send(result);
     } catch (err) {
-      res.status(500).json({ message: err });
+      res.status(500).json({ message: err.message });
     }
   }
 });
@@ -74,7 +76,7 @@ router.post('/resolve', async (req, res) => {
       await Complaints.update({ _id: complaintId }, { status: 'Resolved' });
       res.send('Complaint Resolved!');
     } catch (err) {
-      res.status(500).json({ message: err });
+      res.status(500).json({ message: err.message });
     }
   }
 });
