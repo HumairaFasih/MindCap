@@ -25,8 +25,11 @@ function LodgeComplaint() {
   const [chosenCounselor, setChosenCounselor] = useState('');
   const [complaintType, setComplaintType] = useState('');
   const [complaintDetails, setComplaintDetails] = useState('');
-  const user = useContext(AuthContext);
-  const { usertype, username } = user;
+  const {
+    auth: {
+      authDetails: { usertype, username },
+    },
+  } = useContext(AuthContext);
 
   const submitHandler = async () => {
     const result = await axios({
@@ -65,13 +68,6 @@ function LodgeComplaint() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      console.log(`Printing usertype received by sidebar: ${usertype}`);
-      console.log(`Printing username received by sidebar: ${username}`);
-    }
-  }, [user, usertype, username]);
-
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
@@ -85,10 +81,10 @@ function LodgeComplaint() {
       >
         <Box sx={{ mt: '30px' }}>
           <PageTitle text="Lodge Complaint" marginB="10px" marginL="20px" />
-          <Typography sx={{ fontSize: '14px', ml: '20px', mb: '3px' }}>
+          <Typography sx={{ fontSize: '16px', ml: '20px', mb: '3px' }}>
             We are here to assist you!{' '}
           </Typography>
-          <Typography sx={{ fontSize: '14px', ml: '20px', mb: '7px' }}>
+          <Typography sx={{ fontSize: '16px', ml: '20px', mb: '7px' }}>
             Please fill the form below to provide details of your complaint.
           </Typography>
           <Divider
