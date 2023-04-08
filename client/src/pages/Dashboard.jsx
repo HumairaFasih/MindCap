@@ -82,18 +82,14 @@ function Dashboard() {
   // used to make the slider responsive
   const [screenSize, setScreenSize] = useState('');
 
-  const handleResize = useCallback(() => {	
-    if (window.innerWidth <= 850) {	
-      setScreenSize('small');	
-    } else if (window.innerWidth <= 1130) {	
-      setScreenSize('medium');	
-    } else if (window.innerWidth<= 1400){	
-      setScreenSize('large');	
-    } else if (window.innerWidth<=1700){	
-      setScreenSize('very large')	
-    } else{	
-      setScreenSize('Big boi')	
-    }	
+  const handleResize = useCallback(() => {
+    if (window.innerWidth <= 850) {
+      setScreenSize('small');
+    } else if (window.innerWidth <= 1130) {
+      setScreenSize('medium');
+    } else {
+      setScreenSize('large');
+    }
   }, []);
 
   useEffect(() => {
@@ -128,7 +124,7 @@ function Dashboard() {
 
   // design
   if (!loaded) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   return (
