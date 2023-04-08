@@ -72,8 +72,9 @@ function Sidebar(props) {
       >
         <List>
           {TopSidebarNav(usertype, username).map(({ route, icon, label }) =>
-            label === 'Search Counselors' ||
-            label === 'Lodge Complaint' ? null : (
+            usertype === 'Counselor' &&
+            (label === 'Search Counselors' ||
+              label === 'Lodge Complaint') ? null : (
               <ListItem key={label} disablePadding disableGutters>
                 <Link
                   to={route}
