@@ -1,0 +1,40 @@
+  .dot {
+    border-radius: 50%;
+    background-color: #93B77D;
+    margin: 0 5px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .dot-1 {
+    animation-delay: 0s;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dot-2 {
+    animation-delay: 0.33s;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dot-3 {
+    animation-delay: 0.66s;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dot-1, .dot-2, .dot-3 {
+    animation-direction: alternate;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(0.8);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(0.7);
+    }
+  }

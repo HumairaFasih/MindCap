@@ -13,6 +13,7 @@ import PageNotFound from './pages/PageNotFound';
 import BookAppointment from './pages/BookAppointmentPage';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoutes from './routers/ProtectedRoutes';
+import LodgeComplaint from './pages/LodgeComplaint';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="update-password" element={<UpdatePassword />} />
           <Route path="create-counselor" element={<CreateCounselor />} />
+          <Route path="lodge-complaint" element={<LodgeComplaint />} />
           <Route path="user">
             <Route path="student">
               <Route path=":username" element={<StudentProfile />} />
