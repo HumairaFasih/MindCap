@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, Divider, Icon } from '@mui/material';
 import EditProfileIcon from '@mui/icons-material/ManageAccounts';
@@ -8,11 +7,16 @@ import Sidebar from '../components/Sidebar';
 import { MyButton } from '../components/MyButton';
 import PageTitle from '../components/PageTitle';
 import { AuthContext } from '../context/AuthContext';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
 function StudentProfile() {
-  const { usertype, username } = useContext(AuthContext);
+  const {
+    auth: {
+      authDetails: { usertype, username },
+    },
+  } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const editProfileRoute = `${location.pathname
@@ -22,27 +26,18 @@ function StudentProfile() {
 
   const [studentDetails, setStudentDetails] = useState('');
 
-  const getStudentData = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        withCredentials: true,
-        url: `http://localhost:3003/api/user/student/${username}`,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      console.log(result);
-      console.log('hello i am in getdata of student profile page');
-      setStudentDetails(result.data);
-    } catch (err) {
-      console.log(err);
-    }
-  }, [username]);
-
   useEffect(() => {
-    if (username) {
-      getStudentData();
-    }
-  }, [getStudentData, username]);
+    instance
+      .get(`user/student/${username}`)
+      .then((result) => {
+        console.log(result);
+        console.log('hello i am in getdata of student profile page');
+        setStudentDetails(result.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [username]);
 
   return (
     <Box>
@@ -76,7 +71,7 @@ function StudentProfile() {
               fontSize="40px"
               width="60px"
               height="60px"
-              username="Humaira"
+              username={username}
             />
             <Typography
               variant="h3"
@@ -175,7 +170,7 @@ function StudentProfile() {
                     margin: '15px 182px 0px 50px',
                   }}
                 >
-                  Roll Number/Username
+                  Roll Number
                 </Typography>
                 <Typography
                   variant="h5"

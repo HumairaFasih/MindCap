@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -22,16 +22,16 @@ import { AuthContext } from '../context/AuthContext';
 
 function Sidebar(props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const { usertype, username } = useContext(AuthContext);
-
-  useEffect(() => {
-    console.log(`Printing usertype in sidebar: ${usertype}`);
-  }, [usertype]);
+  const {
+    auth: {
+      authDetails: { usertype, username },
+    },
+  } = useContext(AuthContext);
 
   const drawerWidth = 270;
 
@@ -72,9 +72,8 @@ function Sidebar(props) {
       >
         <List>
           {TopSidebarNav(usertype, username).map(({ route, icon, label }) =>
-            usertype === 'Counselor' &&
-            (label === 'Search Counselors' ||
-              label === 'Lodge Complaint') ? null : (
+            label === 'Search Counselors' ||
+            label === 'Lodge Complaint' ? null : (
               <ListItem key={label} disablePadding disableGutters>
                 <Link
                   to={route}
@@ -149,7 +148,7 @@ function Sidebar(props) {
                 fontWeight: 'bold',
               }}
             >
-              {username && username.charAt(0)}
+              {username.charAt(0)}
             </Avatar>
             <Typography
               variant="h8"

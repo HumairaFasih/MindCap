@@ -8,12 +8,12 @@ const TopSidebarNav = (usertype, username) => {
   const user_type = usertype.toLowerCase();
   return [
     {
-      route: '/dashboard',
+      route: '/',
       icon: <DashboardIcon htmlColor="white" />,
       label: 'Dashboard',
     },
     {
-      route: `/user/${usertype}/${username}`,
+      route: `/user/${user_type}/${username}`,
       icon: <Person />,
       label: 'My Profile',
     },

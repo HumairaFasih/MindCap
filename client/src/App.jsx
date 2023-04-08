@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import SignInPage from './pages/SignInPage';
+import SignIn from './pages/SignInPage';
 import CreateCounselor from './pages/CreateCounselorPage';
 import CounselorProfile from './pages/CounselorProfilePage';
 import EditStudentProfile from './pages/EditStudentProfilePage';
@@ -11,17 +11,15 @@ import UpdatePassword from './pages/UpdatePassword';
 import StudentProfile from './pages/StudentProfilePage';
 import PageNotFound from './pages/PageNotFound';
 import BookAppointment from './pages/BookAppointmentPage';
-import { AuthProvider } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
+import ProtectedRoutes from './routers/ProtectedRoutes';
 
 function App() {
   return (
-    <AuthProvider>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Routes>
-          <Route index element={<PageNotFound />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="login" element={<SignInPage />} />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Routes>
+        <Route element={<ProtectedRoutes />}>
+          <Route index element={<Dashboard />} />
           <Route path="update-password" element={<UpdatePassword />} />
           <Route path="create-counselor" element={<CreateCounselor />} />
           <Route path="user">
@@ -35,10 +33,13 @@ function App() {
             </Route>
           </Route>
           <Route path="book-appointment" element={<BookAppointment />} />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-      </LocalizationProvider>
-    </AuthProvider>
+          {/* <Route path="dashboard" element={<Dashboard />}/> */}
+        </Route>
+        <Route path="login" element={<SignIn />} />
+        {/* <Route path="signup" element={<SignUp />} /> */}
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </LocalizationProvider>
   );
 }
 

@@ -21,11 +21,13 @@ function LongMenu({ handleMeetingCardMenu }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const { usertype } = useContext(AuthContext);
-  const options =
-    usertype && usertype === 'Student'
-      ? studentOptions
-      : usertype && counselorOptions;
+  const {
+    auth: {
+      authDetails: { usertype },
+    },
+  } = useContext(AuthContext);
+
+  const options = usertype === 'Student' ? studentOptions : counselorOptions;
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
