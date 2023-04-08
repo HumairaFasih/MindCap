@@ -18,6 +18,10 @@ const appointmentRouter = require('./routes/appointment');
 
 // intilaise express app
 const app = express();
+// const errorMiddleware = (err, req, res) => {
+//   console.error(err.stack);
+//   res.send(500).json({ message: err.message });
+// };
 
 // register middleware for parsing requests and logging
 app.use(express.json());
@@ -31,6 +35,7 @@ app.use('/api/user', userRouter);
 app.use('/api/rate', rateRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/appointment', appointmentRouter);
+// app.use(errorMiddleware);
 
 // Connect to database
 mongoose
@@ -46,13 +51,16 @@ mongoose
     console.log(error);
   });
 
-// handle
-app.get('/api/current-user', async (req, res) => {
+app.get('/api/current-user', async (req, res, next) => {
   // get currently logged in user's details using their token
-  const token = req.cookies.jwt;
-  const jwtDecoded = jwtDecode(token);
-  console.log('Printing jwtDecoded');
-  console.log(jwtDecoded);
-  res.json({ usertype: jwtDecoded.usertype, username: jwtDecoded.username });
-});
 
+  try {
+    const token = req.cookies.jwt;
+    console.log('Logging the token:', token);
+    const jwtDecoded = jwtDecode(token);
+    res.send({ usertype: jwtDecoded.usertype, username: jwtDecoded.username });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+    next(error);
+  }
+});
