@@ -60,6 +60,7 @@ router.patch('/update-password', async (req, res, next) => {
   const jwtDecoded = jwtDecode(token);
   const { id, usertype } = jwtDecoded;
   const { newPassword } = req.body;
+
   const salt = await bcrypt.genSalt();
   const hashed = await bcrypt.hash(newPassword, salt);
 

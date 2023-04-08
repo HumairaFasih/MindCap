@@ -1,47 +1,70 @@
-import * as React from 'react';
-// eslint-disable-next-line import/order
-import Sidebar from '../components/Sidebar';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
   Divider,
+  IconButton,
+  InputAdornment,
   Card,
-  OutlinedInput,
   InputLabel,
   FormControl,
+  TextField,
+  OutlinedInput,
 } from '@mui/material';
-import axios from 'axios';
-import { useState } from 'react';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Sidebar from '../components/Sidebar';
 import { LongButton } from '../components/LongButton';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
 function UpdatePassword() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
-  const [password, setPassword] = useState();
+  const handleShowPassword = () => setShowPassword((show) => !show);
+  const handleConfirmShowPassword = () => {
+    setShowConfirmPassword((show) => !show);
+  };
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  // useEffect(() => {
+  //   if (error) {
+  //     setError(false);
+  //     setErrorText('');
+  //   }
+  // }, [error]);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
-  const handlePassChange = (e) => {
-    setPassword(e.target.value);
+  const passwordReqStyle = {
+    width: 100,
+    fontSize: 20,
+    ml: 2,
+    mr: 2,
+    textAlign: 'center',
+    fontWeight: 'bold',
   };
 
-  const handleUpdate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await axios({
-      method: 'post',
-      url: 'http://localhost:3003/api/profile/updatepassword',
-      withCredentials: true,
-      data: JSON.stringify({ newpassword: password }),
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    console.log(result);
+    instance
+      .patch(
+        '/authenticate/update-password',
+        JSON.stringify({ newPassword: password })
+      )
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   return (
@@ -49,12 +72,13 @@ function UpdatePassword() {
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
-          component="main"
+          component="form"
           sx={{
             flexGrow: 1,
             p: 3,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
+          onSubmit={handleSubmit}
         >
           <Box sx={{ marginTop: '30px' }}>
             <Typography
@@ -64,7 +88,7 @@ function UpdatePassword() {
               Update Password
             </Typography>
             <Typography variant="h6" sx={{ ml: '20px' }}>
-              Just type the password twice and try not to forget it.
+              Just type the password twice and try not to forget it!
             </Typography>
 
             <Divider
@@ -109,57 +133,13 @@ function UpdatePassword() {
                   alignItems="center"
                   flexDirection="row"
                 >
-                  <Typography
-                    sx={{
-                      width: 100,
-                      fontSize: 20,
-                      mr: 2,
-                      ml: 2,
-                      textAlign: 'center',
-                      fontWeight: 'Bold',
-                    }}
-                  >
-                    8+ Character
-                  </Typography>
+                  <Typography sx={passwordReqStyle}>8+ Character</Typography>
 
-                  <Typography
-                    sx={{
-                      width: 100,
-                      fontSize: 20,
-                      mr: 2,
-                      ml: 2,
-                      textAlign: 'center',
-                      fontWeight: 'Bold',
-                    }}
-                  >
-                    AA Uppercase
-                  </Typography>
+                  <Typography sx={passwordReqStyle}>AA Uppercase</Typography>
 
-                  <Typography
-                    sx={{
-                      width: 100,
-                      fontSize: 20,
-                      mr: 2,
-                      ml: 2,
-                      textAlign: 'center',
-                      fontWeight: 'Bold',
-                    }}
-                  >
-                    aa Lowercase
-                  </Typography>
+                  <Typography sx={passwordReqStyle}>aa Lowercase</Typography>
 
-                  <Typography
-                    sx={{
-                      width: 100,
-                      fontSize: 20,
-                      mr: 2,
-                      ml: 2,
-                      textAlign: 'center',
-                      fontWeight: 'Bold',
-                    }}
-                  >
-                    123 Number
-                  </Typography>
+                  <Typography sx={passwordReqStyle}>123 Number</Typography>
                 </Box>
 
                 <Divider
@@ -185,13 +165,35 @@ function UpdatePassword() {
                       sx={{ mt: 2, mb: 2, width: '400px' }}
                       variant="outlined"
                     >
-                      <InputLabel htmlFor="outlined-adornment-password">
+                      <InputLabel htmlFor="new-password">
                         New Password
                       </InputLabel>
                       <OutlinedInput
-                        id="outlinedpassword"
+                        id="new-password"
+                        variant="outlined"
+                        error={error}
                         type={showPassword ? 'text' : 'password'}
                         label="New Password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                        }}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOffIcon />
+                              ) : (
+                                <VisibilityIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
                       />
                     </FormControl>
                   </Box>
@@ -200,22 +202,51 @@ function UpdatePassword() {
                       sx={{ mb: 2, width: '400px' }}
                       variant="outlined"
                     >
-                      <InputLabel htmlFor="outlined-adornment-password">
+                      <InputLabel htmlFor="confirm-password">
                         Confirm Password
                       </InputLabel>
                       <OutlinedInput
-                        onChange={handlePassChange}
-                        id="outlinedpassword"
-                        type={showPassword ? 'text' : 'password'}
+                        id="confirm-password"
+                        variant="outlined"
+                        error={error}
+                        // helperText={errorText}
+                        type={showConfirmPassword ? 'text' : 'password'}
                         label="Confirm Password"
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                        }}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle confirm password visibility"
+                              onClick={handleConfirmShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showConfirmPassword ? (
+                                <VisibilityOffIcon />
+                              ) : (
+                                <VisibilityIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
                       />
                     </FormControl>
                   </Box>
 
                   <LongButton
-                    onClick={handleUpdate}
+                    type="submit"
                     variant="contained"
                     sx={{ mb: 1 }}
+                    // onClick={(e) => {
+                    //   if (password !== confirmPassword) {
+                    //     e.preventDefault();
+                    //     setError(true);
+                    //     // setErrorText('Passwords do not match');
+                    //   }
+                    // }}
                   >
                     Update Password
                   </LongButton>
