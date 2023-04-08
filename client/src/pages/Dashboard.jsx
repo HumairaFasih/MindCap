@@ -14,6 +14,7 @@ import PastMeetingCard from '../components/PastMeetingCard';
 import ApproveAppointmentCard from '../components/ApproveAppointmentCard';
 import { AuthContext } from '../context/AuthContext';
 import '../components/CardSlider.css';
+import Loading from '../components/LoadingScreen';
 import { instance } from '../axios';
 
 const drawerWidth = 270;
@@ -81,14 +82,18 @@ function Dashboard() {
   // used to make the slider responsive
   const [screenSize, setScreenSize] = useState('');
 
-  const handleResize = useCallback(() => {
-    if (window.innerWidth <= 850) {
-      setScreenSize('small');
-    } else if (window.innerWidth <= 1130) {
-      setScreenSize('medium');
-    } else {
-      setScreenSize('large');
-    }
+  const handleResize = useCallback(() => {	
+    if (window.innerWidth <= 850) {	
+      setScreenSize('small');	
+    } else if (window.innerWidth <= 1130) {	
+      setScreenSize('medium');	
+    } else if (window.innerWidth<= 1400){	
+      setScreenSize('large');	
+    } else if (window.innerWidth<=1700){	
+      setScreenSize('very large')	
+    } else{	
+      setScreenSize('Big boi')	
+    }	
   }, []);
 
   useEffect(() => {
@@ -123,7 +128,7 @@ function Dashboard() {
 
   // design
   if (!loaded) {
-    return <div>Loading Screen ...</div>;
+    return <Loading/>;
   }
 
   return (
