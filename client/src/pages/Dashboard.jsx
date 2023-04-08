@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import axios from 'axios';
 import { Box, Typography } from '@mui/material';
 import './EditCounselorProfilePage.css';
 import Slider from 'react-slick';
@@ -15,85 +14,71 @@ import PastMeetingCard from '../components/PastMeetingCard';
 import ApproveAppointmentCard from '../components/ApproveAppointmentCard';
 import { AuthContext } from '../context/AuthContext';
 import '../components/CardSlider.css';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
 function Dashboard() {
   const [meetings, setMeetings] = useState([]);
-  const [futureMeetings, setFutureMeetings] = useState([]);
-  const [pastMeetings, setPastMeetings] = useState([]);
+  // const [futureMeetings, setFutureMeetings] = useState([]);
+  // const [pastMeetings, setPastMeetings] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const user = useContext(AuthContext);
-  const { usertype, username } = user;
 
-  // connect to backend to get all the meetings
-  const getAllMeetings = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        url: 'http://localhost:3003/api/appointment/view',
-        withCredentials: true,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (result.status === 200) {
-        setMeetings(result.data);
+  const {
+    auth: {
+      authDetails: { usertype, username },
+    },
+  } = useContext(AuthContext);
+
+  const getFutureMeetings = (sortedMeetings) => {
+    const future = sortedMeetings.filter((item) => {
+      if (
+        new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) >
+        new Date()
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    return future;
+  };
+
+  const getPastMeetings = (sortedMeetings) => {
+    const past = sortedMeetings.filter((item) => {
+      if (
+        new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) <=
+        new Date()
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    return past;
+  };
+
+  // connect to backend to get all the meetings and divide them based on time
+  useEffect(() => {
+    instance
+      .get('appointment/view')
+      .then((result) => {
+        const sortedMeetings =
+          result.data.length > 0 &&
+          [...result.data].sort((a, b) => new Date(a.date) - new Date(b.date));
+        setMeetings(sortedMeetings);
+
         console.log('Printing loaded data for meeting');
         console.log(result.data);
         setLoaded(true);
-      } else {
-        console.log('error getting data');
-      }
-    } catch (error) {
-      console.log('error getting data', error);
-    }
+        // console.log(`SORTEDD: ${meetings}`);
+      })
+      .catch((error) => {
+        console.log('Error getting meeting data', error);
+      });
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      console.log(`Printing usertype received by sidebar: ${usertype}`);
-      console.log(`Printing username received by sidebar: ${username}`);
-    }
-  }, [user, usertype, username]);
-
-  useEffect(() => {
-    if (username) {
-      getAllMeetings();
-    }
-  }, [getAllMeetings, username]);
-
-  // divide the meetings into future and past meetigns based on their times
-  useEffect(() => {
-    if (meetings.length > 0) {
-      const sortedMeetings = [...meetings].sort(
-        (a, b) => new Date(a.date) - new Date(b.date)
-      );
-      setMeetings(sortedMeetings);
-    }
-    setFutureMeetings(
-      meetings.filter((item) => {
-        if (
-          new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) >
-          new Date()
-        ) {
-          return true;
-        }
-        return false;
-      })
-    );
-    setPastMeetings(
-      meetings.filter((item) => {
-        if (
-          new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) <=
-          new Date()
-        ) {
-          return true;
-        }
-        return false;
-      })
-    );
-  }, [meetings]);
-
-  // used to make the slider responsive, don't touch
+  // used to make the slider responsive
   const [screenSize, setScreenSize] = useState('');
 
   const handleResize = useCallback(() => {
@@ -138,7 +123,7 @@ function Dashboard() {
 
   // design
   if (!loaded) {
-    return <div>Loading Screen</div>;
+    return <div>Loading Screen ...</div>;
   }
 
   return (
@@ -185,21 +170,19 @@ function Dashboard() {
                   <BookAppointmentCard />
                   {/* render future meetings based on usertype */}
                   {usertype === 'Student'
-                    ? futureMeetings.length !== 0
-                      ? futureMeetings.map((item) => (
-                          <MeetingCard
-                            key={item._id}
-                            appointmentId={item._id}
-                            counselorName={item.counselor_id}
-                            date={new Date(item.date).toLocaleDateString()}
-                            time={new Date(item.time).toLocaleDateString()}
-                            mode={item.mode}
-                            status={item.status}
-                          />
-                        ))
-                      : null
-                    : futureMeetings.length !== 0
-                    ? futureMeetings.map((item) => (
+                    ? getFutureMeetings(meetings).map((item) => (
+                        <MeetingCard
+                          key={item._id}
+                          appointmentId={item._id}
+                          counselorName={item.counselor_id}
+                          date={new Date(item.date).toLocaleDateString()}
+                          time={new Date(item.time).toLocaleDateString()}
+                          mode={item.mode}
+                          status={item.status}
+                        />
+                      ))
+                    : usertype === 'Counselor' &&
+                      getFutureMeetings(meetings).map((item) => (
                         <ApproveAppointmentCard
                           key={item._id}
                           appointmentId={item._id}
@@ -209,8 +192,7 @@ function Dashboard() {
                           mode={item.mode}
                           status={item.status}
                         />
-                      ))
-                    : null}
+                      ))}
                 </Slider>
               </Box>
             </Box>
@@ -234,22 +216,21 @@ function Dashboard() {
               <Box>
                 <Slider {...settings}>
                   {/* render past meetings */}
-                  {pastMeetings.length !== 0 &&
-                    pastMeetings.map((item) => (
-                      <PastMeetingCard
-                        key={item._id}
-                        appointmentId={item._id}
-                        name={
-                          usertype === 'Student'
-                            ? item.counselor_id
-                            : item.student_id
-                        }
-                        date={new Date(item.date).toLocaleDateString()}
-                        time={new Date(item.time).toLocaleDateString()}
-                        mode={item.mode}
-                        status={item.status}
-                      />
-                    ))}
+                  {getPastMeetings(meetings).map((item) => (
+                    <PastMeetingCard
+                      key={item._id}
+                      appointmentId={item._id}
+                      name={
+                        usertype === 'Student'
+                          ? item.counselor_id
+                          : item.student_id
+                      }
+                      date={new Date(item.date).toLocaleDateString()}
+                      time={new Date(item.time).toLocaleDateString()}
+                      mode={item.mode}
+                      status={item.status}
+                    />
+                  ))}
                 </Slider>
               </Box>
             </Box>
