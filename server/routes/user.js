@@ -39,14 +39,15 @@ router.get('/counselor/:username', async (req, res) => {
     });
 
     const returnObj = {
-      name: `${counselor.first_name} ${counselor.last_name}`,
+      fname: counselor.first_name,
+      lname: counselor.last_name,
       qualification: counselor.qualification,
       username: counselor.username,
       gender: counselor.gender,
       experience: counselor.experience,
       bio: counselor.bio,
-      availabilityday: availability.day_type,
-      availabilitytime: availability.time,
+      day: availability.day_type,
+      time: availability.time,
       rating: getRating(reviews),
       revs: [...reviews],
     };
@@ -177,6 +178,5 @@ router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 module.exports = router;

@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   TextField,
@@ -12,115 +11,107 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import './EditCounselorProfilePage.css';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LongButton } from '../components/LongButton';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
+import { AuthContext } from '../context/AuthContext';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
 function EditCounselorProfile() {
-  // connect backend and add functionality to submit
-
-  // setting up useState hooks for each variable
-  const [fname, setfname] = useState('');
-  const [lname, setlname] = useState('');
+  const {
+    auth: {
+      authDetails: { username },
+    },
+  } = useContext(AuthContext);
   const [dob, setdob] = useState(null);
-  const [years, setyears] = useState('');
-  const [qualification, setqualification] = useState('');
-  const [bio, setbio] = useState('');
-  const [gender, setgender] = useState('');
-  const [day, setday] = useState('');
-  const [time, settime] = useState('');
-  const [meridian, setmeridian] = useState('');
+  const [meridian, setMeridian] = useState('');
+  const [counselorDetails, setCounselorDetails] = useState({
+    fname: '',
+    lname: '',
+    username: '',
+    qualification: '',
+    gender: '',
+    experience: '',
+    bio: '',
+    day: '',
+    time: '',
+  });
 
-  // on form submit, send data to backend using axios
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      const result = await axios({
-        method: 'post',
-        url: 'http://localhost:3003/api/user/counselor/edit-profile',
-        withCredentials: true,
-        data: JSON.stringify({
-          newfirstname: fname,
-          newlastname: lname,
-          newdob: dob,
-          newexperience: years,
-          newqualification: qualification,
-          newbio: bio,
-          newgender: gender,
-          newdaytype: day,
-          newtime: time,
-          newmeridian: meridian,
-        }),
-        headers: { 'Content-Type': 'application/json' },
+  useEffect(() => {
+    instance
+      .get(`/user/counselor/${username}`)
+      .then((result) => {
+        if (result.data.time) {
+          const newtime = result.data.time.slice(0, -2);
+          const newmeridian = result.data.time.slice(-2);
+          setCounselorDetails({ ...result.data, time: newtime });
+          setMeridian(newmeridian);
+        } else {
+          setCounselorDetails(result.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
-      if (result.status === 200) {
-        console.log('Submit Successful, ...Redirect');
-      } else {
-        console.log('Submit Failed!');
-      }
-    } catch (err) {
-      console.log(err);
+  }, [username]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    instance
+      .post(
+        '/user/counselor/edit-profile',
+        JSON.stringify({
+          newfirstname: counselorDetails.fname,
+          newlastname: counselorDetails.lname,
+          newdob: dob,
+          newexperience: counselorDetails.experience,
+          newqualification: counselorDetails.qualification,
+          newbio: counselorDetails.bio,
+          newgender: counselorDetails.gender,
+          newdaytype: counselorDetails.day,
+          newtime: counselorDetails.time,
+          newmeridian: meridian,
+        })
+      )
+      .then(() => {
+        console.log('changes to profile saved!');
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  const handleChange = (e) => {
+    console.log(e.target.name, e.target.value);
+    const { name, value } = e.target;
+
+    if (name === 'time') {
+      value.slice();
+    }
+    setCounselorDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (name === 'meridian') {
+      setMeridian(value);
     }
   };
 
-  // on change of each field, use hook to set the name of the variable
-  const changeHandlerFirstName = (e) => {
-    setfname(e.target.value);
-  };
-
-  const changeHandlerLastName = (e) => {
-    setlname(e.target.value);
-  };
-
-  const changeHandlerDOB = (e) => {
-    setdob(new Date(e.$d));
-  };
-
-  const changeHandlerExperience = (e) => {
-    setyears(e.target.value);
-  };
-
-  const changeHandlerQualification = (e) => {
-    setqualification(e.target.value);
-  };
-
-  const changeHandlerBio = (e) => {
-    setbio(e.target.value);
-  };
-
-  const changeHandlerGender = (e) => {
-    setgender(e.target.value);
-  };
-
-  const changeHandlerDay = (e) => {
-    setday(e.target.value);
-  };
-
-  const changeHandlerTime = (e) => {
-    settime(e.target.value);
-  };
-
-  const changeHandlerMeridian = (e) => {
-    setmeridian(e.target.value);
-  };
-
-  // design
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
-          component="main"
+          component="form"
           sx={{
             flexGrow: 1,
             p: 3,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
+          onSubmit={handleSubmit}
         >
           <Box sx={{ mt: '30px' }}>
             <PageTitle text="Edit Profile" marginB="15px" marginL="20px" />
@@ -144,68 +135,83 @@ function EditCounselorProfile() {
               }}
             >
               <TextField
-                id="outlined-basic"
+                id="firstname-field"
                 label="First Name"
-                onChange={changeHandlerFirstName}
+                name="fname"
+                value={counselorDetails.fname}
                 variant="outlined"
-                sx={{ m: 2 }}
+                onChange={handleChange}
+                sx={{ width: 400, m: 3 }}
               />
 
               <TextField
-                id="outlined-basic"
+                id="lastname-field"
                 label="Last Name"
-                onChange={changeHandlerLastName}
+                name="lname"
+                value={counselorDetails.lname}
+                onChange={handleChange}
                 variant="outlined"
-                sx={{ m: 2 }}
+                sx={{ width: 400, m: 3 }}
               />
               <TextField
                 disabled
-                id="outlined-basic"
-                label="Username/User ID"
+                id="username-field"
+                label="Username"
+                name="username"
+                value={counselorDetails.username}
+                onChange={handleChange}
                 variant="filled"
-                defaultValue="0000000"
-                sx={{ m: 2 }}
+                sx={{ width: 400, m: 3 }}
               />
+
               <TextField
                 disabled
-                id="outlined-basic"
+                id="email-field"
                 label="Email"
+                name="email"
+                value={counselorDetails.email}
+                onChange={handleChange}
                 variant="filled"
-                defaultValue="example@gmail.com"
-                sx={{ m: 2 }}
+                sx={{ width: 400, m: 3 }}
               />
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  onChange={changeHandlerDOB}
-                  sx={{ m: 2 }}
-                  label="Date of Birth"
-                />
-              </LocalizationProvider>
+              <DatePicker
+                label="Date of Birth"
+                value={dob}
+                onChange={(newValue) => setdob(newValue)}
+                sx={{ width: 400, m: 3 }}
+              />
 
               <TextField
-                id="outlined-number"
+                id="exp-yrs"
                 label="Years of Experience"
-                onChange={changeHandlerExperience}
+                name="experience"
+                value={counselorDetails.experience}
+                onChange={handleChange}
                 type="number"
-                sx={{ m: 2 }}
+                min="1"
+                step="1"
+                sx={{ width: 400, m: 3 }}
               />
 
               <TextField
-                id="outlined-number"
-                label="Highest Education"
-                onChange={changeHandlerQualification}
-                sx={{ m: 2 }}
+                id="qualification-field"
+                label="Qualification"
+                name="qualification"
+                value={counselorDetails.qualification}
+                onChange={handleChange}
+                sx={{ width: 400, m: 3 }}
               />
 
               <TextField
-                id="outlined-multiline-static"
+                id="bio-field"
                 label="Write Something About Yourself"
-                onChange={changeHandlerBio}
+                name="bio"
+                value={counselorDetails.bio}
+                onChange={handleChange}
                 multiline
-                rows={4}
-                defaultValue="Default Value"
-                sx={{ m: 2 }}
+                rows={6}
+                sx={{ width: 400, m: 3 }}
               />
             </Box>
 
@@ -218,7 +224,7 @@ function EditCounselorProfile() {
                 m: 1,
               }}
             >
-              <FormControl sx={{ m: 3, mb: 0 }}>
+              <FormControl sx={{ m: 2, mb: 0 }}>
                 <FormLabel
                   id="demo-radio-buttons-group-label"
                   sx={{ fontWeight: 'bold' }}
@@ -226,11 +232,11 @@ function EditCounselorProfile() {
                   Gender
                 </FormLabel>
                 <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="Female"
-                  name="radio-buttons-group"
-                  onChange={changeHandlerGender}
-                  sx={{ m: 1, ml: 2 }}
+                  aria-labelledby="gender-selection"
+                  name="gender"
+                  value={counselorDetails.gender}
+                  onChange={handleChange}
+                  sx={{ m: 1 }}
                 >
                   <FormControlLabel
                     value="Female"
@@ -256,19 +262,19 @@ function EditCounselorProfile() {
                 </RadioGroup>
               </FormControl>
 
-              <FormControl sx={{ m: 3, mb: 0 }}>
+              <FormControl sx={{ m: 2, mb: 0 }}>
                 <FormLabel
-                  id="demo-radio-buttons-group-label"
+                  id="appointment-selection"
                   sx={{ fontWeight: 'bold' }}
                 >
                   Choose Appointment Days
                 </FormLabel>
                 <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="Weekdays"
-                  name="radio-buttons-group"
-                  onChange={changeHandlerDay}
-                  sx={{ m: 1, ml: 2 }}
+                  aria-labelledby="available-days-selection"
+                  name="day"
+                  value={counselorDetails.day}
+                  onChange={handleChange}
+                  sx={{ m: 1 }}
                 >
                   <FormControlLabel
                     value="Weekdays"
@@ -287,19 +293,19 @@ function EditCounselorProfile() {
                 </RadioGroup>
               </FormControl>
 
-              <FormControl sx={{ m: 3, mb: 0 }}>
+              <FormControl sx={{ m: 2, mb: 0 }}>
                 <FormLabel
-                  id="demo-radio-buttons-group-label"
+                  id="available-time-selection"
                   sx={{ fontWeight: 'bold' }}
                 >
                   Choose Appointment Hours
                 </FormLabel>
                 <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="12-3"
-                  name="radio-buttons-group"
-                  onChange={changeHandlerTime}
-                  sx={{ m: 1, ml: 2 }}
+                  aria-labelledby="available-hours-selection"
+                  name="time"
+                  value={counselorDetails.time}
+                  onChange={handleChange}
+                  sx={{ m: 1 }}
                 >
                   <FormControlLabel
                     value="12-3"
@@ -332,19 +338,16 @@ function EditCounselorProfile() {
                 </RadioGroup>
               </FormControl>
 
-              <FormControl sx={{ m: 3 }}>
-                <FormLabel
-                  id="demo-radio-buttons-group-label"
-                  sx={{ fontWeight: 'bold' }}
-                >
+              <FormControl sx={{ m: 2 }}>
+                <FormLabel id="meridian-selection" sx={{ fontWeight: 'bold' }}>
                   Choose Meridian
                 </FormLabel>
                 <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="12-3"
-                  name="radio-buttons-group"
-                  onChange={changeHandlerMeridian}
-                  sx={{ m: 1, ml: 2 }}
+                  aria-labelledby="available-meridian-selection"
+                  name="meridian"
+                  value={meridian}
+                  onChange={handleChange}
+                  sx={{ m: 1 }}
                 >
                   <FormControlLabel
                     value="AM"
@@ -363,7 +366,7 @@ function EditCounselorProfile() {
                 </RadioGroup>
               </FormControl>
 
-              <LongButton onClick={onSubmitHandler} sx={{ ml: 3, width: 300 }}>
+              <LongButton type="submit" sx={{ ml: 2 }}>
                 Save Changes
               </LongButton>
             </Box>

@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IconButton, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
 import WestIcon from '@mui/icons-material/West';
-import axios from 'axios';
 
 import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
@@ -12,13 +11,18 @@ import Sidebar from '../components/Sidebar';
 import { MyButton } from '../components/MyButton';
 import ReviewList from '../components/ReviewList';
 import { AuthContext } from '../context/AuthContext';
+import { instance } from '../axios';
 
 import './profile.css';
 
 const drawerWidth = 270;
 
 function CounselorProfile() {
-  const { usertype, username } = useContext(AuthContext);
+  const {
+    auth: {
+      authDetails: { usertype, username },
+    },
+  } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const editProfileRoute = `${location.pathname
@@ -41,13 +45,14 @@ function CounselorProfile() {
 
   const [counselorDetails, setCounselorDetails] = useState({
     username: '',
-    name: '',
+    fname: '',
+    lname: '',
     gender: '',
     experience: '',
     qualification: '',
     bio: '',
-    availabilityday: '',
-    availabilitytime: '',
+    day: '',
+    time: '',
     rating: 0,
     revs: [],
   });
@@ -58,43 +63,29 @@ function CounselorProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const _ = await axios({
-        method: 'post',
-        url: `http://localhost:3003/api/rate/add-review`,
-        withCredentials: true,
-        data: JSON.stringify({ ...review, username }),
-        headers: { 'Content-Type': 'application/json' },
+    instance
+      .post('rate/add-review', JSON.stringify({ ...review, username }))
+      .then((result) => {
+        setNewReview({
+          content: '',
+          rating: null,
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
-      setNewReview({
-        content: '',
-        rating: null,
-      });
-      getCounselorData();
-    } catch (err) {
-      console.log(err.message);
-    }
   };
 
-  const getCounselorData = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        withCredentials: true,
-        url: `http://localhost:3003/api/user/counselor/${username}`,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      setCounselorDetails(result.data);
-    } catch (err) {
-      console.log(err.message);
-    }
-  }, [username]);
-
   useEffect(() => {
-    if (username) {
-      getCounselorData();
-    }
-  }, [getCounselorData, username]);
+    instance
+      .get(`user/counselor/${username}`)
+      .then((result) => {
+        setCounselorDetails(result.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [username]);
 
   return (
     <Box>
@@ -117,11 +108,14 @@ function CounselorProfile() {
           </IconButton>
           <Box className="user-profile-header">
             <Box className="user-profile-icon">
-              <ProfileIcon accountName={counselorDetails.name} />
+              <ProfileIcon accountName={counselorDetails.fname} />
             </Box>
             <Box className="user-profile-fields">
               <Box className="user-profile-title">
-                <PageTitle text={counselorDetails.name} marginL="0rem" />
+                <PageTitle
+                  text={`${counselorDetails.fname} ${counselorDetails.lname}`}
+                  marginL="0rem"
+                />
               </Box>
               <Box>{counselorDetails.qualification}</Box>
               <Box>
@@ -160,15 +154,14 @@ function CounselorProfile() {
                   className="TodayIcon"
                 />
                 <Box className="availability-day-text">
-                  {counselorDetails.availabilityday} |{' '}
-                  {counselorDetails.availabilitytime}
+                  {counselorDetails.day} | {counselorDetails.time}
                 </Box>
               </Box>
 
               <SubSecHeading text="Bio" />
               <Box className="content">{counselorDetails.bio}</Box>
               <SubSecHeading text="Reviews" />
-              {usertype !== 'Student' ? null : (
+              {usertype === 'Student' && (
                 <Box>
                   <Box className="review">
                     <Box className="review-text">Rate Counselor:</Box>
