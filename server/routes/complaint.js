@@ -14,12 +14,12 @@ router.post('/lodge', async (req, res) => {
 
   if (usertype === 'Student') {
     try {
-      const { counselor, complaintType, date, complaintDetails } = req.body;
+      const { counselor, complaintType, complaintDetails } = req.body;
       // create complaint
       await Complaints.create({
         counselor_username: counselor,
         type: complaintType,
-        filed_date: date,
+        filed_date: new Date(),
         details: complaintDetails,
         status: 'Pending',
       });
