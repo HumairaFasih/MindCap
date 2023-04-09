@@ -18,7 +18,7 @@ const TopSidebarNav = (usertype, username) => {
       label: 'My Profile',
     },
     {
-      route: '/search-counselors',
+      route: '/search',
       icon: <SearchIcon htmlColor="white" />,
       label: 'Search Counselors',
     },

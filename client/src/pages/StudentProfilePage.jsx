@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation , useParams } from 'react-router-dom';
 import { Box, Typography, Divider, Icon } from '@mui/material';
 import EditProfileIcon from '@mui/icons-material/ManageAccounts';
 import LetterAvatar from '../components/LetterAvatar';
@@ -17,6 +17,7 @@ function StudentProfile() {
       authDetails: { usertype, username },
     },
   } = useContext(AuthContext);
+  const { user_name }  = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const editProfileRoute = `${location.pathname
@@ -25,23 +26,56 @@ function StudentProfile() {
     .join('/')}/edit-profile`;
 
   const [studentDetails, setStudentDetails] = useState('');
+  const handleDeactive = (userName, accType, accountStatus) => {
+    console.log(userName, accType, accountStatus);
+    let accStatus;
+    if (accountStatus === true) {
+      accStatus = false;
+    } else {
+      accStatus = true;
+    }
+    instance.post(`admin/change-status`, JSON.stringify({ username: userName, accType, accStatus })).then((result) => {
+      console.log('yay');
+    }
+    ).catch((err) => {
+      console.log(err.message);
+    }
+    );
+
+  };
+
+  const handleClick = (userName, accType) => {
+    // change the following format to instance format
+    instance.post(`admin/delete-account`, JSON.stringify({ username: userName, accType })).then((result) => {
+      console.log('yay');
+    }
+    ).catch((err) => {
+      console.log(err.message);
+    }
+    );
+  };
+
 
   const viewMedicalRecord = async (e) => {
     e.preventDefault();
-    const result = await axios({
-      method: 'get',
-      url: `http://localhost:3003/api/user/medical-record?name=${(username)}`,
-      withCredentials: true,
-      responseType: 'blob'
-    });
-  const blob = new Blob([result.data], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  window.open(url, '_blank').focus();
-  }
+    // change the following format to instance format
+    instance.get(`user/medical-record?name=${(user_name)}`).then((result) => {
+      console.log(result);
+      const blob = new Blob([result.data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank').focus();
+    }
+    ).catch((err) => {
+      console.log(err.message);
+    }
+    );
+  };
+
+   
 
   useEffect(() => {
     instance
-      .get(`user/student/${username}`)
+      .get(`user/student/${user_name}`)
       .then((result) => {
         console.log(result);
         console.log('hello i am in getdata of student profile page');
@@ -50,7 +84,7 @@ function StudentProfile() {
       .catch((err) => {
         console.log(err);
       });
-  }, [username]);
+  }, [user_name]);
 
   return (
     <Box>
@@ -79,6 +113,7 @@ function StudentProfile() {
               padding: '2rem',
             }}
           >
+<<<<<<< Updated upstream
             <Box sx={{marginTop: '0.7rem', marginRight: '0.8rem'}}>
               <LetterAvatar
                 fontSize="40px"
@@ -87,6 +122,14 @@ function StudentProfile() {
                 username={username}
               />
             </Box>
+=======
+            <LetterAvatar
+              fontSize="40px"
+              width="60px"
+              height="60px"
+              username={user_name}
+            />
+>>>>>>> Stashed changes
             <Typography
               variant="h3"
               sx={{
@@ -106,22 +149,47 @@ function StudentProfile() {
                 marginLeft: '45rem'
               }}
             >
-              {usertype === 'Student' && (
+              {usertype === 'Admin' ? (
+                <Box sx= {{ display: 'flex', flexDirection: 'column', marginLeft: 'auto' }}>  
                 <MyButton
-                  width="187px"
-                  paddinghorizontal="10px"
-                  paddingvertical="10px"
+                // 200px in rem are 12.5rem
+                  width="12.5rem"
                   variant="contained"
-                  sx={{ mb: 2, justifyContent: '', variant: 'contained' }}
-                  onClick={() => navigate(editProfileRoute)}
+                  sx={{ mb:1, ml: 'auto', padding: '10px'}}
+                  onClick={() => {
+                    handleDeactive(studentDetails.username, 'Student', studentDetails.status);
+                  }}
                 >
-                  <Icon
-                    component={EditProfileIcon}
-                    sx={{ width: '50px', height: '32px' }}
-                  />
-                  Edit Profile
+                  Deactivate Account
                 </MyButton>
-              )}
+                <MyButton
+                  width="12.5rem"
+                  variant="contained"
+                  sx={{ mt: 2, ml: 'auto', padding: '10px'  }}
+                  onClick={() => {
+                    handleClick(user_name, 'Student');
+                  }}
+                >
+                  Delete Account
+                </MyButton>
+              </Box>
+              ): usertype === 'Student' ? (
+                  <MyButton
+                    width="187px"
+                    paddinghorizontal="10px"
+                    paddingvertical="10px"
+                    variant="contained"
+                    sx={{ mb: 2, justifyContent: '', variant: 'contained' }}
+                    onClick={() => navigate(editProfileRoute)}
+                  >
+                    <Icon
+                      component={EditProfileIcon}
+                      sx={{ width: '50px', height: '32px' }}
+                    />
+                    Edit Profile
+                  </MyButton>
+              ) : null}
+
             </Box>
           </Box>
 

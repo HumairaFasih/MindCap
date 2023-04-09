@@ -16,6 +16,7 @@ import ViewNotifications from './pages/ViewNotificationsPage'
 import ResolveComplaint from './pages/ResolveComplaint';
 import ProtectedRoutes from './routers/ProtectedRoutes';
 import LodgeComplaint from './pages/LodgeComplaint';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   return (
@@ -26,13 +27,14 @@ function App() {
           <Route path="update-password" element={<UpdatePassword />} />
           <Route path="create-counselor" element={<CreateCounselor />} />
           <Route path="lodge-complaint" element={<LodgeComplaint />} />
+          <Route path="search" element={<SearchPage/>} />
           <Route path="user">
             <Route path="student">
-              <Route path=":username" element={<StudentProfile />} />
+              <Route path=":user_name" element={<StudentProfile />} />
               <Route path="edit-profile" element={<EditStudentProfile />} />
             </Route>
             <Route path="counselor">
-              <Route path=":username" element={<CounselorProfile />} />
+              <Route path=":user_name" element={<CounselorProfile />} />
               <Route path="edit-profile" element={<EditCounselorProfile />} />
             </Route>
           </Route>

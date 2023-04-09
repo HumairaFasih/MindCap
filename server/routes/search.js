@@ -1,64 +1,54 @@
-const express = require('express');
-const jwtDecode = require('jwt-decode');
-const Counselor = require('../models/counselorModel');
-const Reviews = require('../models/reviewsModel');
-const Availability = require('../models/availabilityModel');
-const Student = require('../models/studentModel');
+const express = require("express");
+const jwtDecode = require("jwt-decode");
+const Counselor = require("../models/counselorModel");
+const Reviews = require("../models/reviewsModel");
+const Availability = require("../models/availabilityModel");
+const Student = require("../models/studentModel");
 
 const router = express.Router();
 
-// helper func to tell if day falls in daytype
-const isEqual = (day, daytype) => {
-  if (daytype === 'Weekday') {
-    if (
-      day === 'Monday' ||
-      day === 'Tuesday' ||
-      day === 'Wednesday' ||
-      day === 'Thursday' ||
-      day === 'Friday'
-    ) {
-      return true;
-    }
-
-    return false;
+// go over each review and add the rating to the total
+const getRating = (reviews) => {
+  let total = 0;
+  for (let i = 0; i < reviews.length; i += 1) {
+    total += reviews[i].rating;
   }
-
-  if (day === 'Saturday' || day === 'Sunday') {
-    return true;
-  }
-
-  return false;
+  const rating = total / reviews.length;
+  return rating;
 };
 
-/*
+
+/* 
 search and filter is required in these two areas:
     1. search + filter counselors by student
     2. search + filter students & counselors by admin
 */
-router.get('/search-counselors', async (req, res) => {
+router.post("/search-counselors", async (req, res) => {
   // get and decode jwt token
+  console.log("idhr")
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
   const { usertype } = jwtDecoded;
 
   // if i am the student
-  if (usertype === 'Student') {
+  if (usertype === "Student") {
     try {
       // use the name from req.body to search for counselors
-      const { counselorName } = req.body;
-      const name = counselorName.split(' ');
+      console.log("request body", req.body);
+      const { query } = req.body;
+      const name = query.split(" ");
       const firstName = name[0];
       const lastName = name[1];
-      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, 'i');
+      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, "i");
       const filter = { $or: [{ first_name: regex }, { last_name: regex }] };
       // if there is a filter then use that to filter the search results
-
       if (req.body.gender) {
         filter.gender = req.body.gender;
       }
       // get all counselors that match either the first name, last name, and gender (if provided)
       const result = await Counselor.find(filter);
+      console.log('result', result)
       const returnObj = await Promise.all(
         // for each counselor
         // eslint-disable-next-line consistent-return
@@ -77,29 +67,41 @@ router.get('/search-counselors', async (req, res) => {
               username: item.username,
               name: `${item.first_name} ${item.last_name}`,
               qualification: item.qualification,
-              rating: reviews.rating,
+              rating: getRating(reviews),
+              accType: "Counselor",
             };
           }
-          // if availability is a filter, then return only if the day in filter === day_type
-          if (isEqual(availability.day_type, req.body.day)) {
-            return {
-              username: item.username,
-              name: `${item.first_name} ${item.last_name}`,
-              qualification: item.qualification,
-              rating: reviews.rating,
-            };
+          for (let i = 0; i < availability.length; i += 1) {
+            console.log(availability[i].day_type === req.body.day)
+            console.log(availability[i].day_type)
+            console.log(req.body.day)
+            console.log(availability[i].counselor_username === item.username)
+            // if the availability day matches the filter day, then return the object
+            if (availability[i].day_type === req.body.day && availability[i].counselor_username === item.username) {
+              console.log("in if")
+              return {
+                username: item.username,
+                name: `${item.first_name} ${item.last_name}`,
+                qualification: item.qualification,
+                rating: getRating(reviews),
+                accType: "Counselor",
+              };
+            }
           }
         })
       );
-      res.send(returnObj);
+      console.log("returnObj", returnObj);
+      const filtered = returnObj.filter((item) => item !== undefined);
+      res.send(filtered);
     } catch (err) {
-      res.send(500).json({ message: err.message });
+      res.send(err);
     }
   }
 });
 
-router.get('/search-accounts', async (req, res) => {
+router.post("/search-accounts", async (req, res) => {
   // get and decode jwt token
+  console.log("in search accounts")
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
@@ -107,26 +109,29 @@ router.get('/search-accounts', async (req, res) => {
 
   // else if i am admin, then use the name from req.body to search for counselors + students
   // if there is a filter, then use that to filter the results
-  if (usertype === 'Admin') {
+  if (usertype === "Admin") {
     try {
       // get the name
-      const { givenName } = req.body;
-      console.log(givenName);
-      const name = givenName.split(' ');
+      const { query } = req.body;
+      console.log(query);
+      const name = query.split(" ");
       const firstName = name[0];
       const lastName = name[1];
-      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, 'i');
+      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, "i");
       const filter = { $or: [{ first_name: regex }, { last_name: regex }] };
+      console.log("Search may:", filter)
       // if account type is provided then:
-      if (req.body.accType) {
-        const { accType } = req.body;
-        console.log(accType);
+      if (req.body.accountType) {
+        const { accountType } = req.body;
+        console.log(accountType);
         // student, so return student's name and rollnumber
-        if (accType === 'Student') {
+        if (accountType === "Student") {
           const results = await Student.find(filter);
           const returnObj = results.map((item) => ({
             name: `${item.first_name} ${item.last_name}`,
             username: item.username,
+            accType: "Student",
+            accStatus: item.status,
           }));
           res.send(returnObj);
         } else {
@@ -141,10 +146,13 @@ router.get('/search-accounts', async (req, res) => {
                 username: item.username,
                 name: `${item.first_name} ${item.last_name}`,
                 qualification: item.qualification,
-                rating: reviews.rating,
+                rating: getRating(reviews),
+                accType: "Counselor",
+                accStatus: item.status,
               };
             })
           );
+          console.log(returnObj);
           res.send(returnObj);
         }
       }
@@ -154,6 +162,8 @@ router.get('/search-accounts', async (req, res) => {
         const returnStudents = resultsStudents.map((item) => ({
           name: `${item.first_name} ${item.last_name}`,
           username: item.username,
+          accType: "Student",
+          accStatus: item.status,
         }));
         const resultsCounselors = await Counselor.find(filter);
         const returnCounselors = await Promise.all(
@@ -166,16 +176,21 @@ router.get('/search-accounts', async (req, res) => {
               username: item.username,
               name: `${item.first_name} ${item.last_name}`,
               qualification: item.qualification,
-              rating: reviews.rating,
+              rating: getRating(reviews),
+              accType: "Counselor",
+              accStatus: item.status,
             };
+
           })
         );
+        console.log(returnCounselors);
         res.send([...returnStudents, ...returnCounselors]);
       }
     } catch (err) {
-      res.send(500).json({ message: err.message });
+      res.send(err);
     }
   }
 });
+
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation , useParams } from 'react-router-dom';
 import { IconButton, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
 import WestIcon from '@mui/icons-material/West';
@@ -23,6 +23,7 @@ function CounselorProfile() {
       authDetails: { usertype, username },
     },
   } = useContext(AuthContext);
+  const { user_name }  = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const editProfileRoute = `${location.pathname
@@ -37,6 +38,35 @@ function CounselorProfile() {
       navigate(editProfileRoute);
     }
   };
+  const handleDeactive = (userName, accType, accountStatus) => {
+    console.log(userName, accType, accountStatus);
+    let accStatus;
+    if (accountStatus === true) {
+      accStatus = false;
+    } else {
+      accStatus = true;
+    }
+    instance.post(`admin/change-status`, JSON.stringify({ username: userName, accType, accStatus })).then((result) => {
+      console.log('yay');
+    }
+    ).catch((err) => {
+      console.log(err.message);
+    }
+    );
+
+  };
+
+  const handleClick = (userName, accType) => {
+    // change the following format to instance format
+    instance.post(`admin/delete-account`, JSON.stringify({ username: userName, accType })).then((result) => {
+      console.log('yay');
+    }
+    ).catch((err) => {
+      console.log(err.message);
+    }
+    );
+  };
+
 
   const [review, setNewReview] = useState({
     content: '',
@@ -64,7 +94,7 @@ function CounselorProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     instance
-      .post('rate/add-review', JSON.stringify({ ...review, username }))
+      .post('rate/add-review', JSON.stringify({ ...review, user_name }))
       .then((result) => {
         setNewReview({
           content: '',
@@ -78,14 +108,14 @@ function CounselorProfile() {
 
   useEffect(() => {
     instance
-      .get(`user/counselor/${username}`)
+      .get(`user/counselor/${user_name}`)
       .then((result) => {
         setCounselorDetails(result.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [username]);
+  }, [user_name]);
 
   return (
     <Box>
@@ -133,16 +163,52 @@ function CounselorProfile() {
               </Box>
             </Box>
 
-            <MyButton
-              width="200px"
-              paddinghorizontal="10px"
-              paddingvertical="10px"
-              variant="contained"
-              sx={{ mb: 9, ml: 'auto' }}
-              onClick={conditionalNavigate}
-            >
-              {usertype === 'Student' ? 'Book Appointment' : 'Edit Profile'}
-            </MyButton>
+            {
+              usertype === 'Admin' ? (
+                <Box sx= {{ display: 'flex', flexDirection: 'column', marginLeft: 'auto' }}>  
+                  <MyButton
+                  // 200px in rem are 12.5rem
+                    width="12.5rem"
+                    variant="contained"
+                    sx={{ mb:1, ml: 'auto', padding: '10px'}}
+                    onClick={() => {
+                      handleDeactive(
+                        counselorDetails.username,
+                        'Counselor',
+                        counselorDetails.status
+                      );
+                    }}
+                  >
+                    Deactivate Account
+                  </MyButton>
+                  <MyButton
+                    width="12.5rem"
+                    variant="contained"
+                    sx={{ mt: 2, ml: 'auto', padding: '10px'  }}
+                    onClick={() => {
+                      handleClick(counselorDetails.username, 'Counselor');
+                    }}
+                  >
+                    Delete Account
+                  </MyButton>
+                </Box>
+              ) : (
+                <Box sx = {{ marginLeft: 'auto' }}>
+                  <MyButton
+                    width="200px"
+                    paddinghorizontal="10px"
+                    paddingvertical="10px"
+                    variant="contained"
+                    sx={{ mb: 9, ml: 'auto' }}
+                    onClick={conditionalNavigate}
+                  >
+                    {usertype === 'Student'
+                      ? 'Book Appointment'
+                      : 'Edit Profile'}
+                  </MyButton>
+                </Box>
+              )
+            }
           </Box>
           <Box>
             {/* Change font color of Typography to black.  */}
