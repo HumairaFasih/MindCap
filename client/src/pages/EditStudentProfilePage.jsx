@@ -1,11 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   Box,
   Card,
-  Container,
   TextField,
   Typography,
   Divider,
@@ -23,6 +21,7 @@ import PageTitle from '../components/PageTitle';
 import { MyButton } from '../components/MyButton';
 import { LongButton } from '../components/LongButton';
 import { AuthContext } from '../context/AuthContext';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
@@ -40,37 +39,27 @@ function EditStudentProfile() {
     // med_filename: '',
   });
 
+  const navigate = useNavigate();
   const handleFileChange = (e) => {
     if (e.target.files) {
       setFileData(e.target.files[0]);
     }
   };
 
-  const getStudentData = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        withCredentials: true,
-        url: `http://localhost:3003/api/user/student/${username}`,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      console.log(result);
-      console.log('hello i am in getdata for student edit page');
-      if (result.data) {
-        setStudentDetails(result.data);
-      } else {
-        console.log('No data fetched from database');
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  }, [username]);
-
   useEffect(() => {
-    if (username) {
-      getStudentData();
-    }
-  }, [username, getStudentData]);
+    instance
+      .get(`user/student/${username}`)
+      .then((result) => {
+        if (result.data) {
+          setStudentDetails(result.data);
+        } else {
+          console.log('No data fetched from database for this student!');
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [username]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,6 +82,7 @@ function EditStudentProfile() {
         // Redirect to other screen when it is made
         if (result.status === 200) {
           console.log('Submit Successful, ...Redirect');
+          navigate(`user/student/${username}`);
         } else {
           console.log('Submit Failed!');
         }
@@ -163,7 +153,7 @@ function EditStudentProfile() {
 
             <FormControl sx={{ m: 3 }}>
               <FormLabel
-                id="demo-radio-buttons-group-label"
+                id="medical report"
                 sx={{ color: '#ADADAD', fontWeight: 'bold' }}
               >
                 Upload Medical Reports
@@ -265,14 +255,14 @@ function EditStudentProfile() {
 
             <FormControl sx={{ m: 3 }}>
               <FormLabel
-                id="demo-radio-buttons-group-label"
+                id="gender"
                 sx={{ color: '#ADADAD', fontWeight: 'bold' }}
               >
                 Gender
               </FormLabel>
               <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                name="radio-buttons-group"
+                aria-labelledby="gender"
+                name="gender"
                 value={studentDetails.gender}
                 onChange={handleChange}
                 sx={{ m: 1, ml: 2 }}
