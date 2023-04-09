@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import React, { useState, useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';

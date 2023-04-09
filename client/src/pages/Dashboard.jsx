@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Box, Typography } from '@mui/material';
 import './EditCounselorProfilePage.css';

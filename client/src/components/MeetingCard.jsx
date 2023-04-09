@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import React, { useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';

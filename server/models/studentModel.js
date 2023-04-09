@@ -1,10 +1,8 @@
-/* eslint-disable prettier/prettier */
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 const mongoose = require('mongoose');
 
 const bcrypt = require('bcrypt');
 
-// eslint-disable-next-line prefer-destructuring
 const StudentSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -66,7 +64,7 @@ StudentSchema.statics.update = async function (filter, update) {
 };
 
 StudentSchema.statics.getDetails = async function (filter) {
-  
+
   console.log(filter);
   try {
     return await this.findOne(filter).lean();

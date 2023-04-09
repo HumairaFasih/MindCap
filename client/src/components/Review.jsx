@@ -2,7 +2,6 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import MyRating from './Rating';
 import '../pages/profile.css'
-/* eslint-disable arrow-body-style */
 const Review = ({ content, rating }) => {
   return (
     <div>

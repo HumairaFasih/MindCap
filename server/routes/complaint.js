@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const express = require('express');
 const jwtDecode = require('jwt-decode');
 const Complaints = require('../models/complaintsModel');

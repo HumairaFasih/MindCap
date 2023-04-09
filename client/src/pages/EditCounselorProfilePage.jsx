@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
