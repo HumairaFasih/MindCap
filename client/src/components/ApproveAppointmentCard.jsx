@@ -1,16 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import axios from 'axios';
 import {
   Box,
   Typography,
-  Button,
-  Menu,
-  MenuItem,
   FormGroup,
   FormControlLabel,
   Divider,
   Checkbox,
 } from '@mui/material';
-import { styled } from '@mui/system';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -41,7 +38,21 @@ function ApproveAppointmentCard({
   const handleClick = (value) => {
     setIsChecked(true);
     onStatusChange(value);
-  }
+  };
+
+  const handleMeetingCardMenu = async (value) => {
+    if (value === 'View Medical Report') {
+      const result = await axios({
+        method: 'get',
+        url: `http://localhost:3003/api/user/medical-record?name=${studentName}`,
+        withCredentials: true,
+        responseType: 'blob',
+      });
+      const blob = new Blob([result.data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank').focus();
+    }
+  };
 
   const getStatusColor = (statusColour) => {
     switch (statusColour) {
@@ -108,7 +119,12 @@ function ApproveAppointmentCard({
             </Typography>
           </Box>
 
-          <LongMenu counselorName="" cancelAppointment="" entity="counselor" />
+          <LongMenu
+            handleMeetingCardMenu={handleMeetingCardMenu}
+            counselorName=""
+            cancelAppointment=""
+            entity="counselor"
+          />
         </Box>
 
         <Box display="flex" flexDirection="row">
