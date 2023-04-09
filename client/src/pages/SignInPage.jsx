@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { instance } from '../axios';
 import tree from '../assets/images/tree.png';
 import logo from '../assets/images/logo-no-bg.png';
@@ -52,27 +52,61 @@ function SignIn() {
       });
   };
 
+  const [screenSize, setScreenSize] = useState('');
+  const handleResize = useCallback(() => {	
+    if (window.innerWidth <= 280) {	
+      setScreenSize('small');	
+    } else if (window.innerWidth <= 500) {	
+      setScreenSize('medium');	
+    } else if (window.innerWidth<= 1000){	
+      setScreenSize('large');	
+    } else{
+      setScreenSize('xlarge');
+    }
+  }, []);
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
+
+  function responsiveText(){
+    if (screenSize==='small') {
+      return '90vw'
+    }
+    if (screenSize==='medium') {
+      return '90vw'
+    }
+    if (screenSize==='large') {
+      return '500px'
+    }
+    return '500px'
+  }
+
   return (
-    <div>
-      <div className="left-half">
-        <div className="circle-logo">
-          <img src={tree} alt="tree" />
-        </div>
-      </div>
+    <Box>
+    <Box className='left-half'>
+      <Box className='circle-logo'>
+        <img src={tree} alt='tree' />
+      </Box>
+    </Box>
 
-      <div className="right-half">
-        <div className="signin-box">
-          <div className="logo-header">
-            <img src={logo} className="logo-img" alt="logo" />
-            <h1>MindCap</h1>
-          </div>
+    <Box className='right-half'>
+      <Box sx={{display:'flex', alignItems:'center', justifyContent:'center', height:'100vh'}}>
+      <Box className='signin-box'>
+        <Box className='logo-header'>
+          <img src={logo} className='logo-img' alt='logo' />
+          <h1>MindCap</h1>
+        </Box>
 
-          <h1>Welcome!</h1>
+        <h1 className='adjustwelcome' style={{ alignSelf: 'flex-start' }}>Welcome!</h1>
           <TextField
             sx={{
-              '& > :not(style)': { my: 1, width: '400px', height: '50px' },
+              '& > :not(style)': { my: 1, height: '60px', width: responsiveText},
             }}
             id="outlined-basic"
+            label='Username'
             value={username}
             onChange={handleChangeUsername}
             name="username"
@@ -82,22 +116,23 @@ function SignIn() {
 
           <TextField
             sx={{
-              '& > :not(style)': { my: 2, width: '400px', height: '50px' },
+              '& > :not(style)': { my: 1, height: '60px', width: responsiveText},
             }}
             id="outlined-basic"
             value={password}
             onChange={handleChangePassword}
+            label='Password'
             name="password"
             variant="outlined"
             type="password"
             required
           />
 
-          <LongButton variant="contained" onClick={handleSubmit}>
+          <LongButton sx={{mt:2, width:responsiveText}} variant="contained" onClick={handleSubmit}>
             SIGN IN
           </LongButton>
-          <Typography
-            className="bottom-text"
+
+          <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -105,12 +140,17 @@ function SignIn() {
               mt: 3,
             }}
           >
-            Are you a student?
-            <Link to="/signup">Sign Up</Link>
-          </Typography>
-        </div>
-      </div>
-    </div>
+            <Typography sx={{ padding: 1 }}>
+              Don't have a student account?
+            </Typography>
+            <Link to='/signup'>
+              <Typography sx={{ fontWeight: 'bold' }}>Sign Up</Typography>
+            </Link>
+          </Box>
+        </Box>
+      </Box>
+      </Box>
+    </Box>
   );
 }
 

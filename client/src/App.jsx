@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import SignIn from './pages/SignInPage';
+import SignUp from './pages/SignUpPage';
 import CreateCounselor from './pages/CreateCounselorPage';
 import CounselorProfile from './pages/CounselorProfilePage';
 import EditStudentProfile from './pages/EditStudentProfilePage';
@@ -40,7 +41,7 @@ function App() {
           {/* <Route path="dashboard" element={<Dashboard />}/> */}
         </Route>
         <Route path="login" element={<SignIn />} />
-        {/* <Route path="signup" element={<SignUp />} /> */}
+        <Route path="signup" element={<SignUp />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </LocalizationProvider>
