@@ -15,9 +15,16 @@ const MedicalRecordsSchema = new mongoose.Schema({
 });
 
 MedicalRecordsSchema.statics.getDetails = async function (filter) {
-  console.log('printing filter in medi model: ', filter);
   try {
     return await this.findOne(filter).lean();
+  } catch (err) {
+    throw Error('Failed');
+  }
+};
+
+MedicalRecordsSchema.statics.getDetailsNonLean = async function (filter) {
+  try {
+    return await this.findOne(filter);
   } catch (err) {
     throw Error('Failed');
   }
