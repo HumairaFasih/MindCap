@@ -6,6 +6,7 @@ import { LongButton } from '../components/LongButton';
 import FormField from '../components/FormField';
 import PageTitle from '../components/PageTitle';
 import Sidebar from '../components/Sidebar';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
@@ -27,16 +28,25 @@ function CreateCounselor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('handling submit');
-    try {
-      const _ = await axios({
-        method: 'post',
-        url: 'http://localhost:3003/api/admin/create-counselor',
-        data: JSON.stringify(values),
-        headers: { 'Content-Type': 'application/json' },
+    instance
+      .post(`admin/create-counselor`, JSON.stringify(values))
+      .then((result) => {
+        console.log('yay');
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
-    } catch (err) {
-      console.log(err.message);
-    }
+
+    // try {
+    //   const _ = await axios({
+    //     method: 'post',
+    //     url: 'http://localhost:3003/api/admin/create-counselor',
+    //     data: JSON.stringify(values),
+    //     headers: { 'Content-Type': 'application/json' },
+    //   });
+    // } catch (err) {
+    //   console.log(err.message);
+    // }
   };
 
   return (
