@@ -23,6 +23,7 @@ import PageTitle from '../components/PageTitle';
 import { MyButton } from '../components/MyButton';
 import { LongButton } from '../components/LongButton';
 import { AuthContext } from '../context/AuthContext';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 
@@ -47,23 +48,20 @@ function EditStudentProfile() {
   };
 
   const getStudentData = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'get',
-        withCredentials: true,
-        url: `http://localhost:3003/api/user/student/${username}`,
-        headers: { 'Content-Type': 'application/json' },
+    instance
+      .get(`user/student/${username}`)
+      .then((result) => {
+        console.log(result);
+        console.log('hello i am in getdata for student edit page');
+        if (result.data) {
+          setStudentDetails(result.data);
+        } else {
+          console.log('No data fetched from database');
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
-      console.log(result);
-      console.log('hello i am in getdata for student edit page');
-      if (result.data) {
-        setStudentDetails(result.data);
-      } else {
-        console.log('No data fetched from database');
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
   }, [username]);
 
   useEffect(() => {
@@ -81,24 +79,36 @@ function EditStudentProfile() {
       formData.append('newlastname', studentDetails.lname);
       formData.append('newdob', dob);
       formData.append('newgender', studentDetails.gender);
-      try {
-        const result = await axios.post(
-          `http://localhost:3003/api/user/student/edit-profile`,
-          formData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true,
+      instance
+        .post(`user/student/edit-profile`, formData)
+        .then((result) => {
+          if (result.status === 200) {
+            console.log('Submit Successful, ...Redirect');
+          } else {
+            console.log('Submit Failed!');
           }
-        );
-        // Redirect to other screen when it is made
-        if (result.status === 200) {
-          console.log('Submit Successful, ...Redirect');
-        } else {
-          console.log('Submit Failed!');
-        }
-      } catch (err) {
-        console.log(err);
-      }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // try {
+      //   const result = await axios.post(
+      //     `http://localhost:3003/api/user/student/edit-profile`,
+      //     formData,
+      //     {
+      //       headers: { 'Content-Type': 'multipart/form-data' },
+      //       withCredentials: true,
+      //     }
+      //   );
+      //   // Redirect to other screen when it is made
+      //   if (result.status === 200) {
+      //     console.log('Submit Successful, ...Redirect');
+      //   } else {
+      //     console.log('Submit Failed!');
+      //   }
+      // } catch (err) {
+      //   console.log(err);
+      // }
     }
   };
 

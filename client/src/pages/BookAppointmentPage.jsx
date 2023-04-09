@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -13,7 +13,7 @@ import {
   Radio,
   RadioGroup,
   Checkbox,
-  Button
+  Button,
 } from '@mui/material';
 
 import { DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -23,37 +23,45 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { MyButton } from '../components/MyButton';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
+import { instance } from '../axios';
 
 const drawerWidth = 270;
 function BookAppointment() {
- 
   // get CounselorTime and chooseDateType from backend
 
   const [counselorNames, setCounselorNames] = useState([]);
   const [chosen, setChosen] = React.useState(true);
-  const [chosenval, setChosenTimeVal]=React.useState('')
+  const [chosenval, setChosenTimeVal] = React.useState('');
   const [chosenCounselor, setChosenCounselor] = useState('');
   const [counselorTime, setCounselorTime] = useState('12-3AM');
-  const [chooseDateType, setDateType] =useState('weekdays');
-  const [chooseDate, setDate]= useState(null);
+  const [chooseDateType, setDateType] = useState('weekdays');
+  const [chooseDate, setDate] = useState(null);
   const [chooseTime, setTime] = useState(null);
   const [meetingMode, setMeetingMode] = useState('');
   const [shareStatus, setShareStatus] = useState('false');
 
-  let buttons=[]
-
+  let buttons = [];
 
   useEffect(() => {
-    async function fetchData(){
-    const result = await axios.get('http://localhost:3003/api/appointment/get-all-counselors');
-    setCounselorNames(result.data);
+    async function fetchData() {
+      instance
+        .get('appointment/get-all-counselors')
+        .then((result) => {
+          setCounselorNames(result.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
+    // const result = await axios.get('http://localhost:3003/api/appointment/get-all-counselors');
+    // setCounselorNames(result.data);
+    // }
     fetchData();
-  }, [])
+  }, []);
 
-  const handleTimeClick=(value)=>{
-    setChosen(value===chosen? true: !chosen)
-    setChosenTimeVal(value)
+  const handleTimeClick = (value) => {
+    setChosen(value === chosen ? true : !chosen);
+    setChosenTimeVal(value);
     const dateString = value;
     const dateTime = new Date(Date.parse(`01/01/1970 ${dateString}`));
     setTime(dateTime);
@@ -71,114 +79,135 @@ function BookAppointment() {
 
   const handleCounselorSelect = async (e) => {
     setChosenCounselor(e.target.value);
-    const result = await axios({
-      method: 'post',
-      url: 'http://localhost:3003/api/appointment/get-availability',
-      withCredentials: true,
-      data: JSON.stringify( {counselor: e.target.value}),
-      headers: { 'Content-Type': 'application/json' },
-    });
-    setCounselorTime(result.data.time);
-    setDateType(result.data.day_type)
-  }
+    instance
+      .post(
+        'appointment/get-availability',
+        JSON.stringify({ counselor: e.target.value })
+      )
+      .then((result) => {
+        setCounselorTime(result.data.time);
+        setDateType(result.data.day_type);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // const result = await axios({
+    //   method: 'post',
+    //   url: 'http://localhost:3003/api/appointment/get-availability',
+    //   withCredentials: true,
+    //   data: JSON.stringify({ counselor: e.target.value }),
+    //   headers: { 'Content-Type': 'application/json' },
+    // });
+    // setCounselorTime(result.data.time);
+    // setDateType(result.data.day_type);
+  };
 
   const submitHandler = async () => {
-    const result = await axios({
-      method: 'post', 
-      url: 'http://localhost:3003/api/appointment/book',
-      withCredentials: true,
-      data: JSON.stringify({
-        counselorUsername: chosenCounselor,
-        meetingMode,
-        date: chooseDate, 
-        time: chooseTime, 
-        share: shareStatus
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    })
-    console.log(result);
-  }
+    instance
+      .post(
+        'appointment/book',
+        JSON.stringify({
+          counselorUsername: chosenCounselor,
+          meetingMode,
+          date: chooseDate,
+          time: chooseTime,
+          share: shareStatus,
+        })
+      )
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // const result = await axios({
+    //   method: 'post',
+    //   url: 'http://localhost:3003/api/appointment/book',
+    //   withCredentials: true,
+    //   data: JSON.stringify({
+    //     counselorUsername: chosenCounselor,
+    //     meetingMode,
+    //     date: chooseDate,
+    //     time: chooseTime,
+    //     share: shareStatus,
+    //   }),
+    //   headers: { 'Content-Type': 'application/json' },
+    // });
+    // console.log(result);
+  };
 
-  if (counselorTime==='12-3AM') {
-    buttons=[
-      {label: '12:00 AM', value: '12:00 AM'},
-      {label: '12:30 AM', value: '12:30 AM'},
-      {label: '1:00 AM', value: '1:00 AM'},
-      {label: '1:30 AM', value: '1:30 AM'},
-      {label: '2:00 AM', value: '2:00 AM'},
-      {label: '2:30 AM', value: '2:30 AM'},
-    ]
-  }
-  else if (counselorTime==='3-6AM') {
-    buttons=[
-      {label: '3:00 AM', value: '3:00 AM'},
-      {label: '3:30 AM', value: '3:30 AM'},
-      {label: '4:00 AM', value: '4:00 AM'},
-      {label: '4:30 AM', value: '4:30 AM'},
-      {label: '5:00 AM', value: '5:00 AM'},
-      {label: '5:30 AM', value: '5:30 AM'},
-    ]
-  }
-  else if (counselorTime==='6-9AM') {
-    buttons=[
-      {label: '6:00 AM', value: '6:00 AM'},
-      {label: '6:30 AM', value: '6:30 AM'},
-      {label: '7:00 AM', value: '7:00 AM'},
-      {label: '7:30 AM', value: '7:30 AM'},
-      {label: '8:00 AM', value: '8:00 AM'},
-      {label: '8:30 AM', value: '8:30 AM'},
-    ]
-  }
-  else if (counselorTime==='9-12PM') {
-    buttons=[
-      {label: '9:00 AM', value: '9:00 AM'},
-      {label: '9:30 AM', value: '9:30 AM'},
-      {label: '10:00 AM', value: '10:00 AM'},
-      {label: '10:30 AM', value: '10:30 AM'},
-      {label: '11:00 AM', value: '11:00 AM'},
-      {label: '11:30 AM', value: '11:30 AM'},
-    ]
-  }
-  else if (counselorTime==='12-3PM') {
-    buttons=[
-      {label: '12:00 PM', value: '12:00 PM'},
-      {label: '12:30 PM', value: '12:30 PM'},
-      {label: '1:00 PM', value: '1:00 PM'},
-      {label: '1:30 PM', value: '1:30 PM'},
-      {label: '2:00 PM', value: '2:00 PM'},
-      {label: '2:30 PM', value: '2:30 PM'},
-    ]
-  }
-  else if (counselorTime==='3-6PM') {
-    buttons=[
-      {label: '3:00 PM', value: '3:00 PM'},
-      {label: '3:30 PM', value: '3:30 PM'},
-      {label: '4:00 PM', value: '4:00 PM'},
-      {label: '4:30 PM', value: '4:30 PM'},
-      {label: '5:00 PM', value: '5:00 PM'},
-      {label: '5:30 PM', value: '5:30 PM'},
-    ]
-
-  }
-  else if (counselorTime==='6-9PM') {
-    buttons=[
-      {label: '6:00 PM', value: '6:00 PM'},
-      {label: '6:30 PM', value: '6:30 PM'},
-      {label: '7:00 PM', value: '7:00 PM'},
-      {label: '7:30 PM', value: '7:30 PM'},
-      {label: '8:00 PM', value: '8:00 PM'},
-      {label: '8:30 PM', value: '8:30 PM'},
-    ]
-  }
-  else if (counselorTime==='9-12AM') {
-    buttons=[
-      {label: '9:00 PM', value: '9:00 PM'},
-      {label: '9:30 PM', value: '9:30 PM'},
-      {label: '10:00 PM', value: '10:00 PM'},
-      {label: '10:30 PM', value: '10:30 PM'},
-      {label: '11:00 PM', value: '11:00 PM'},
-      {label: '11:30 PM', value: '11:30 PM'},
-    ]
+  if (counselorTime === '12-3AM') {
+    buttons = [
+      { label: '12:00 AM', value: '12:00 AM' },
+      { label: '12:30 AM', value: '12:30 AM' },
+      { label: '1:00 AM', value: '1:00 AM' },
+      { label: '1:30 AM', value: '1:30 AM' },
+      { label: '2:00 AM', value: '2:00 AM' },
+      { label: '2:30 AM', value: '2:30 AM' },
+    ];
+  } else if (counselorTime === '3-6AM') {
+    buttons = [
+      { label: '3:00 AM', value: '3:00 AM' },
+      { label: '3:30 AM', value: '3:30 AM' },
+      { label: '4:00 AM', value: '4:00 AM' },
+      { label: '4:30 AM', value: '4:30 AM' },
+      { label: '5:00 AM', value: '5:00 AM' },
+      { label: '5:30 AM', value: '5:30 AM' },
+    ];
+  } else if (counselorTime === '6-9AM') {
+    buttons = [
+      { label: '6:00 AM', value: '6:00 AM' },
+      { label: '6:30 AM', value: '6:30 AM' },
+      { label: '7:00 AM', value: '7:00 AM' },
+      { label: '7:30 AM', value: '7:30 AM' },
+      { label: '8:00 AM', value: '8:00 AM' },
+      { label: '8:30 AM', value: '8:30 AM' },
+    ];
+  } else if (counselorTime === '9-12PM') {
+    buttons = [
+      { label: '9:00 AM', value: '9:00 AM' },
+      { label: '9:30 AM', value: '9:30 AM' },
+      { label: '10:00 AM', value: '10:00 AM' },
+      { label: '10:30 AM', value: '10:30 AM' },
+      { label: '11:00 AM', value: '11:00 AM' },
+      { label: '11:30 AM', value: '11:30 AM' },
+    ];
+  } else if (counselorTime === '12-3PM') {
+    buttons = [
+      { label: '12:00 PM', value: '12:00 PM' },
+      { label: '12:30 PM', value: '12:30 PM' },
+      { label: '1:00 PM', value: '1:00 PM' },
+      { label: '1:30 PM', value: '1:30 PM' },
+      { label: '2:00 PM', value: '2:00 PM' },
+      { label: '2:30 PM', value: '2:30 PM' },
+    ];
+  } else if (counselorTime === '3-6PM') {
+    buttons = [
+      { label: '3:00 PM', value: '3:00 PM' },
+      { label: '3:30 PM', value: '3:30 PM' },
+      { label: '4:00 PM', value: '4:00 PM' },
+      { label: '4:30 PM', value: '4:30 PM' },
+      { label: '5:00 PM', value: '5:00 PM' },
+      { label: '5:30 PM', value: '5:30 PM' },
+    ];
+  } else if (counselorTime === '6-9PM') {
+    buttons = [
+      { label: '6:00 PM', value: '6:00 PM' },
+      { label: '6:30 PM', value: '6:30 PM' },
+      { label: '7:00 PM', value: '7:00 PM' },
+      { label: '7:30 PM', value: '7:30 PM' },
+      { label: '8:00 PM', value: '8:00 PM' },
+      { label: '8:30 PM', value: '8:30 PM' },
+    ];
+  } else if (counselorTime === '9-12AM') {
+    buttons = [
+      { label: '9:00 PM', value: '9:00 PM' },
+      { label: '9:30 PM', value: '9:30 PM' },
+      { label: '10:00 PM', value: '10:00 PM' },
+      { label: '10:30 PM', value: '10:30 PM' },
+      { label: '11:00 PM', value: '11:00 PM' },
+      { label: '11:30 PM', value: '11:30 PM' },
+    ];
   }
 
   return (
@@ -211,16 +240,19 @@ function BookAppointment() {
                     <InputLabel default color="success">
                       Counselor Name
                     </InputLabel>
-                    <Select onChange={handleCounselorSelect}
+                    <Select
+                      onChange={handleCounselorSelect}
                       default
                       color="success"
                       label="CounselorName"
                     >
-                      { counselorNames.length !== 0 ?
-                    counselorNames.map((counselor) => (
-                      <MenuItem value={counselor} sx={{minWidth: 300}}>{counselor}</MenuItem>
-                    )):null
-                  }
+                      {counselorNames.length !== 0
+                        ? counselorNames.map((counselor) => (
+                            <MenuItem value={counselor} sx={{ minWidth: 300 }}>
+                              {counselor}
+                            </MenuItem>
+                          ))
+                        : null}
                     </Select>
                   </FormControl>
                 </Box>
@@ -232,8 +264,7 @@ function BookAppointment() {
                   Meeting Mode
                 </Typography>
                 <FormControl>
-                  <RadioGroup onClick={(e) => setMeetingMode(e.target.value)}
-                  >
+                  <RadioGroup onClick={(e) => setMeetingMode(e.target.value)}>
                     <FormControlLabel
                       className="radioGroup"
                       sx={{ margin: '6px 0px 0px 6px' }}
@@ -261,9 +292,13 @@ function BookAppointment() {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoItem>
                     <DateCalendar
-                      shouldDisableDate={chooseDateType==='weekdays'? disableWeekends: disableWeekdays}
+                      shouldDisableDate={
+                        chooseDateType === 'weekdays'
+                          ? disableWeekends
+                          : disableWeekdays
+                      }
                       disablePast
-                      onChange={(e) => setDate((new Date(e.$d)))}
+                      onChange={(e) => setDate(new Date(e.$d))}
                       sx={{
                         margin: '14px 30px 0px 8px',
                         border: '1px solid grey',
@@ -271,14 +306,13 @@ function BookAppointment() {
                         backgroundColor: 'white',
                         '& .MuiPickersDay-root': {
                           '&.Mui-selected': {
-                            backgroundColor: 'rgba(147, 183, 125,0.5) !important' ,
+                            backgroundColor:
+                              'rgba(147, 183, 125,0.5) !important',
                             color: '#000',
+                          },
                         },
-                      },
-                       
                       }}
                       views={['day']}
-                      
                     />
                   </DemoItem>
                 </LocalizationProvider>
@@ -312,40 +346,40 @@ function BookAppointment() {
                     backgroundColor: 'rgba(147, 183, 125,0.5)',
                     width: '530px',
                     height: '500px',
-                    pt: '15px'
+                    pt: '15px',
                   }}
                 >
-                  
-                  {buttons.map((button)=>(
-                  <Button
-                    key={button.value}
-                    onClick={()=>handleTimeClick(button.value)}
-                    disableRipple
-                    sx={{
-                      borderRadius: '12px',
-                      backgroundColor: button.value===chosenval ? '#C2D7BF': '#ffffff',
-                      border: '2px solid rgb(147, 183, 125)',
-                      boxShadow: '0px 2px 7px grey',
-                      width: '470px',
-                      height: '60px',
-                      alignSelf: 'center',
-                      margin: '15px 0px 0px 0px',
-                      transition:'0.1s'
-                    }}
-                  >
-                    <Typography
-                      variant="h5"
+                  {buttons.map((button) => (
+                    <Button
+                      key={button.value}
+                      onClick={() => handleTimeClick(button.value)}
+                      disableRipple
                       sx={{
+                        borderRadius: '12px',
+                        backgroundColor:
+                          button.value === chosenval ? '#C2D7BF' : '#ffffff',
+                        border: '2px solid rgb(147, 183, 125)',
+                        boxShadow: '0px 2px 7px grey',
+                        width: '470px',
+                        height: '60px',
                         alignSelf: 'center',
-                        fontWeight: 'bold',
-                        color: '#000000',
-                        fontFamily: 'Calibri',
+                        margin: '15px 0px 0px 0px',
+                        transition: '0.1s',
                       }}
                     >
-                      {button.label}
-                    </Typography>
-                  </Button>))}
-
+                      <Typography
+                        variant="h5"
+                        sx={{
+                          alignSelf: 'center',
+                          fontWeight: 'bold',
+                          color: '#000000',
+                          fontFamily: 'Calibri',
+                        }}
+                      >
+                        {button.label}
+                      </Typography>
+                    </Button>
+                  ))}
                 </Box>
 
                 <MyButton
