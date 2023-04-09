@@ -68,7 +68,7 @@ router.post('/delete-account', async (req, res) => {
   if (accType === 'Student') {
     try {
       console.log('deleted')
-      // await Student.deleteOne({ username: { $regex: username, $options: 'i' } });
+      await Student.deleteOne({ username: { $regex: username, $options: 'i' } });
       res.send('success');
     } catch (err) {
       console.log(err);
@@ -76,7 +76,7 @@ router.post('/delete-account', async (req, res) => {
   } else {
     try {
       console.log('deleted')
-      // await Counselor.deleteOne({ username: { $regex: username, $options: 'i' } });
+      await Counselor.deleteOne({ username: { $regex: username, $options: 'i' } });
       res.send('success');
     } catch (err) {
       console.log(err);
