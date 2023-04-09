@@ -16,12 +16,14 @@ import { AuthContext } from '../context/AuthContext';
 import '../components/CardSlider.css';
 import Loading from '../components/LoadingScreen';
 import { instance } from '../axios';
+import ComplaintCard from '../components/ComplaintCard';
 
 const drawerWidth = 270;
 
 function Dashboard() {
   const [meetings, setMeetings] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [complaints, setComplaints] = useState([]);
 
   const {
     auth: {
@@ -65,6 +67,29 @@ function Dashboard() {
     return past;
   };
 
+  // sort complaints
+  const getPendingComplaints = (sortedComplaints) => {
+    const pendings = sortedComplaints.filter((item) => {
+      if (item.status === 'Pending') {
+        return true;
+      }
+      return false;
+    });
+
+    return pendings;
+  };
+
+  const getResolvedComplaints = (sortedComplaints) => {
+    const past = sortedComplaints.filter((item) => {
+      if (item.status === 'Pending') {
+        return false;
+      }
+      return true;
+    });
+
+    return past;
+  };
+
   // connect to backend to get all the meetings and divide them based on time
   useEffect(() => {
     instance
@@ -83,6 +108,19 @@ function Dashboard() {
       .catch((error) => {
         console.log('Error getting meeting data', error);
       });
+  }, []);
+
+  // load the complaints
+  useEffect(() => {
+    instance.get('complaint/view').then((result) => {
+      const sortedComplaints =
+        result.data.length > 0 &&
+        [...result.data].sort((a, b) => new Date(a.date) - new Date(b.date));
+      setComplaints(sortedComplaints);
+      console.log('Printing loaded data for complaints');
+      console.log(result.data);
+      setLoaded(true);
+    });
   }, []);
 
   // change meeting status for the meeting
@@ -198,7 +236,9 @@ function Dashboard() {
               <Typography
                 sx={{ fontSize: '30px', fontWeight: 'bold', ml: '15px' }}
               >
-                Upcoming Appointments
+                {usertype === 'Admin'
+                  ? 'New Complaints'
+                  : 'Upcoming Appointments'}
               </Typography>
               <Box>
                 <Slider {...settings}>
@@ -216,8 +256,8 @@ function Dashboard() {
                           status={item.status}
                         />
                       ))
-                    : usertype === 'Counselor' &&
-                      getFutureMeetings(meetings).map((item) => (
+                    : usertype === 'Counselor'
+                    ? getFutureMeetings(meetings).map((item) => (
                         <ApproveAppointmentCard
                           key={item._id}
                           appointmentId={item._id}
@@ -229,6 +269,18 @@ function Dashboard() {
                           onStatusChange={(status) =>
                             handleAppointmentStatus(item._id, status)
                           }
+                        />
+                      ))
+                    : usertype === 'Admin' &&
+                      getPendingComplaints(complaints).map((item) => (
+                        <ComplaintCard
+                          key={item._id}
+                          complaintId={item._id}
+                          counselorName={item.counselor_username}
+                          date={new Date(item.filed_date).toLocaleDateString()}
+                          type={item.type}
+                          details={item.details}
+                          status={item.status}
                         />
                       ))}
                 </Slider>
@@ -254,23 +306,36 @@ function Dashboard() {
               <Box>
                 <Slider {...settings}>
                   {/* render past meetings */}
-                  {getPastMeetings(meetings).map((item) => (
-                    <PastMeetingCard
-                      key={item._id}
-                      appointmentId={item._id}
-                      name={
-                        usertype === 'Student'
-                          ? item.counselor_id
-                          : item.student_id
-                      }
-                      date={new Date(item.date).toLocaleDateString()}
-                      time={item.time}
-                      mode={item.mode}
-                      status={
-                        item.status === 'Pending' ? 'Cancelled' : item.status
-                      }
-                    />
-                  ))}
+                  {meetings.length > 0 &&
+                    getPastMeetings(meetings).map((item) => (
+                      <PastMeetingCard
+                        key={item._id}
+                        appointmentId={item._id}
+                        name={
+                          usertype === 'Student'
+                            ? item.counselor_id
+                            : item.student_id
+                        }
+                        date={new Date(item.date).toLocaleDateString()}
+                        time={item.time}
+                        mode={item.mode}
+                        status={
+                          item.status === 'Pending' ? 'Cancelled' : item.status
+                        }
+                      />
+                    ))}
+                  {complaints.length > 0 &&
+                    getResolvedComplaints(complaints).map((item) => (
+                      <ComplaintCard
+                        key={item._id}
+                        complaintId={item._id}
+                        counselorName={item.counselor_username}
+                        date={new Date(item.filed_date).toLocaleDateString()}
+                        type={item.type}
+                        details={item.details}
+                        status={item.status}
+                      />
+                    ))}
                 </Slider>
               </Box>
             </Box>
