@@ -27,26 +27,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "airbnb/hooks"
-    ],
-    "rules": {
-      "react/prop-types": "off",
-      "camelcase": "off",
-      "no-nested-ternary": "off",
-      "prettier/prettier": [
-        "warn",
-        {
-          "trailingComma": "es5",
-          "singleQuote": true,
-          "printWidth": 80,
-          "endOfLine": "lf"
-        }
-      ]
-    }
-  },
   "browserslist": {
     "production": [
       ">0.2%",

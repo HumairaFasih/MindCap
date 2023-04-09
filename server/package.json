@@ -9,30 +9,6 @@
     "dev": "nodemon ./bin/www"
   },
   "license": "ISC",
-  "eslintConfig": {
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "airbnb-base",
-      "prettier"
-    ],
-    "plugins": [
-      "prettier"
-    ],
-    "rules": {
-      "no-console": "off",
-      "prettier/prettier": [
-        "warn",
-        {
-          "trailingComma": "es5",
-          "singleQuote": true,
-          "printWidth": 80,
-          "endOfLine": "lf"
-        }
-      ]
-    }
-  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
