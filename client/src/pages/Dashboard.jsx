@@ -33,13 +33,17 @@ function Dashboard() {
 
   const getFutureMeetings = (sortedMeetings) => {
     const future = sortedMeetings.filter((item) => {
+      const meetingDateTime = new Date(
+        `${item.date.split('T')[0]}T${item.time.split('T')[1]}`
+      );
       if (
-        new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) >
-        new Date()
+        item.status === 'Cancelled' ||
+        item.status === 'Rejected' ||
+        meetingDateTime <= new Date()
       ) {
-        return true;
+        return false;
       }
-      return false;
+      return true;
     });
 
     return future;
@@ -47,13 +51,17 @@ function Dashboard() {
 
   const getPastMeetings = (sortedMeetings) => {
     const past = sortedMeetings.filter((item) => {
+      const meetingDateTime = new Date(
+        `${item.date.split('T')[0]}T${item.time.split('T')[1]}`
+      );
       if (
-        new Date(`${item.date.split('T')[0]}T${item.time.split('T')[1]}`) <=
-        new Date()
+        item.status !== 'Cancelled' &&
+        item.status !== 'Rejected' &&
+        meetingDateTime > new Date()
       ) {
-        return true;
+        return false;
       }
-      return false;
+      return true;
     });
 
     return past;
@@ -233,7 +241,9 @@ function Dashboard() {
                       date={new Date(item.date).toLocaleDateString()}
                       time={item.time}
                       mode={item.mode}
-                      status={item.status}
+                      status={
+                        item.status === 'Pending' ? 'Cancelled' : item.status
+                      }
                     />
                   ))}
                 </Slider>
