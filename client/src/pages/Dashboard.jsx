@@ -21,8 +21,6 @@ const drawerWidth = 270;
 
 function Dashboard() {
   const [meetings, setMeetings] = useState([]);
-  // const [futureMeetings, setFutureMeetings] = useState([]);
-  // const [pastMeetings, setPastMeetings] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
   const {
@@ -86,6 +84,30 @@ function Dashboard() {
         console.log('Error getting meeting data', error);
       });
   }, []);
+
+  // change meeting status for the meeting
+  const handleAppointmentStatus = (id, status) => {
+    const updatedMeetings = meetings.map((item) => {
+      if (item._id === id) {
+        instance
+          .post(
+            `/appointment/set-status`,
+            JSON.stringify({
+              appointmentId: id,
+              studentUsername: item.student_id,
+              userChoice: status,
+            })
+          )
+          .then((result) => ({ ...item, status }))
+          .catch((err) => {
+            console.log(err.message);
+          });
+        return { ...item, status };
+      }
+      return item;
+    });
+    setMeetings(updatedMeetings);
+  };
 
   // used to make the slider responsive
   const [screenSize, setScreenSize] = useState('');
@@ -180,7 +202,7 @@ function Dashboard() {
               </Typography>
               <Box>
                 <Slider {...settings}>
-                  <BookAppointmentCard />
+                  {usertype === 'Student' ? <BookAppointmentCard /> : null}
                   {/* render future meetings based on usertype */}
                   {usertype === 'Student'
                     ? getFutureMeetings(meetings).map((item) => (
@@ -204,6 +226,9 @@ function Dashboard() {
                           time={item.time}
                           mode={item.mode}
                           status={item.status}
+                          onStatusChange={(status) =>
+                            handleAppointmentStatus(item._id, status)
+                          }
                         />
                       ))}
                 </Slider>

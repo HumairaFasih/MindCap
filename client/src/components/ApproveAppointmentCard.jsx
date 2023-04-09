@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -25,6 +25,8 @@ import {
   getTime,
 } from '../utilities/date_functions';
 
+import { instance } from '../axios';
+
 function ApproveAppointmentCard({
   appointmentId,
   studentName,
@@ -32,13 +34,14 @@ function ApproveAppointmentCard({
   time,
   mode,
   status,
-  cancelAppointment,
+  onStatusChange,
 }) {
   const [isChecked, setIsChecked] = React.useState(false);
 
-  const handleClick = () => {
+  const handleClick = (value) => {
     setIsChecked(true);
-  };
+    onStatusChange(value);
+  }
 
   const getStatusColor = (statusColour) => {
     switch (statusColour) {
@@ -186,41 +189,45 @@ function ApproveAppointmentCard({
             }}
           />
 
-          <Box display="flex" flexDirection="column">
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    onClick={handleClick}
-                    disabled={isChecked}
-                    sx={{
-                      color: 'grey',
-                      p: 1.2,
-                      py: 0,
-                      '& .MuiSvgIcon-root': { fontSize: '1rem' },
-                    }}
-                  />
-                }
-                label={<Box sx={{ color: approveColor() }}>Approve</Box>}
-                sx={{ mb: 0 }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    onClick={handleClick}
-                    disabled={isChecked}
-                    sx={{
-                      color: 'grey',
-                      p: 1.2,
-                      '& .MuiSvgIcon-root': { fontSize: '1rem' },
-                    }}
-                  />
-                }
-                label={<Box sx={{ color: rejectColor() }}>Reject</Box>}
-                sx={{ mt: 0 }}
-              />
-            </FormGroup>
-          </Box>
+          {status === 'Pending' ? (
+            <Box display="flex" flexDirection="column">
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      onClick={() => handleClick('Approved')}
+                      disabled={isChecked}
+                      value="Approved"
+                      sx={{
+                        color: 'grey',
+                        p: 1.2,
+                        py: 0,
+                        '& .MuiSvgIcon-root': { fontSize: '1rem' },
+                      }}
+                    />
+                  }
+                  label={<Box sx={{ color: approveColor() }}>Approve</Box>}
+                  sx={{ mb: 0 }}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      onClick={() => handleClick('Rejected')}
+                      disabled={isChecked}
+                      value="Rejected"
+                      sx={{
+                        color: 'grey',
+                        p: 1.2,
+                        '& .MuiSvgIcon-root': { fontSize: '1rem' },
+                      }}
+                    />
+                  }
+                  label={<Box sx={{ color: rejectColor() }}>Reject</Box>}
+                  sx={{ mt: 0 }}
+                />
+              </FormGroup>
+            </Box>
+          ) : null}
         </Box>
       </Box>
     </Box>
