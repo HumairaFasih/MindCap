@@ -15,7 +15,7 @@ function SignUpPage() {
     firstName: '',
     lastName: '',
     emailAddress: '',
-    userName: '',
+    username: '',
     password: '',
     confirmPassword: '',
   });
@@ -56,17 +56,16 @@ function SignUpPage() {
       const result = await axios({
         method: 'post',
         url: 'http://localhost:3003/api/authenticate/signup',
-        withCredentials: true,
         data: JSON.stringify({
           firstName,
           lastName,
-          emailAddress,
+          email: emailAddress,
           username,
           password,
         }),
         headers: { 'Content-Type': 'application/json' },
       });
-
+      console.log(result);
       // Redirect to appropriate screen
       if (result.data.id != null) {
         console.log('Sign Up Successful, Redirecting to Dashboard...');

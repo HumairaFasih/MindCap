@@ -55,6 +55,32 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
+// eslint-disable-next-line consistent-return
+router.post('/signup', async (req, res) => {
+  console.log(req.body);
+  const { username, firstName, lastName, email, password } = req.body;
+  const existingUser = await Student.findOne({ username });
+  if (existingUser) {
+    return res.status(400).send('Username already exists');
+  }
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const result = await Student.create({
+      username,
+      email,
+      password: hashedPassword,
+      first_name: firstName,
+      last_name: lastName,
+    });
+    console.log('Created user: ', result.username);
+    res.json({ id: result.id });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 router.patch('/update-password', async (req, res, next) => {
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
