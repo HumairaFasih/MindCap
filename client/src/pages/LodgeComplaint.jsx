@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -9,8 +9,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  OutlinedInput,
 } from '@mui/material';
-import { AuthContext } from '../context/AuthContext';
 
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
@@ -18,6 +18,33 @@ import { MyButton } from '../components/MyButton';
 import { instance } from '../axios';
 
 const drawerWidth = 270;
+
+const types = [
+  {
+    value: 'Ethical Violation',
+    label: 'Ethical Violation',
+  },
+  {
+    value: 'Sexual Harrasment',
+    label: 'Sexual Harrasment',
+  },
+  {
+    value: 'Negligence or malpractice',
+    label: 'Negligence or malpractice',
+  },
+  {
+    value: 'Unprofessional conduct',
+    label: 'Unprofessional conduct',
+  },
+  {
+    value: 'Violation of laws',
+    label: 'Violation of laws',
+  },
+  {
+    value: 'Other',
+    label: 'Other',
+  },
+];
 
 function LodgeComplaint() {
   const [counselorNames, setCounselorNames] = useState([]);
@@ -102,11 +129,14 @@ function LodgeComplaint() {
                 setChosenCounselor(e.target.value);
               }}
               color="success"
-              defaultValue=""
             >
               {counselorNames &&
                 counselorNames.map((counselor) => (
-                  <MenuItem value={counselor} sx={{ minWidth: 300 }}>
+                  <MenuItem
+                    key={counselor}
+                    value={counselor}
+                    sx={{ minWidth: 300 }}
+                  >
                     {counselor}
                   </MenuItem>
                 ))}
@@ -125,21 +155,12 @@ function LodgeComplaint() {
                 setComplaintType(e.target.value);
               }}
               color="success"
-              defaultValue=""
             >
-              <MenuItem value="" disabled>
-                Select Complaint Type
-              </MenuItem>
-              <MenuItem value="Ethical Violation">Ethical Violation</MenuItem>
-              <MenuItem value="Sexual Harrasment">Sexual Harrasment</MenuItem>
-              <MenuItem value="Negligence or malpractice">
-                Negligence or malpractice
-              </MenuItem>
-              <MenuItem value="Unprofessional conduct">
-                Unprofessional conduct
-              </MenuItem>
-              <MenuItem value="Violation of laws">Violation of laws</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
+              {types.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
