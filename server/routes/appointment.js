@@ -10,12 +10,16 @@ const MedicalRecord = require('../models/medicalModel');
 const router = express.Router();
 
 router.get('/get-all-counselors', async (req, res) => {
-  const result = await Counselor.getAll();
-  const usernames = [];
-  result.forEach((item) => {
-    usernames.push(item.username);
-  });
-  res.json(usernames);
+  try {
+    const result = await Counselor.getAll();
+    const usernames = [];
+    result.forEach((item) => {
+      usernames.push(item.username);
+    });
+    res.json(usernames);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 router.get('/view', async (req, res) => {
