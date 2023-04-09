@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Box, Typography } from '@mui/material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -15,6 +14,7 @@ import {
   convertMonth,
   getTime,
 } from '../utilities/date_functions';
+import { instance } from '../axios';
 
 function MeetingCard({
   appointment_id,
@@ -36,24 +36,23 @@ function MeetingCard({
     navigate(counselorProfileRoute);
   };
 
-  const cancelAppointment = useCallback(async () => {
-    try {
-      const result = await axios({
-        method: 'post',
-        url: 'http://localhost:3003/api/appointment/cancel',
-        data: JSON.stringify({ appointmentId: appointment_id }),
-        withCredentials: true,
-        headers: { 'Content-Type': 'application/json' },
+  const cancelAppointment = useCallback(() => {
+    instance
+      .post(
+        '/appointment/cancel',
+        JSON.stringify({
+          appointmentId: appointment_id,
+        })
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setIsCancelled(true);
+          console.log('Successfully cancelled appointment');
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
-      if (result.status === 200) {
-        setIsCancelled(true);
-        console.log('Successfully cancelled appointment');
-      } else {
-        console.log('error cancelling appointment');
-      }
-    } catch (error) {
-      console.log(error);
-    }
   }, [appointment_id]);
 
   const handleMeetingCardMenu = (value) => {
