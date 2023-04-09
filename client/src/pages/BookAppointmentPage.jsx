@@ -45,7 +45,7 @@ function BookAppointment() {
   useEffect(() => {
     async function fetchData() {
       instance
-        .get('appointment/get-all-counselors')
+        .get('/appointment/get-all-counselors')
         .then((result) => {
           setCounselorNames(result.data);
         })
@@ -53,9 +53,6 @@ function BookAppointment() {
           console.log(err);
         });
     }
-    // const result = await axios.get('http://localhost:3003/api/appointment/get-all-counselors');
-    // setCounselorNames(result.data);
-    // }
     fetchData();
   }, []);
 
@@ -81,7 +78,7 @@ function BookAppointment() {
     setChosenCounselor(e.target.value);
     instance
       .post(
-        'appointment/get-availability',
+        '/appointment/get-availability',
         JSON.stringify({ counselor: e.target.value })
       )
       .then((result) => {
@@ -91,21 +88,12 @@ function BookAppointment() {
       .catch((err) => {
         console.log(err);
       });
-    // const result = await axios({
-    //   method: 'post',
-    //   url: 'http://localhost:3003/api/appointment/get-availability',
-    //   withCredentials: true,
-    //   data: JSON.stringify({ counselor: e.target.value }),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
-    // setCounselorTime(result.data.time);
-    // setDateType(result.data.day_type);
   };
 
   const submitHandler = async () => {
     instance
       .post(
-        'appointment/book',
+        '/appointment/book',
         JSON.stringify({
           counselorUsername: chosenCounselor,
           meetingMode,
@@ -120,20 +108,6 @@ function BookAppointment() {
       .catch((err) => {
         console.log(err);
       });
-    // const result = await axios({
-    //   method: 'post',
-    //   url: 'http://localhost:3003/api/appointment/book',
-    //   withCredentials: true,
-    //   data: JSON.stringify({
-    //     counselorUsername: chosenCounselor,
-    //     meetingMode,
-    //     date: chooseDate,
-    //     time: chooseTime,
-    //     share: shareStatus,
-    //   }),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
-    // console.log(result);
   };
 
   if (counselorTime === '12-3AM') {

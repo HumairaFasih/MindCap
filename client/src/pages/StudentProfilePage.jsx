@@ -30,7 +30,7 @@ function StudentProfile() {
     e.preventDefault();
     const result = await axios({
       method: 'get',
-      url: `http://localhost:3003/api/user/medical-record?name=${(username)}`,
+      url: `/user/medical-record?name=${(username)}`,
       withCredentials: true,
       responseType: 'blob'
     });

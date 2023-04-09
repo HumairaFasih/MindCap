@@ -72,7 +72,7 @@ function EditStudentProfile() {
       formData.append('newgender', studentDetails.gender);
       try {
         const result = await axios.post(
-          `http://localhost:3003/api/user/student/edit-profile`,
+          `/user/student/edit-profile`,
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
