@@ -181,7 +181,7 @@ function Dashboard() {
                           appointmentId={item._id}
                           counselorName={item.counselor_id}
                           date={new Date(item.date).toLocaleDateString()}
-                          time={new Date(item.time).toLocaleDateString()}
+                          time={item.time}
                           mode={item.mode}
                           status={item.status}
                         />
@@ -193,7 +193,7 @@ function Dashboard() {
                           appointmentId={item._id}
                           studentName={item.student_id}
                           date={new Date(item.date).toLocaleDateString()}
-                          time={new Date(item.time).toLocaleDateString()}
+                          time={item.time}
                           mode={item.mode}
                           status={item.status}
                         />
@@ -231,7 +231,7 @@ function Dashboard() {
                           : item.student_id
                       }
                       date={new Date(item.date).toLocaleDateString()}
-                      time={new Date(item.time).toLocaleDateString()}
+                      time={item.time}
                       mode={item.mode}
                       status={item.status}
                     />
