@@ -26,6 +26,7 @@ function UpdatePassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(false);
   const [errorText, setErrorText] = useState('');
+  const [mismatch, setMismatch] = useState(false);
 
   const handleShowPassword = () => setShowPassword((show) => !show);
   const handleConfirmShowPassword = () => {
@@ -53,18 +54,22 @@ function UpdatePassword() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    instance
-      .patch(
-        '/authenticate/update-password',
-        JSON.stringify({ newPassword: password })
-      )
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    if (password === confirmPassword) {
+      e.preventDefault();
+      instance
+        .patch(
+          '/authenticate/update-password',
+          JSON.stringify({ newPassword: password })
+        )
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } else {
+      setMismatch(true);
+    }
   };
 
   return (
@@ -250,6 +255,7 @@ function UpdatePassword() {
                   >
                     Update Password
                   </LongButton>
+                  {mismatch && <Typography>Passwords do not match!</Typography>}
                 </Box>
               </Card>
             </Box>
