@@ -34,12 +34,10 @@ const StudentSchema = new mongoose.Schema({
   },
   date_of_birth: {
     type: Date,
-    required: true,
   },
   gender: {
     type: String,
     enum: ['Male', 'Female', 'Prefer not to say'],
-    required: true,
   },
 });
 
