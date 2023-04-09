@@ -76,23 +76,23 @@ function StudentProfile() {
             sx={{
               display: 'flex',
               flexDirection: 'row',
-              padding: '8px',
-              justifyContent: 'space-between',
+              padding: '2rem',
             }}
           >
-            <LetterAvatar
-              fontSize="40px"
-              width="60px"
-              height="60px"
-              username={username}
-            />
+            <Box sx={{marginTop: '0.7rem', marginRight: '0.8rem'}}>
+              <LetterAvatar
+                fontSize="40px"
+                width="60px"
+                height="60px"
+                username={username}
+              />
+            </Box>
             <Typography
               variant="h3"
               sx={{
                 display: 'inline-flex',
                 fontWeight: 'bold',
                 padding: '13px',
-                margin: '0px 18px',
               }}
             >
               {`${studentDetails.fname} ${studentDetails.lname}`}
@@ -101,7 +101,9 @@ function StudentProfile() {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                margin: '20px 30px 20px 650px',
+                // margin: '20px 30px 20px 650px',
+                marginTop: '0.7rem',
+                marginLeft: '45rem'
               }}
             >
               {usertype === 'Student' && (
@@ -139,15 +141,14 @@ function StudentProfile() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '16px',
+                  padding: '1.2rem',
                 }}
               >
                 <Typography
                   variant="h5"
                   sx={{
                     display: 'flex',
-                    padding: '5px',
-                    margin: '15px 182px 0px 50px',
+                    margin: '1.6rem 11.4rem 0rem 3rem',
                   }}
                 >
                   Full Name
@@ -156,7 +157,7 @@ function StudentProfile() {
                   variant="h5"
                   sx={{
                     display: 'flex',
-                    padding: '5px',
+                    marginTop: '1.6rem',
                   }}
                 >
                   {`${studentDetails.fname} ${studentDetails.lname}`}
@@ -172,22 +173,21 @@ function StudentProfile() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '16px',
+                  padding: '1.2rem'
                 }}
               >
                 <Typography
                   variant="h5"
                   sx={{
                     display: 'flex',
-                    padding: '5px',
-                    margin: '15px 182px 0px 50px',
+                    margin: '0.6rem 9.9rem 0px 3rem',
                   }}
                 >
                   Roll Number
                 </Typography>
                 <Typography
                   variant="h5"
-                  sx={{ display: 'flex', padding: '5px' }}
+                  sx={{ display: 'flex', marginTop: '0.6rem'}}
                 >
                   {studentDetails.roll_num}
                 </Typography>
@@ -202,22 +202,21 @@ function StudentProfile() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '16px',
+                  padding: '1.2rem',
                 }}
               >
                 <Typography
                   variant="h5"
                   sx={{
                     display: 'inline-flex',
-                    padding: '5px',
-                    margin: '0px 214px 0px 50px',
+                    margin: '0.6rem 13.2rem 0px 3rem',
                   }}
                 >
                   Gender
                 </Typography>
                 <Typography
                   variant="h5"
-                  sx={{ display: 'inline-flex', padding: '5px' }}
+                  sx={{ display: 'inline-flex', marginTop: '0.6rem' }}
                 >
                   {studentDetails.gender}
                 </Typography>
@@ -232,22 +231,21 @@ function StudentProfile() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '16px',
+                  padding: '1.2rem',
                 }}
               >
                 <Typography
                   variant="h5"
                   sx={{
                     display: 'inline-flex',
-                    padding: '5px',
-                    margin: '0px 155px 0px 50px',
+                    margin: '0.6rem 9.7rem 0px 3rem',
                   }}
                 >
                   Date of Birth
                 </Typography>
                 <Typography
                   variant="h5"
-                  sx={{ display: 'inline-flex', padding: '5px' }}
+                  sx={{ display: 'inline-flex', marginTop: '0.6rem' }}
                 >
                   {studentDetails.dob}
                 </Typography>
@@ -262,15 +260,14 @@ function StudentProfile() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '16px',
+                  padding: '1.2rem',
                 }}
               >
                 <Typography
                   variant="h5"
                   sx={{
                     display: 'inline-flex',
-                    padding: '5px',
-                    margin: '0px 128px 15px 50px',
+                    margin: '0.6rem 8rem 15px 3rem',
                   }}
                 >
                   Medical Report
@@ -279,8 +276,8 @@ function StudentProfile() {
                   variant="h5"
                   sx={{
                     display: 'inline-flex',
-                    padding: '5px',
-                    margin: '0px 64px 0px 0px',
+                    marginTop: '0.6rem',
+                    marginRight: '3rem'
                   }}
                 >
                   <a href="#random" target="_blank" rel="noreferrer" onClick={viewMedicalRecord}>

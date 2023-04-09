@@ -12,6 +12,8 @@ import StudentProfile from './pages/StudentProfilePage';
 import PageNotFound from './pages/PageNotFound';
 import BookAppointment from './pages/BookAppointmentPage';
 import Dashboard from './pages/Dashboard';
+import ViewNotifications from './pages/ViewNotificationsPage'
+import ResolveComplaint from './pages/ResolveComplaint';
 import ProtectedRoutes from './routers/ProtectedRoutes';
 import LodgeComplaint from './pages/LodgeComplaint';
 
