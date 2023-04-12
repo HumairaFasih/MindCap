@@ -1,10 +1,10 @@
 import { React, useContext, useState } from 'react';
 import { Box } from '@mui/system';
-import { Rating, IconButton, FormGroup, FormControlLabel, Switch, Typography } from '@mui/material';
+import { Rating, IconButton, FormControlLabel, Switch} from '@mui/material';
 import RightIcon from '@mui/icons-material/KeyboardArrowRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import DeletePopup from './DeletePopup';
 
 import { MyButton } from './MyButton';
 import { AuthContext } from '../context/AuthContext';
@@ -13,7 +13,7 @@ import { instance } from '../axios';
 import ProfileIcon from './ProfileIcon';
 import './ResultCard.css';
 
-export default function ResultCard({ name, user_name, rating, qualification, accountType, accountStatus }) {
+export default function ResultCard({ name, user_name, rating, qualification, accountType, accountStatus, onDelete }) {
   const navigate = useNavigate();
   const {
     auth: {
@@ -99,7 +99,7 @@ export default function ResultCard({ name, user_name, rating, qualification, acc
               </Box>
               <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }} className='delete-account'>
               <DeleteIcon sx={{ color: '#61665e',  m: 'auto' }} />
-              <a href='' onClick={handleClick(user_name, accountType)} style={{ fontFamily: 'sans-serif', color: '#61665e', marginTop: '3px' }}>Delete Account</a>
+                <DeletePopup userName={user_name} accType={accountType} onDelete={onDelete} />
               </Box>
             </Box>
 

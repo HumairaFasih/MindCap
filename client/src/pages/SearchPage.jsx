@@ -1,7 +1,6 @@
 import { React, useState } from 'react';
 import { Box } from '@mui/material';
 
-
 import Sidebar from '../components/Sidebar';
 import SearchBar from '../components/SearchBar';
 import ResultCard from '../components/ResultCard';
@@ -19,6 +18,10 @@ export default function SearchPage() {
             qualification: '',
         },
     ])
+    const handleDeleteCard = (id) => {
+      const updatedCards = searchResults.filter((searchResults) => searchResults.username !== id);
+      setSearchResults(updatedCards);
+    };
   const handleData = (data) => {
     console.log('data: ', data);
     // set search results if data length is not 0
@@ -64,7 +67,6 @@ export default function SearchPage() {
               <div className='result-box'>
 
                 {searchResults.map((result) => (
-                  <div key = {result.username}>
                   <ResultCard
                     user_name={result.username}
                     name={result.name}
@@ -72,8 +74,9 @@ export default function SearchPage() {
                     qualification={result.qualification}
                     accountType={result.accType}
                     accountStatus={result.accStatus}
+                    key={result.username}
+                    onDelete={handleDeleteCard}
                   />
-                  </div>
                 ))}
               </div>
             ) : null}
