@@ -151,12 +151,12 @@ function SearchBar({ onData }) {
                         alignItems: 'center',
                     }}
                 >
-                    <Grid item xs={6} md={2.6} lg={2.6}>
+                    <Grid item xs={6} md={2.4} lg={2.4}>
                         <Filter label='Select Account Type' value={accountType} onChange={handleChangeAccountType} menuItems={menuItemsAccountType} />
                     </Grid>
                     <Grid item>
                         {/* 150px in rem is 9.375rem */}
-                        <MyButton width='9' onClick={handleSearch}>
+                        <MyButton width='8rem' onClick={handleSearch}>
                             Apply Filter
                         </MyButton>
                     </Grid>

@@ -71,10 +71,10 @@ function CreateCounselor() {
                 variant="outlined"
                 sx={{
                   marginTop: '30px',
-                  width: '36vw',
+                  width: '31.25rem',
                   minWidth: '',
                   boxShadow: '2px 2px 2px #00000055',
-                  borderRadius: 30,
+                  borderRadius: 10,
                   padding: '30px',
                 }}
               >

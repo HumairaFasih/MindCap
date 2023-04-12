@@ -36,7 +36,7 @@ router.post('/create-counselor', async (req, res) => {
 
 router.post('/change-status', async (req, res) => {
   const { username, accType, accStatus } = req.body;
-  console.log(username, accType, accStatus);
+  console.log('WHAT', username, accType, accStatus);
   if (accType === 'Student') {
     try {
       // find the account in the student collection and change the status
@@ -52,9 +52,11 @@ router.post('/change-status', async (req, res) => {
     }
   } else {
     try {
+      console.log('Counselor change')
       const account = await Counselor.find({ username: { $regex: username, $options: 'i' } });
       account[0].status = accStatus;
       await account[0].save();
+      // send back updated account status
       res.send('success');
     } catch (err) {
       console.log(err);

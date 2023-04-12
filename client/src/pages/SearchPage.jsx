@@ -13,10 +13,10 @@ export default function SearchPage() {
         {
             username: '',
             name: '',
-            rating: 0,
-            qualification: '',
             accountType: '',
             accountStatus: '',
+            rating: 0,
+            qualification: '',
         },
     ])
   const handleData = (data) => {
@@ -24,7 +24,7 @@ export default function SearchPage() {
     // set search results if data length is not 0
     if (data.length !== 0)
     {
-        setSearchResults(data);
+      setSearchResults(data);
     }
     else
     {
@@ -59,9 +59,12 @@ export default function SearchPage() {
             </div>
             {/* render following if searchResults is not empty */}
 
+            {/* re-render the the entire component on each search */}
             { searchResults[0].username !== '' ? (
               <div className='result-box'>
+
                 {searchResults.map((result) => (
+                  <div key = {result.username}>
                   <ResultCard
                     user_name={result.username}
                     name={result.name}
@@ -70,6 +73,7 @@ export default function SearchPage() {
                     accountType={result.accType}
                     accountStatus={result.accStatus}
                   />
+                  </div>
                 ))}
               </div>
             ) : null}

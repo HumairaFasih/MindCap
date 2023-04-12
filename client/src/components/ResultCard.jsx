@@ -52,6 +52,7 @@ export default function ResultCard({ name, user_name, rating, qualification, acc
         border: '2px solid rgba(147, 183, 125, 0.7)',
         backgroundColor: 'rgba(147, 183, 125, 0.32)',
         mb: '20px',
+        flexDirection: 'row',
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -96,7 +97,7 @@ export default function ResultCard({ name, user_name, rating, qualification, acc
                 />
 
               </Box>
-              <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }} className='delete-account'>
               <DeleteIcon sx={{ color: '#61665e',  m: 'auto' }} />
               <a href='' onClick={handleClick(user_name, accountType)} style={{ fontFamily: 'sans-serif', color: '#61665e', marginTop: '3px' }}>Delete Account</a>
               </Box>
