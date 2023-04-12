@@ -36,7 +36,7 @@ export default function AlertDialog({userName, accType, onDelete}) {
         <Typography className="typography" variant="body1" onClick={handleClickOpen}>
             Delete Account
         </Typography>
-      {/* <a href='' onClick={handleClickOpen} style={{ fontFamily: 'sans-serif', color: '#61665e', marginTop: '3px' }}>Delete Account</a> */}
+     
       <Dialog
         open={open}
         onClose={handleClose}
@@ -52,9 +52,9 @@ export default function AlertDialog({userName, accType, onDelete}) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleClick(userName, accType)} autoFocus>
-            Agree
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
