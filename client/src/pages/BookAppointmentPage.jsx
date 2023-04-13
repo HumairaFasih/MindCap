@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -39,7 +39,7 @@ function BookAppointment() {
   const [chooseTime, setTime] = useState(null);
   const [meetingMode, setMeetingMode] = useState('');
   const [shareStatus, setShareStatus] = useState('false');
-
+  const [screenSize, setScreenSize] = useState('');
   let buttons = [];
 
   useEffect(() => {
@@ -184,6 +184,69 @@ function BookAppointment() {
     ];
   }
 
+
+  const handleResize = useCallback(() => {
+    console.log(window.outerWidth)	
+    if (window.outerWidth <= 280) {	
+      setScreenSize('small');	
+    } else if (window.outerWidth <= 500) {	
+      setScreenSize('medium');	
+    } else if (window.outerWidth<= 1000){	
+      setScreenSize('large');	
+    } else{
+      setScreenSize('xlarge');
+    }
+  }, []);
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
+
+  function responsiveColumn(){
+    console.log(screenSize)
+    if (screenSize==='small') {
+      return 'column'
+    }
+    if (screenSize==='medium') {
+      return 'column'
+    }
+    if (screenSize==='large') {
+      return 'column'
+    }
+    return 'row'
+  }
+
+  function timeBox(){
+    console.log(screenSize)
+    if (screenSize==='small') {
+      return '90vw'
+    }
+    if (screenSize==='medium') {
+      return '90vw'
+    }
+    if (screenSize==='large') {
+      return '530px'
+    }
+    return '530px'
+  }
+
+
+  function timeBoxPadding(){
+    console.log(screenSize)
+    if (screenSize==='small') {
+      return '0px'
+    }
+    if (screenSize==='medium') {
+      return '0px'
+    }
+    if (screenSize==='large') {
+      return '0px'
+    }
+    return '170px'
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
@@ -193,7 +256,7 @@ function BookAppointment() {
           sx={{
             flexGrow: 1,
             p: 3,
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            width: { xs: `calc(100% - ${drawerWidth}px)` },
           }}
         >
           <Box sx={{ padding: '12px' }}>
@@ -207,7 +270,8 @@ function BookAppointment() {
               variant="middle"
               sx={{ background: '#000', mt: '15px', mb: '15px' }}
             />
-            <Box display="flex" flexDirection="row">
+            
+            <Box display="flex" flexDirection={responsiveColumn()}>
               <Box sx={{ margin: '0px 0px 0px 10px' }}>
                 <Box sx={{ margin: '10px 80px 10px 0px' }}>
                   <FormControl sx={{ m: 1, minWidth: 300 }}>
@@ -304,7 +368,8 @@ function BookAppointment() {
                   </Typography>
                 </Box>
               </Box>
-              <Box sx={{ margin: '0px 40px 0px 170px' }}>
+
+              <Box sx={{ margin: '0px 40px 0px 0px', ml: timeBoxPadding() }}>
                 <Typography
                   variant="h5"
                   sx={{ fontWeight: 'bold', margin: '20px 0px 0px 10px' }}
@@ -318,7 +383,7 @@ function BookAppointment() {
                     margin: '30px 80px 10px 10px',
                     borderRadius: '12px',
                     backgroundColor: 'rgba(147, 183, 125,0.5)',
-                    width: '530px',
+                    width: timeBox(),
                     height: '500px',
                     pt: '15px',
                   }}
@@ -334,7 +399,7 @@ function BookAppointment() {
                           button.value === chosenval ? '#C2D7BF' : '#ffffff',
                         border: '2px solid rgb(147, 183, 125)',
                         boxShadow: '0px 2px 7px grey',
-                        width: '470px',
+                        width: '90%',
                         height: '60px',
                         alignSelf: 'center',
                         margin: '15px 0px 0px 0px',
@@ -358,10 +423,11 @@ function BookAppointment() {
 
                 <MyButton
                   onClick={submitHandler}
-                  width="528px"
+                  
                   paddinghorizontal="10px"
                   paddingvertical="15px"
-                  sx={{ color: '#ffffff', margin: '18px 40px 0px 10px' }}
+              
+                  sx={{ color: '#ffffff', margin: '18px 40px 0px 10px', width: timeBox()}}
                 >
                   Book Now
                 </MyButton>
