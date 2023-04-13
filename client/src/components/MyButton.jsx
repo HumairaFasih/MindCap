@@ -5,9 +5,9 @@ import { styled } from '@mui/material/styles';
 export const MyButton = styled(Button)(
   ({
     width,
-    paddingHorizontal,
-    paddingVertical,
-    backgroundColor,
+    paddinghorizontal,
+    paddingvertical,
+    backgroundcolor,
     bradius,
   }) => ({
     boxShadow: 'none',
@@ -15,11 +15,11 @@ export const MyButton = styled(Button)(
     color: 'white',
     fontSize: 18,
     borderRadius: bradius ? bradius : 8,
-    paddingHorizontal: paddingHorizontal || '6px',
-    paddingVertical: paddingVertical || '12px',
+    px: paddinghorizontal || '6px',
+    py: paddingvertical || '12px',
     width: width || 400,
     lineHeight: 1.5,
-    backgroundColor: backgroundColor || '#93B77D',
+    backgroundColor: backgroundcolor || '#93B77D',
     fontFamily: [
       '-apple-system',
       'BlinkMacSystemFont',
@@ -30,10 +30,10 @@ export const MyButton = styled(Button)(
       'sans-serif',
     ].join(','),
     '&:hover': {
-      backgroundColor: backgroundColor || '#93B77D',
+      backgroundColor: backgroundcolor || '#93B77D',
     },
     '&:active': {
-      backgroundColor: backgroundColor || '#93B77D',
+      backgroundColor: backgroundcolor || '#93B77D',
     },
   })
 );
