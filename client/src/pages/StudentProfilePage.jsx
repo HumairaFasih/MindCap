@@ -8,6 +8,7 @@ import { MyButton } from '../components/MyButton';
 import PageTitle from '../components/PageTitle';
 import { AuthContext } from '../context/AuthContext';
 import { instance } from '../axios';
+import Loading from '../components/LoadingScreen';
 
 const drawerWidth = 270;
 
@@ -25,32 +26,36 @@ function StudentProfile() {
     .join('/')}/edit-profile`;
 
   const [studentDetails, setStudentDetails] = useState('');
+  const [loaded, setLoaded] = useState(false);
 
   const viewMedicalRecord = async (e) => {
     e.preventDefault();
     const result = await axios({
       method: 'get',
-      url: `/user/medical-record?name=${(username)}`,
+      url: `/user/medical-record?name=${username}`,
       withCredentials: true,
-      responseType: 'blob'
+      responseType: 'blob',
     });
-  const blob = new Blob([result.data], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  window.open(url, '_blank').focus();
-  }
+    const blob = new Blob([result.data], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank').focus();
+  };
 
   useEffect(() => {
     instance
       .get(`user/student/${username}`)
       .then((result) => {
-        console.log(result);
-        console.log('hello i am in getdata of student profile page');
         setStudentDetails(result.data);
+        setLoaded(true);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [username]);
+
+  if (!loaded) {
+    return <Loading />;
+  }
 
   return (
     <Box>
@@ -79,7 +84,7 @@ function StudentProfile() {
               padding: '2rem',
             }}
           >
-            <Box sx={{marginTop: '0.7rem', marginRight: '0.8rem'}}>
+            <Box sx={{ marginTop: '0.7rem', marginRight: '0.8rem' }}>
               <LetterAvatar
                 fontSize="40px"
                 width="60px"
@@ -103,7 +108,7 @@ function StudentProfile() {
                 flexDirection: 'column',
                 // margin: '20px 30px 20px 650px',
                 marginTop: '0.7rem',
-                marginLeft: '45rem'
+                marginLeft: '45rem',
               }}
             >
               {usertype === 'Student' && (
@@ -173,7 +178,7 @@ function StudentProfile() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '1.2rem'
+                  padding: '1.2rem',
                 }}
               >
                 <Typography
@@ -187,7 +192,7 @@ function StudentProfile() {
                 </Typography>
                 <Typography
                   variant="h5"
-                  sx={{ display: 'flex', marginTop: '0.6rem'}}
+                  sx={{ display: 'flex', marginTop: '0.6rem' }}
                 >
                   {studentDetails.roll_num}
                 </Typography>
@@ -277,10 +282,15 @@ function StudentProfile() {
                   sx={{
                     display: 'inline-flex',
                     marginTop: '0.6rem',
-                    marginRight: '3rem'
+                    marginRight: '3rem',
                   }}
                 >
-                  <a href="#random" target="_blank" rel="noreferrer" onClick={viewMedicalRecord}>
+                  <a
+                    href="#random"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={viewMedicalRecord}
+                  >
                     {studentDetails.med_filename}
                   </a>
                 </Typography>
