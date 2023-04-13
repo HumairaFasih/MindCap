@@ -37,6 +37,10 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     enum: ['Male', 'Female', 'Prefer not to say'],
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // search for username in Student collection, if found compare passwords

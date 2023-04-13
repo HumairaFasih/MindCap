@@ -1,0 +1,18 @@
+.profile-icon-card{
+    transform: scale(0.7);
+}
+
+.account-name{
+    margin-bottom: 0;
+    font-family: sans-serif;
+}
+p {
+    margin: 0px;
+    margin-right: 0.4rem;
+    padding: 0px;
+    font-family: sans-serif;
+  }
+
+.account-username, .account-rating{
+    margin-left: 0.4rem;
+}

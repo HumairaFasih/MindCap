@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const Counselor = require('../models/counselorModel');
+const Student = require('../models/studentModel');
 
 const router = express.Router();
 
@@ -32,5 +33,58 @@ router.post('/create-counselor', async (req, res) => {
   }
   return null;
 });
+
+router.post('/change-status', async (req, res) => {
+  const { username, accType, accStatus } = req.body;
+  console.log('WHAT', username, accType, accStatus);
+  if (accType === 'Student') {
+    try {
+      // find the account in the student collection and change the status
+      console.log('Student change')
+      const account = await Student.find({ username: { $regex: username, $options: 'i' } });
+      console.log('Student:', account)
+      account[0].status = accStatus;
+      console.log(account[0].status)
+      await account[0].save();
+      res.send('success');
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    try {
+      console.log('Counselor change')
+      const account = await Counselor.find({ username: { $regex: username, $options: 'i' } });
+      account[0].status = accStatus;
+      await account[0].save();
+      // send back updated account status
+      res.send('success');
+    } catch (err) {
+      console.log(err);
+    }
+  }
+});
+
+router.post('/delete-account', async (req, res) => {
+  const { username, accType } = req.body;
+  console.log(username, accType);
+  if (accType === 'Student') {
+    try {
+      console.log('deleted')
+      await Student.deleteOne({ username: { $regex: username, $options: 'i' } });
+      res.send('success');
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    try {
+      console.log('deleted')
+      await Counselor.deleteOne({ username: { $regex: username, $options: 'i' } });
+      res.send('success');
+    } catch (err) {
+      console.log(err);
+    }
+  }
+});
+
 
 module.exports = router;
