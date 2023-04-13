@@ -1,12 +1,17 @@
-import { createContext, useCallback, useMemo, useState } from 'react';
-// import axios from 'axios';
+import {
+  createContext,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react';
 import { instance } from '../axios';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
-    isAuthenticated: false,
+    isAuthenticated: null,
     authDetails: null,
   });
 
@@ -18,21 +23,26 @@ export const AuthProvider = ({ children }) => {
     [auth, setAuth]
   );
 
-  const getAuthDetails = useCallback(async () => {
-    instance
-      .get('/current-user')
-      .then((result) => {
-        setAuth({ isAuthenticated: true, authDetails: result.data });
-        console.log('Hello logging result: ', result.data);
-      })
-      .catch((error) => {
-        setAuth((authDetails) => ({ ...authDetails, isAuthenticated: false }));
-      });
-  }, []);
+  useEffect(() => {
 
-  useMemo(() => {
-    getAuthDetails();
-  }, [getAuthDetails]);
+    const authVal = localStorage.getItem('isAuthenticated');
+    {
+      authVal
+        ? instance
+            .get('/current-user')
+            .then((result) => {
+              setAuth({ isAuthenticated: true, authDetails: result.data });
+            })
+            .catch((error) => {
+              setAuth((prevAuth) => ({
+                ...prevAuth,
+                isAuthenticated: false,
+              }));
+              console.log(error.message);
+            })
+        : console.log('User is not logged in');
+    }
+  }, []);
 
   return (
     <AuthContext.Provider value={providerValue}>
