@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { Box, Typography, Divider, Icon } from '@mui/material';
 import EditProfileIcon from '@mui/icons-material/ManageAccounts';
 import LetterAvatar from '../components/LetterAvatar';
@@ -9,6 +10,7 @@ import PageTitle from '../components/PageTitle';
 import { AuthContext } from '../context/AuthContext';
 import { instance } from '../axios';
 import Loading from '../components/LoadingScreen';
+
 
 const drawerWidth = 270;
 
@@ -32,10 +34,11 @@ function StudentProfile() {
     e.preventDefault();
     const result = await axios({
       method: 'get',
-      url: `/user/medical-record?name=${username}`,
+      url: `http://localhost:3003/api/user/medical-record?name=${username}`,
       withCredentials: true,
       responseType: 'blob',
     });
+    console.log(result);
     const blob = new Blob([result.data], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank').focus();
