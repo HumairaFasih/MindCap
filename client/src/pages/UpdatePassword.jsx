@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
+  Alert,
   Typography,
   Divider,
   IconButton,
@@ -8,14 +9,13 @@ import {
   Card,
   InputLabel,
   FormControl,
-  TextField,
   OutlinedInput,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Sidebar from '../components/Sidebar';
-import { LongButton } from '../components/LongButton';
 import { instance } from '../axios';
+import { MyButton } from '../components/MyButton';
 
 const drawerWidth = 270;
 
@@ -24,25 +24,7 @@ function UpdatePassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState(false);
-  const [errorText, setErrorText] = useState('');
   const [mismatch, setMismatch] = useState(false);
-
-  const handleShowPassword = () => setShowPassword((show) => !show);
-  const handleConfirmShowPassword = () => {
-    setShowConfirmPassword((show) => !show);
-  };
-
-  // useEffect(() => {
-  //   if (error) {
-  //     setError(false);
-  //     setErrorText('');
-  //   }
-  // }, [error]);
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
 
   const passwordReqStyle = {
     width: 100,
@@ -54,8 +36,9 @@ function UpdatePassword() {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (password === confirmPassword) {
-      e.preventDefault();
       instance
         .patch(
           '/authenticate/update-password',
@@ -72,18 +55,48 @@ function UpdatePassword() {
     }
   };
 
+  const [screenSize, setScreenSize] = useState('');
+  const handleResize = useCallback(() => {
+    if (window.innerWidth <= 280) {
+      setScreenSize('small');
+    } else if (window.innerWidth <= 500) {
+      setScreenSize('medium');
+    } else if (window.innerWidth <= 1000) {
+      setScreenSize('large');
+    } else {
+      setScreenSize('xlarge');
+    }
+  }, []);
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
+
+  function responsiveText() {
+    if (screenSize === 'small') {
+      return '90vw';
+    }
+    if (screenSize === 'medium') {
+      return '90vw';
+    }
+    if (screenSize === 'large') {
+      return '500px';
+    }
+    return '500px';
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box
-          component="form"
           sx={{
             flexGrow: 1,
             p: 3,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
-          onSubmit={handleSubmit}
         >
           <Box sx={{ marginTop: '30px' }}>
             <Typography
@@ -164,10 +177,20 @@ function UpdatePassword() {
                     mr: 10,
                     ml: 10,
                   }}
+                  component="form"
+                  onSubmit={handleSubmit}
                 >
+                  {mismatch && (
+                    <Alert
+                      severity="error"
+                      sx={{ width: responsiveText(), mb: 2 }}
+                    >
+                      Passwords do not match. Please try again.
+                    </Alert>
+                  )}
                   <Box>
                     <FormControl
-                      sx={{ mt: 2, mb: 2, width: '400px' }}
+                      sx={{ mt: 2, mb: 2, width: responsiveText() }}
                       variant="outlined"
                     >
                       <InputLabel htmlFor="new-password">
@@ -176,7 +199,6 @@ function UpdatePassword() {
                       <OutlinedInput
                         id="new-password"
                         variant="outlined"
-                        error={error}
                         type={showPassword ? 'text' : 'password'}
                         label="New Password"
                         value={password}
@@ -187,8 +209,8 @@ function UpdatePassword() {
                           <InputAdornment position="end">
                             <IconButton
                               aria-label="toggle password visibility"
-                              onClick={handleShowPassword}
-                              onMouseDown={handleMouseDownPassword}
+                              onClick={() => setShowPassword((show) => !show)}
+                              onMouseDown={(e) => e.preventDefault()}
                               edge="end"
                             >
                               {showPassword ? (
@@ -204,7 +226,7 @@ function UpdatePassword() {
                   </Box>
                   <Box>
                     <FormControl
-                      sx={{ mb: 2, width: '400px' }}
+                      sx={{ mb: 2, width: responsiveText() }}
                       variant="outlined"
                     >
                       <InputLabel htmlFor="confirm-password">
@@ -213,8 +235,6 @@ function UpdatePassword() {
                       <OutlinedInput
                         id="confirm-password"
                         variant="outlined"
-                        error={error}
-                        // helperText={errorText}
                         type={showConfirmPassword ? 'text' : 'password'}
                         label="Confirm Password"
                         value={confirmPassword}
@@ -225,8 +245,12 @@ function UpdatePassword() {
                           <InputAdornment position="end">
                             <IconButton
                               aria-label="toggle confirm password visibility"
-                              onClick={handleConfirmShowPassword}
-                              onMouseDown={handleMouseDownPassword}
+                              onClick={() =>
+                                setShowConfirmPassword(
+                                  (confirmShow) => !confirmShow
+                                )
+                              }
+                              onMouseDown={(e) => e.preventDefault()}
                               edge="end"
                             >
                               {showConfirmPassword ? (
@@ -241,21 +265,16 @@ function UpdatePassword() {
                     </FormControl>
                   </Box>
 
-                  <LongButton
+                  <MyButton
                     type="submit"
                     variant="contained"
+                    width={responsiveText()}
+                    fullWidth
+                    bradius="3"
                     sx={{ mb: 1 }}
-                    // onClick={(e) => {
-                    //   if (password !== confirmPassword) {
-                    //     e.preventDefault();
-                    //     setError(true);
-                    //     // setErrorText('Passwords do not match');
-                    //   }
-                    // }}
                   >
                     Update Password
-                  </LongButton>
-                  {mismatch && <Typography>Passwords do not match!</Typography>}
+                  </MyButton>
                 </Box>
               </Card>
             </Box>
