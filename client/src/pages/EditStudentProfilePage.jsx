@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
   Box,
   Card,
+  Alert,
   TextField,
   Typography,
   Divider,
@@ -27,19 +27,23 @@ const drawerWidth = 270;
 
 function EditStudentProfile() {
   const [dob, setdob] = useState(null);
-  const { username } = useContext(AuthContext);
+  const {
+    auth: {
+      authDetails: { username },
+    },
+  } = useContext(AuthContext);
   const [fileData, setFileData] = useState('');
+  const [error, setError] = useState(false);
   const [studentDetails, setStudentDetails] = useState({
     fname: '',
     lname: '',
+    email: '',
     roll_num: '',
     gender: '',
     dob: null,
-    email: '',
-    // med_filename: '',
+    med_filename: '',
   });
 
-  const navigate = useNavigate();
   const handleFileChange = (e) => {
     if (e.target.files) {
       setFileData(e.target.files[0]);
@@ -63,37 +67,37 @@ function EditStudentProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (fileData != null) {
+
+    if (!studentDetails.fname || !studentDetails.lname) {
+      setError(true);
+    } else {
       const formData = new FormData();
-      formData.append('pdf', fileData);
+      {
+        fileData && formData.append('pdf', fileData);
+      }
       formData.append('newfirstname', studentDetails.fname);
       formData.append('newlastname', studentDetails.lname);
       formData.append('newdob', dob);
       formData.append('newgender', studentDetails.gender);
-      try {
-        const result = await axios.post(
-          `/user/student/edit-profile`,
-          formData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true,
-          }
-        );
-        // Redirect to other screen when it is made
-        if (result.status === 200) {
-          console.log('Submit Successful, ...Redirect');
-          navigate(`user/student/${username}`);
-        } else {
-          console.log('Submit Failed!');
-        }
-      } catch (err) {
-        console.log(err);
-      }
+
+      axios
+        .post(`/user/student/edit-profile`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        })
+        .then((result) => setStudentDetails(result.data))
+        .catch((err) => console.log(err.message));
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (
+      (name === 'fname' && value !== '' && studentDetails.lname !== '') ||
+      (name === 'lname' && value !== '' && studentDetails.fname !== '')
+    ) {
+      setError(false);
+    }
     setStudentDetails({ ...studentDetails, [name]: value });
   };
 
@@ -116,7 +120,6 @@ function EditStudentProfile() {
             sx={{ background: '#000', marginVertical: '15px' }}
           />
         </Box>
-
         <Box
           sx={{
             display: 'flex',
@@ -142,6 +145,8 @@ function EditStudentProfile() {
               variant="outlined"
               onChange={handleChange}
               sx={{ width: 400, m: 3 }}
+              error={error}
+              helperText={error ? 'Please fill in this field' : ''}
             />
 
             <DatePicker
@@ -188,7 +193,7 @@ function EditStudentProfile() {
               >
                 Drag & Drop files to Upload or
               </Typography>
-              <MyButton variant="contained" component="label">
+              <MyButton variant="contained" component="label" width="100px">
                 Browse
                 <input
                   type="file"
@@ -231,6 +236,8 @@ function EditStudentProfile() {
               onChange={handleChange}
               variant="outlined"
               sx={{ width: 400, m: 3 }}
+              error={error}
+              helperText={error ? 'Please fill in this field' : ''}
             />
             <TextField
               disabled

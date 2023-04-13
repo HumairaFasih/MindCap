@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
@@ -32,6 +31,7 @@ function EditCounselorProfile() {
     fname: '',
     lname: '',
     username: '',
+    email: '',
     qualification: '',
     gender: '',
     experience: '',
@@ -39,6 +39,8 @@ function EditCounselorProfile() {
     day: '',
     time: '',
   });
+  const [expError, setExpError] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     instance
@@ -47,6 +49,9 @@ function EditCounselorProfile() {
         if (result.data.time) {
           const newtime = result.data.time.slice(0, -2);
           const newmeridian = result.data.time.slice(-2);
+          // const newDate = `${newValue.$d.getDate()}/${
+          //   newValue.$d.getMonth() + 1
+          // }/${newValue.$d.getUTCFullYear()}`;
           setCounselorDetails({ ...result.data, time: newtime });
           setMeridian(newmeridian);
         } else {
@@ -57,32 +62,6 @@ function EditCounselorProfile() {
         console.log(err.message);
       });
   }, [username]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    instance
-      .post(
-        '/user/counselor/edit-profile',
-        JSON.stringify({
-          newfirstname: counselorDetails.fname,
-          newlastname: counselorDetails.lname,
-          newdob: dob,
-          newexperience: counselorDetails.experience,
-          newqualification: counselorDetails.qualification,
-          newbio: counselorDetails.bio,
-          newgender: counselorDetails.gender,
-          newdaytype: counselorDetails.day,
-          newtime: counselorDetails.time,
-          newmeridian: meridian,
-        })
-      )
-      .then(() => {
-        console.log('changes to profile saved!');
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
 
   const handleChange = (e) => {
     console.log(e.target.name, e.target.value);
@@ -95,8 +74,58 @@ function EditCounselorProfile() {
       ...prev,
       [name]: value,
     }));
+
     if (name === 'meridian') {
       setMeridian(value);
+    }
+
+    if (name === 'experience') {
+      {
+        value < 0 || value > 50 ? setExpError(true) : setExpError(false);
+      }
+    }
+
+    if (
+      (name === 'fname' && value !== '' && counselorDetails.lname !== '') ||
+      (name === 'lname' && value !== '' && counselorDetails.fname !== '')
+    ) {
+      setError(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!counselorDetails.fname || !counselorDetails.lname) {
+      setError(true);
+    } else {
+      if (!expError) {
+        instance
+          .post(
+            '/user/counselor/edit-profile',
+            JSON.stringify({
+              newfirstname: counselorDetails.fname,
+              newlastname: counselorDetails.lname,
+              newdob: dob,
+              newexperience: counselorDetails.experience,
+              newqualification: counselorDetails.qualification
+                ? counselorDetails.qualification
+                : 0,
+              newbio: counselorDetails.bio,
+              newgender: counselorDetails.gender,
+              newdaytype: counselorDetails.day,
+              newtime: counselorDetails.time,
+              newmeridian: meridian,
+            })
+          )
+          .then(() => {
+            console.log('changes to profile saved!');
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      } else {
+        console.log('Add appropriate number of experience years');
+      }
     }
   };
 
@@ -142,6 +171,8 @@ function EditCounselorProfile() {
                 variant="outlined"
                 onChange={handleChange}
                 sx={{ width: 400, m: 3 }}
+                error={error}
+                helperText={error ? 'Please fill in this field' : ''}
               />
 
               <TextField
@@ -152,6 +183,8 @@ function EditCounselorProfile() {
                 onChange={handleChange}
                 variant="outlined"
                 sx={{ width: 400, m: 3 }}
+                error={error}
+                helperText={error ? 'Please fill in this field' : ''}
               />
               <TextField
                 disabled
@@ -177,8 +210,10 @@ function EditCounselorProfile() {
 
               <DatePicker
                 label="Date of Birth"
-                value={dob}
-                onChange={(newValue) => setdob(newValue)}
+                value={dob ? dob : null}
+                onChange={(newValue) => {
+                  setdob(newValue);
+                }}
                 sx={{ width: 400, m: 3 }}
               />
 
@@ -186,11 +221,21 @@ function EditCounselorProfile() {
                 id="exp-yrs"
                 label="Years of Experience"
                 name="experience"
-                value={counselorDetails.experience}
-                onChange={handleChange}
+                value={
+                  counselorDetails.experience ? counselorDetails.experience : 0
+                }
                 type="number"
-                min="1"
-                step="1"
+                InputProps={{ min: 0, max: 50 }}
+                error={expError}
+                helperText="Please enter a value between 0 and 50"
+                FormHelperTextProps={{
+                  style: {
+                    lineHeight: 0.7,
+                    paddingTop: 5,
+                    marginRight: 0,
+                  },
+                }}
+                onChange={handleChange}
                 sx={{ width: 400, m: 3 }}
               />
 
@@ -198,7 +243,11 @@ function EditCounselorProfile() {
                 id="qualification-field"
                 label="Qualification"
                 name="qualification"
-                value={counselorDetails.qualification}
+                value={
+                  counselorDetails.qualification
+                    ? counselorDetails.qualification
+                    : ''
+                }
                 onChange={handleChange}
                 sx={{ width: 400, m: 3 }}
               />
@@ -207,7 +256,7 @@ function EditCounselorProfile() {
                 id="bio-field"
                 label="Write Something About Yourself"
                 name="bio"
-                value={counselorDetails.bio}
+                value={counselorDetails.bio ? counselorDetails.bio : ''}
                 onChange={handleChange}
                 multiline
                 rows={6}
@@ -234,7 +283,7 @@ function EditCounselorProfile() {
                 <RadioGroup
                   aria-labelledby="gender-selection"
                   name="gender"
-                  value={counselorDetails.gender}
+                  value={counselorDetails.gender ? counselorDetails.gender : ''}
                   onChange={handleChange}
                   sx={{ m: 1 }}
                 >
@@ -272,7 +321,7 @@ function EditCounselorProfile() {
                 <RadioGroup
                   aria-labelledby="available-days-selection"
                   name="day"
-                  value={counselorDetails.day}
+                  value={counselorDetails.day ? counselorDetails.day : ''}
                   onChange={handleChange}
                   sx={{ m: 1 }}
                 >
@@ -303,7 +352,7 @@ function EditCounselorProfile() {
                 <RadioGroup
                   aria-labelledby="available-hours-selection"
                   name="time"
-                  value={counselorDetails.time}
+                  value={counselorDetails.time ? counselorDetails.time : ''}
                   onChange={handleChange}
                   sx={{ m: 1 }}
                 >
@@ -345,7 +394,7 @@ function EditCounselorProfile() {
                 <RadioGroup
                   aria-labelledby="available-meridian-selection"
                   name="meridian"
-                  value={meridian}
+                  value={meridian ? meridian : ''}
                   onChange={handleChange}
                   sx={{ m: 1 }}
                 >

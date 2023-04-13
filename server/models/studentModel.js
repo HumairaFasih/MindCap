@@ -27,11 +27,11 @@ const StudentSchema = new mongoose.Schema({
   },
   last_name: {
     type: String,
-    required: true,
     trim: true,
+    required: true,
   },
   date_of_birth: {
-    type: Date, 
+    type: Date,
   },
   gender: {
     type: String,

@@ -21,7 +21,7 @@ const getRating = (reviews) => {
 };
 
 // view counselor profile
-router.get('/counselor/:username', async (req, res) => {
+router.get('/counselor/:username', async (req, res, next) => {
   const { username } = req.params;
   console.log(username);
 
@@ -38,23 +38,27 @@ router.get('/counselor/:username', async (req, res) => {
       counselor_username: username,
     });
 
+    console.log(counselor.qualification);
+
     const returnObj = {
       fname: counselor.first_name,
       lname: counselor.last_name,
-      qualification: counselor.qualification,
       username: counselor.username,
-      gender: counselor.gender,
-      experience: counselor.experience,
-      bio: counselor.bio,
-      day: availability.day_type,
-      time: availability.time,
-      rating: getRating(reviews),
-      revs: [...reviews],
+      email: counselor.email,
+      qualification: counselor.qualification ? counselor.qualification : '',
+      gender: counselor.gender ? counselor.gender : '',
+      experience: counselor.experience ? counselor.experience : '',
+      bio: counselor.bio ? counselor.bio : '',
+      day: availability.day_type ? availability.day_type : '',
+      time: availability.time ? availability.time : '',
+      rating: reviews ? getRating(reviews) : null,
+      revs: reviews ? [...reviews] : [],
     };
     // console.log(returnObj);
     res.send(returnObj);
   } catch (error) {
     res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 
@@ -73,10 +77,12 @@ router.get('/student/:username', async (req, res) => {
       fname: student.first_name,
       lname: student.last_name,
       roll_num: student.username,
-      gender: student.gender,
-      dob: student.date_of_birth.toLocaleDateString('en-US'),
       email: student.email,
-      med_filename: medicalFile.filename,
+      gender: student.gender ? student.gender : '',
+      dob: student.date_of_birth
+        ? student.date_of_birth.toLocaleDateString('en-US')
+        : '',
+      med_filename: medicalFile.filename ? medicalFile.filename : '',
     };
     console.log(returnObj);
     res.send(returnObj);
@@ -92,6 +98,7 @@ router.post('/counselor/edit-profile', async (req, res) => {
 
   // get id and usertype from the decoded token
   const { id, username } = jwtDecoded;
+  console.log(username);
 
   try {
     const {
@@ -106,18 +113,32 @@ router.post('/counselor/edit-profile', async (req, res) => {
       newtime,
       newmeridian,
     } = req.body;
+
+    console.log(
+      newfirstname,
+      newlastname,
+      newdob,
+      newexperience,
+      newqualification,
+      newbio,
+      newgender,
+      newdaytype,
+      newtime,
+      newmeridian
+    );
     await Counselor.update(
       { _id: id },
       {
         first_name: newfirstname,
         last_name: newlastname,
-        date_of_birth: newdob,
-        gender: newgender,
-        bio: newbio,
-        qualification: newqualification,
-        experience: newexperience,
+        date_of_birth: newdob ? newdob : '',
+        gender: newgender ? newgender : '',
+        bio: newbio ? newbio : '',
+        qualification: newqualification ? newqualification : '',
+        experience: newexperience ? newexperience : '',
       }
     );
+
     // update counselor availibility
     const newslot = newtime + newmeridian;
     await Availability.update(
@@ -133,59 +154,68 @@ router.post('/counselor/edit-profile', async (req, res) => {
   }
 });
 
-router.post('/student/edit-profile', upload.single('pdf'), async (req, res) => {
-  const token = req.cookies.jwt;
-  const jwtDecoded = jwtDecode(token);
-  const { id, username } = jwtDecoded;
+router.post(
+  '/student/edit-profile',
+  upload.single('pdf'),
+  async (req, res, next) => {
+    const token = req.cookies.jwt;
+    const jwtDecoded = jwtDecode(token);
+    const { id, username } = jwtDecoded;
+    console.log(id, username);
 
-  try {
-    const { newfirstname, newlastname, newdob, newgender } = req.body;
-    const dateFinal = new Date(new Date(newdob).getTime() + 300 * 60000);
-    await Student.update(
-      { _id: id },
-      {
-        first_name: newfirstname,
-        last_name: newlastname,
-        date_of_birth: dateFinal,
-        gender: newgender,
-      }
-    );
-    if (req.file != null) {
-      const {
-        originalname: filename,
-        buffer: data,
-        mimetype: contentType,
-      } = req.file;
+    try {
+      const { newfirstname, newlastname, newdob, newgender } = req.body;
+      console.log(newfirstname, newlastname, newdob, newgender);
 
-      await MedicalRecord.findOneAndUpdate(
-        { username },
+      const dateFinal =
+        newdob && new Date(new Date(newdob).getTime() + 300 * 60000);
+      await Student.update(
+        { _id: id },
         {
-          username,
-          filename,
-          data,
-          contentType,
-        },
-        {
-          new: true,
-          upsert: true,
+          first_name: newfirstname,
+          last_name: newlastname,
+          date_of_birth: dateFinal ? dateFinal : null,
+          gender: newgender ? newgender : '',
         }
       );
-    }
+      if (req.file) {
+        const {
+          originalname: filename,
+          buffer: data,
+          mimetype: contentType,
+        } = req.file;
 
-    // sets status to 200
-    res.send('Edited profile successfully');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+        await MedicalRecord.findOneAndUpdate(
+          { username },
+          {
+            username,
+            filename,
+            data,
+            contentType,
+          },
+          {
+            new: true,
+            upsert: true,
+          }
+        );
+      }
+
+      // sets status to 200
+      res.send('Edited profile successfully');
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+      next(error);
+    }
   }
-});
+);
 
 router.get('/medical-record', async (req, res) => {
   const username = req.query.name;
-  const resul = await MedicalRecord.getDetailsNonLean({
+  const result = await MedicalRecord.getDetailsNonLean({
     username,
   });
 
-  res.send(resul.data);
+  res.send(result.data);
 });
 
 module.exports = router;

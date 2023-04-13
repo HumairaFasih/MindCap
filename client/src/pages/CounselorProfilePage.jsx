@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate, useLocation , useParams } from 'react-router-dom';
-import { IconButton, Box, Rating, TextField } from '@mui/material';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IconButton, Alert, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
 import WestIcon from '@mui/icons-material/West';
-
 import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
 import ProfileIcon from '../components/ProfileIcon';
@@ -11,8 +10,8 @@ import Sidebar from '../components/Sidebar';
 import { MyButton } from '../components/MyButton';
 import ReviewList from '../components/ReviewList';
 import { AuthContext } from '../context/AuthContext';
+import Loading from '../components/LoadingScreen';
 import { instance } from '../axios';
-
 import './profile.css';
 
 const drawerWidth = 270;
@@ -20,22 +19,20 @@ const drawerWidth = 270;
 function CounselorProfile() {
   const {
     auth: {
-      authDetails: { usertype, username },
+      authDetails: { usertype },
     },
   } = useContext(AuthContext);
-  const { user_name }  = useParams();
+  const { username } = useParams();
+  const [loaded, setLoaded] = useState(false);
+  const [rateError, setRateError] = useState(false);
+  const [reviewError, setReviewError] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const editProfileRoute = `${location.pathname
-    .split('/')
-    .slice(0, -1)
-    .join('/')}/edit-profile`;
 
   const conditionalNavigate = () => {
     if (usertype === 'Student') {
       navigate('/book-appointment');
     } else if (usertype === 'Counselor') {
-      navigate(editProfileRoute);
+      navigate('/user/counselor/edit-profile', { replace: true });
     }
   };
   const handleDeactive = (userName, accType, accountStatus) => {
@@ -46,27 +43,32 @@ function CounselorProfile() {
     } else {
       accStatus = true;
     }
-    instance.post(`admin/change-status`, JSON.stringify({ username: userName, accType, accStatus })).then((result) => {
-      console.log('yay');
-    }
-    ).catch((err) => {
-      console.log(err.message);
-    }
-    );
-
+    instance
+      .post(
+        `/admin/change-status`,
+        JSON.stringify({ username: userName, accType, accStatus })
+      )
+      .then((result) => {
+        console.log('yay');
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   const handleClick = (userName, accType) => {
-    // change the following format to instance format
-    instance.post(`admin/delete-account`, JSON.stringify({ username: userName, accType })).then((result) => {
-      console.log('yay');
-    }
-    ).catch((err) => {
-      console.log(err.message);
-    }
-    );
+    instance
+      .post(
+        `admin/delete-account`,
+        JSON.stringify({ username: userName, accType })
+      )
+      .then((result) => {
+        console.log('yay');
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
-
 
   const [review, setNewReview] = useState({
     content: '',
@@ -88,34 +90,57 @@ function CounselorProfile() {
   });
 
   const handleChange = (prop) => (event) => {
+    if (prop === 'rating' && event.target.value !== '' && rateError) {
+      setRateError(false);
+    }
+    if (prop === 'review' && event.target.value !== '' && reviewError) {
+      setReviewError(false);
+    }
     setNewReview({ ...review, [prop]: event.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    instance
-      .post('rate/add-review', JSON.stringify({ ...review, user_name }))
-      .then((result) => {
-        setNewReview({
-          content: '',
-          rating: null,
+    if (!review.rating) {
+      setRateError(true);
+    }
+    if (review.content === '') {
+      setReviewError(true);
+    } else {
+      instance
+        .post('/rate/add-review', JSON.stringify({ ...review, username }))
+        .then((result) => {
+          getCounselorData();
+          setNewReview({
+            content: '',
+            rating: null,
+          });
+        })
+        .catch((err) => {
+          console.log(err.message);
         });
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    }
   };
 
-  useEffect(() => {
+  const getCounselorData = useCallback(() => {
     instance
-      .get(`user/counselor/${user_name}`)
+      .get(`user/counselor/${username}`)
       .then((result) => {
         setCounselorDetails(result.data);
+        setLoaded(true);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [user_name]);
+  });
+
+  useEffect(() => {
+    getCounselorData();
+  }, [username]);
+
+  if (!loaded) {
+    return <Loading />;
+  }
 
   return (
     <Box>
@@ -125,17 +150,18 @@ function CounselorProfile() {
           component="main"
           sx={{
             flexGrow: 1,
+            mt: 5,
             ml: 3,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          <IconButton
+          {/* <IconButton
             onClick={() => {
               navigate(-1);
             }}
           >
-            <WestIcon style={{ fontSize: '2.5rem', color: '#000000' }} />
-          </IconButton>
+            {/* <WestIcon style={{ fontSize: '2.5rem', color: '#000000' }} />
+          </IconButton> */}
           <Box className="user-profile-header">
             <Box className="user-profile-icon">
               <ProfileIcon accountName={counselorDetails.fname} />
@@ -153,7 +179,7 @@ function CounselorProfile() {
                 {counselorDetails.experience} years
               </Box>
               <Box>
-                {counselorDetails.rating !== null && (
+                {counselorDetails.rating && (
                   <Rating
                     name="rating"
                     value={counselorDetails.rating}
@@ -163,52 +189,54 @@ function CounselorProfile() {
               </Box>
             </Box>
 
-            {
-              usertype === 'Admin' ? (
-                <Box sx= {{ display: 'flex', flexDirection: 'column', marginLeft: 'auto' }}>  
-                  <MyButton
+            {usertype === 'Admin' ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  marginLeft: 'auto',
+                }}
+              >
+                <MyButton
                   // 200px in rem are 12.5rem
-                    width="12.5rem"
-                    variant="contained"
-                    sx={{ mb:1, ml: 'auto', padding: '10px'}}
-                    onClick={() => {
-                      handleDeactive(
-                        counselorDetails.username,
-                        'Counselor',
-                        counselorDetails.status
-                      );
-                    }}
-                  >
-                    Deactivate Account
-                  </MyButton>
-                  <MyButton
-                    width="12.5rem"
-                    variant="contained"
-                    sx={{ mt: 2, ml: 'auto', padding: '10px'  }}
-                    onClick={() => {
-                      handleClick(counselorDetails.username, 'Counselor');
-                    }}
-                  >
-                    Delete Account
-                  </MyButton>
-                </Box>
-              ) : (
-                <Box sx = {{ marginLeft: 'auto' }}>
-                  <MyButton
-                    width="200px"
-                    paddinghorizontal="10px"
-                    paddingvertical="10px"
-                    variant="contained"
-                    sx={{ mb: 9, ml: 'auto' }}
-                    onClick={conditionalNavigate}
-                  >
-                    {usertype === 'Student'
-                      ? 'Book Appointment'
-                      : 'Edit Profile'}
-                  </MyButton>
-                </Box>
-              )
-            }
+                  width="12.5rem"
+                  variant="contained"
+                  sx={{ mb: 1, ml: 'auto', padding: '10px' }}
+                  onClick={() => {
+                    handleDeactive(
+                      counselorDetails.username,
+                      'Counselor',
+                      counselorDetails.status
+                    );
+                  }}
+                >
+                  Deactivate Account
+                </MyButton>
+                <MyButton
+                  width="12.5rem"
+                  variant="contained"
+                  sx={{ mt: 2, ml: 'auto', padding: '10px' }}
+                  onClick={() => {
+                    handleClick(counselorDetails.username, 'Counselor');
+                  }}
+                >
+                  Delete Account
+                </MyButton>
+              </Box>
+            ) : (
+              <Box sx={{ marginLeft: 'auto' }}>
+                <MyButton
+                  width="200px"
+                  paddinghorizontal="10px"
+                  paddingvertical="10px"
+                  variant="contained"
+                  sx={{ mb: 9, ml: 'auto' }}
+                  onClick={conditionalNavigate}
+                >
+                  {usertype === 'Student' ? 'Book Appointment' : 'Edit Profile'}
+                </MyButton>
+              </Box>
+            )}
           </Box>
           <Box>
             {/* Change font color of Typography to black.  */}
@@ -229,6 +257,11 @@ function CounselorProfile() {
               <SubSecHeading text="Reviews" />
               {usertype === 'Student' && (
                 <Box>
+                  {rateError && (
+                    <Alert severity="error" sx={{ width: '16rem', mb: 2 }}>
+                      Please enter a rating.
+                    </Alert>
+                  )}
                   <Box className="review">
                     <Box className="review-text">Rate Counselor:</Box>
                     <Rating
@@ -237,9 +270,14 @@ function CounselorProfile() {
                       onChange={handleChange('rating')}
                     />
                   </Box>
-                  <Box className="review">
+                  <Box className="review" sx={{ flexDirection: 'column' }}>
+                    {reviewError && (
+                      <Alert severity="error" sx={{ width: '16rem', mb: 2 }}>
+                        Please enter a review.
+                      </Alert>
+                    )}
                     <TextField
-                      id="outlined-multiline-static"
+                      id="review"
                       label="Write a review"
                       value={review.content}
                       multiline
