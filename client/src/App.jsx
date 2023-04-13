@@ -31,11 +31,11 @@ function App() {
           <Route path="search" element={<SearchPage/>} />
           <Route path="user">
             <Route path="student">
-              <Route path=":user_name" element={<StudentProfile />} />
+              <Route path=":username" element={<StudentProfile />} />
               <Route path="edit-profile" element={<EditStudentProfile />} />
             </Route>
             <Route path="counselor">
-              <Route path=":user_name" element={<CounselorProfile />} />
+              <Route path=":username" element={<CounselorProfile />} />
               <Route path="edit-profile" element={<EditCounselorProfile />} />
             </Route>
           </Route>
