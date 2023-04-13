@@ -12,6 +12,7 @@ import {
   retrieveDaySuffix,
   convertMonth,
   getTime,
+  getDate,
 } from '../utilities/date_functions';
 import { instance } from '../axios';
 
@@ -149,7 +150,7 @@ function MeetingCard({
           >
             <DateRangeIcon />
           </Typography>
-          <Typography>{displayDate}</Typography>
+          <Typography>{getDate(date)}</Typography>
         </Box>
 
         <Box display="flex" flexDirection="row">
