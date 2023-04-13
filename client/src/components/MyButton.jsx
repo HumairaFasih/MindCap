@@ -3,11 +3,11 @@ import { styled } from '@mui/material/styles';
 
 // Pass props to the styled component
 export const MyButton = styled(Button)(
-  ({ width, paddinghorizontal, paddingvertical }) => ({
+  ({ width, paddinghorizontal, paddingvertical, bradius }) => ({
     boxShadow: 'none',
     textTransform: 'none',
     fontSize: 18,
-    borderRadius: 8,
+    borderRadius: bradius ? bradius : 8,
     paddingHorizontal: { paddinghorizontal },
     paddingVertical: { paddingvertical },
     width: { width },

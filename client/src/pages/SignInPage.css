@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 .left-half {
 /* covers half the screen with colour  */
     background-color: #DCE8D5;
@@ -35,18 +38,18 @@
 
 .right-half{
     background-color: #FFFFFF;
-    height: 100%;
-    width: 50%;
+    height: 100vh;
+    width: 50vw;
     position: absolute;
     top: 0;
     left: 50%;
 }
 
 .signin-box{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .bottom-text{
@@ -63,3 +66,68 @@ a:hover{
 }
 
 /* fix responsiveness for tab */
+@media screen and (max-width: 1000px) {
+    .left-half {
+        display: none;
+    }
+
+    .right-half {
+        width: 100vw;
+        left: 0%;
+        top: 0;
+    }
+
+}
+
+.adjustcredentials {
+    width: 100%;
+}
+
+/* fix responsiveness for mobile */
+@media screen and (max-width: 480px) {
+    .right-half {
+        width: 100vw;
+    }
+
+    .signin-box {
+        width: 100%;
+    }
+
+    .adjustwelcome {
+        padding-left: 5vw;
+    }
+
+    .adjustcredentials {
+        width: 90vw;
+    }
+}
+
+/* fix responsiveness for galaxy fold */
+@media screen and (max-width: 280px) {
+    .right-half {
+        width: 100vw;
+    }
+
+    .signin-box {
+        width: 100%;
+    }
+
+    .adjustwelcome {
+        padding-left: 5vw;
+    }
+
+    .adjustcredentials {
+        width: 90vw;
+    }
+}
+
+/* fix responsiveness for galaxy fold */
+@media screen and (max-width: 280px) {
+    .right-half {
+        width: 100vw;
+    }
+
+    .signin-box {
+        width: 100%;
+    }
+}

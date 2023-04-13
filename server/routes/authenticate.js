@@ -55,6 +55,32 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
+router.post('/signup', async (req, res, next) => {
+  console.log(req.body);
+  const { username, firstName, lastName, email, password } = req.body;
+  const existingUser = await Student.findOne({ username });
+  if (existingUser) {
+    return res.status(400).json({ message: 'Username already exists' });
+  }
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const result = await Student.create({
+      username,
+      email,
+      password: hashedPassword,
+      first_name: firstName,
+      last_name: lastName,
+    });
+    console.log('Created user: ', result.username);
+    res.send(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    next(err);
+  }
+});
+
 router.patch('/update-password', async (req, res, next) => {
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);

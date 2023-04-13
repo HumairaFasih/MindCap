@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import IconImage from '../assets/images/logo-no-bg.png';
 import './Preloader.css';
 
-function LoadingScreen() {
+function Loading() {
   return (
     <Box
       sx={{
@@ -54,4 +54,4 @@ function LoadingScreen() {
   );
 }
 
-export default LoadingScreen;
+export default Loading;
