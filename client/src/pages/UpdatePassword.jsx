@@ -39,6 +39,7 @@ function UpdatePassword() {
     e.preventDefault();
 
     if (password === confirmPassword) {
+      setMismatch(false);
       instance
         .patch(
           '/authenticate/update-password',
@@ -180,13 +181,15 @@ function UpdatePassword() {
                   component="form"
                   onSubmit={handleSubmit}
                 >
-                  {mismatch && (
+                  {mismatch ? (
                     <Alert
                       severity="error"
                       sx={{ width: responsiveText(), mb: 2 }}
                     >
                       Passwords do not match. Please try again.
                     </Alert>
+                  ) : (
+                    <Alert severity="success">Password successfully updated!</Alert>
                   )}
                   <Box>
                     <FormControl
