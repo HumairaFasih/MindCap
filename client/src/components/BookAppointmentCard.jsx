@@ -4,12 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 function BookAppointmentCard() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const bookAppointmentRoute = `${location.pathname
-    .split('/')
-    .slice(0, -1)
-    .join('/')}/book-appointment`;
 
   return (
     <Box>
@@ -43,7 +37,7 @@ function BookAppointmentCard() {
               fontWeight: 'bold',
               textAlign: 'center',
             }}
-            onClick={() => navigate(bookAppointmentRoute)}
+            onClick={() => navigate('/book-appointment', { replace: true })}
           >
             +
           </Button>
