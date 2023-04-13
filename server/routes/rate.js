@@ -18,19 +18,21 @@ router.post('/add-review', async (req, res) => {
   if (usertype === 'Student') {
     try {
       const { username, rating, content } = req.body;
+      console.log(username, rating, content);
       await Reviews.create({
         counselor_username: username,
         rating,
         review: content,
       });
       res.send('Review added!');
-    } catch (error) {
-      res.send(500).json({ error: error.message });
+    } catch (err) {
+      res.send(500).json({ err: err.message });
+      next(err);
     }
   }
 });
 
-router.get('/getreviews', async (req, res) => {
+router.get('/getreviews', async (req, res, next) => {
   // access and decode token
   const token = req.cookies.jwt;
   console.log(token);
@@ -55,6 +57,7 @@ router.get('/getreviews', async (req, res) => {
     res.send([...reviews]);
   } catch (error) {
     res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 

@@ -127,7 +127,6 @@ function LodgeComplaint() {
               onChange={(e) => {
                 setChosenCounselor(e.target.value);
               }}
-              color="success"
             >
               {counselorNames &&
                 counselorNames.map((counselor) => (
@@ -153,7 +152,6 @@ function LodgeComplaint() {
               onChange={(e) => {
                 setComplaintType(e.target.value);
               }}
-              color="success"
             >
               {types.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
