@@ -20,6 +20,7 @@ import {
   retrieveDaySuffix,
   convertMonth,
   getTime,
+  getDate,
 } from '../utilities/date_functions';
 
 import { instance } from '../axios';
@@ -138,11 +139,7 @@ function ApproveAppointmentCard({
             <DateRangeIcon />
           </Typography>
           <Typography>
-            {`${new Date(date).getDate()}${retrieveDaySuffix(
-              new Date(date).getDate()
-            )} ${convertMonth(new Date(date).getMonth() + 1)} ${new Date(
-              date
-            ).getFullYear()}`}
+            {getDate(date)}
           </Typography>
         </Box>
 

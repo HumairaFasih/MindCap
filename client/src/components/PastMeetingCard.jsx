@@ -12,10 +12,12 @@ import {
   retrieveDaySuffix,
   convertMonth,
   getTime,
+  getDate,
 } from '../utilities/date_functions';
 
 
 function PastMeetingCard({ appointmentId, name, date, time, mode, status }) {
+  console.log(date);
   const getIcon = (statusIcon) => {
     switch (statusIcon) {
       case 'Attended':
@@ -91,11 +93,7 @@ function PastMeetingCard({ appointmentId, name, date, time, mode, status }) {
             >
               <DateRangeIcon />
             </Typography>
-            <Typography>{`${new Date(date).getDate()}${retrieveDaySuffix(
-              new Date(date).getDate()
-            )} ${convertMonth(new Date(date).getMonth() + 1)} ${new Date(
-              date
-            ).getFullYear()}`}</Typography>
+            <Typography>{getDate(date)}</Typography>
           </Box>
 
           <Box display="flex" flexDirection="row">

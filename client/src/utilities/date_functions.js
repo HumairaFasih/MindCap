@@ -1,4 +1,5 @@
 export const retrieveDaySuffix = (day) => {
+  console.log("Here", day)
   if (day >= 11 && day <= 13) {
     return 'th';
   }
@@ -65,3 +66,13 @@ export const getTime = (t) => {
     minutes < 10 ? '0' : ''
   }${minutes} ${meridian}`;
 };
+
+export const getDate = (inp) => {
+  const parts = inp.split("/"); 
+  const day = parts[0]; 
+  const month = parts[1]; 
+  const date = new Date(`20${parts[2]}-${month}-${day}`);
+  const formattedDate = `${date.getDate()}${retrieveDaySuffix(date.getDate())} ${convertMonth(date.getMonth() + 1)}`;
+  console.log(formattedDate);
+  return formattedDate;
+}
