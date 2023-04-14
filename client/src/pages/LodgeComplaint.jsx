@@ -76,6 +76,8 @@ function LodgeComplaint() {
       )
       .then(() => {
         console.log('Succcessfully lodged complaint!');
+        // redirect to last page
+        window.history.back();
       })
       .catch((err) => {
         console.log(err.message);

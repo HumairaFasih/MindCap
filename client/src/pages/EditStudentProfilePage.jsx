@@ -88,7 +88,11 @@ function EditStudentProfile() {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         })
-        .then((result) => setStudentDetails(result.data))
+        .then((result) => {setStudentDetails(result.data)
+        // redirect to last page
+        window.history.back()
+        }
+        )
         .catch((err) => console.log(err.message));
     }
   };

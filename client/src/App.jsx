@@ -23,10 +23,9 @@ function App() {
   // if user access '/' route and they are not authenticated then redirect to login page
 
   if (window.location.pathname === '/') {
-    if (!localStorage.getItem('token')) {
+    if (!localStorage.getItem('isAuthenticated')) {
+      console.log('redirecting to login');
       window.location.href = '/login';
-    } else {
-      window.location.href = '/dashboard';
     }
   }
   return (

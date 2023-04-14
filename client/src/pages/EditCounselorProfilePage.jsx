@@ -16,6 +16,7 @@ import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
 import { AuthContext } from '../context/AuthContext';
 import { instance } from '../axios';
+import { Navigate } from 'react-router-dom';
 
 const drawerWidth = 270;
 
@@ -119,6 +120,9 @@ function EditCounselorProfile() {
           )
           .then(() => {
             console.log('changes to profile saved!');
+            // send back to profile page
+            // the return link is of form user/counselor/USERNAME
+            window.location.href = `/user/counselor/${username}`;
           })
           .catch((err) => {
             console.log(err.message);

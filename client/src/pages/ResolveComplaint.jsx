@@ -99,6 +99,7 @@ function ResolveComplaint() {
     );
     if(result.data == 'Complaint Resolved!'){
         setStatus('Resolved');
+        window.history.back();
     }
   }
 

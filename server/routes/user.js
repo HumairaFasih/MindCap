@@ -225,12 +225,13 @@ router.get('/medical-record', async (req, res) => {
   // check if name of counselor is in visible_to array of medical record
   // if not, return 403
   // if yes, return the medical record
-  
+  console.log('QUERY:', req.query, counselor);
   if (result === null) {
     res.status(404).send('Medical Record not found');
     return;
   }
-  else if (!result.visible_to.includes(counselor)) {
+  // if counselor is not null and the returned medical record is not visible to the counselor, return 403
+  else if (counselor && !result.visible_to.includes(counselor)) {
     res.status(403).send('You are not allowed to view this medical record');
     return;
   }
