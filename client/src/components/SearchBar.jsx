@@ -40,7 +40,7 @@ function SearchBar({ onData }) {
 
   const {
     auth: {
-      authDetails: { usertype, username },
+      authDetails: { usertype },
     },
   } = useContext(AuthContext);
 
