@@ -36,6 +36,8 @@ function BookAppointmentCard() {
               fontSize: '40px',
               fontWeight: 'bold',
               textAlign: 'center',
+              ':hover': {bgcolor: '#739D68'},
+              boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
             }}
             onClick={() => navigate('/book-appointment', { replace: true })}
           >
