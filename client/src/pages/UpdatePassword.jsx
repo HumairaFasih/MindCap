@@ -37,7 +37,12 @@ function UpdatePassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // THE PASSWORD MUST CONTAIN AT LEAST 8 CHARACTERS, 1 UPPERCASE, 1 LOWERCASE, 1 NUMBER
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+    if (!passwordRegex.test(password)) {
+      setMismatch(true);
+      return;
+    }
     if (password !== confirmPassword) {
       setMismatch(true);
     } else {
@@ -186,7 +191,7 @@ function UpdatePassword() {
                       severity="error"
                       sx={{ width: responsiveText(), mb: 2 }}
                     >
-                      Passwords do not match. Please try again.
+                      Requirement not met or password mismatch!
                     </Alert>
                   ) : (
                     mismatch === false && (
