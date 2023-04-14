@@ -26,14 +26,7 @@ function UpdatePassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [mismatch, setMismatch] = useState(false);
 
-  const passwordReqStyle = {
-    width: 100,
-    fontSize: 20,
-    ml: 2,
-    mr: 2,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,11 +51,13 @@ function UpdatePassword() {
 
   const [screenSize, setScreenSize] = useState('');
   const handleResize = useCallback(() => {
-    if (window.innerWidth <= 280) {
+    if (window.outerWidth <= 280) {
       setScreenSize('small');
-    } else if (window.innerWidth <= 500) {
+    } else if (window.outerWidth <=700) {
       setScreenSize('medium');
-    } else if (window.innerWidth <= 1000) {
+    } else if (window.outerWidth <= 813) {
+      setScreenSize('mediumlarge');
+    } else if (window.outerWidth <= 1000) {
       setScreenSize('large');
     } else {
       setScreenSize('xlarge');
@@ -80,13 +75,57 @@ function UpdatePassword() {
       return '90vw';
     }
     if (screenSize === 'medium') {
-      return '90vw';
+      return '300px';
+    }
+    if (screenSize==='mediumlarge'){
+      return '50vw'
     }
     if (screenSize === 'large') {
       return '500px';
     }
     return '500px';
   }
+
+  function textSize(){
+    if (screenSize === 'small') {
+      return 18;
+    }
+    if (screenSize === 'medium') {
+      return 15;
+    }
+    if (screenSize==='mediumlarge'){
+      return 14;
+    }
+    if (screenSize === 'large') {
+      return 20;
+    }
+    return 20;
+  }
+
+  function widthpass(){
+    if (screenSize === 'small') {
+      return 60;
+    }
+    if (screenSize === 'medium') {
+      return 60;
+    }
+    if (screenSize==='mediumlarge'){
+      return 60;
+    }
+    if (screenSize === 'large') {
+      return 100;
+    }
+    return 100;
+  }
+
+  const passwordReqStyle = {
+    width: widthpass(),
+    fontSize: textSize(),
+    ml: 2,
+    mr: 2,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  };
 
   return (
     <Box>
