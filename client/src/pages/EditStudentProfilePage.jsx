@@ -84,7 +84,7 @@ function EditStudentProfile() {
       
 
       axios
-        .post(`http://localhost:3003/api/user/student/edit-profile`, formData, {
+        .post(`/api/user/student/edit-profile`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         })
