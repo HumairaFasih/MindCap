@@ -35,8 +35,8 @@ function BookAppointment() {
   const [chosen, setChosen] = useState(true);
   const [chosenval, setChosenTimeVal] = useState('');
   const [chosenCounselor, setChosenCounselor] = useState('');
-  const [counselorTime, setCounselorTime] = useState('12-3AM');
-  const [chooseDateType, setDateType] = useState('weekdays');
+  const [counselorTime, setCounselorTime] = useState('');
+  const [chooseDateType, setDateType] = useState('');
   const [chooseDate, setDate] = useState(null);
   const [chooseTime, setTime] = useState(null);
   const [meetingMode, setMeetingMode] = useState('');
@@ -48,15 +48,39 @@ function BookAppointment() {
 
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
+  const routeRegex = /^\/user\/counselor\//;
+
+  const getAvailability = (counselor_name) => {
+    instance
+      .post(
+        '/appointment/get-availability',
+        JSON.stringify({ counselor: counselor_name })
+      )
+      .then((result) => {
+        console.log('Logging day_type: ', result.data.day_type);
+        console.log('Logging time: ', result.data.time);
+        setCounselorTime(result.data.time);
+        setDateType(result.data.day_type);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setAvailableError(true);
+      });
+  };
 
   useEffect(() => {
-    const routeRegex = /^\/user\/counselor\//;
     if (routeRegex.test(from)) {
       setChosenCounselor(from.split('/').at(-1));
     } else {
       setChosenCounselor('');
     }
   }, []);
+
+  useEffect(() => {
+    if (routeRegex.test(from) && chosenCounselor) {
+      getAvailability(chosenCounselor);
+    }
+  }, [chosenCounselor]);
 
   useEffect(() => {
     async function fetchData() {
@@ -93,29 +117,11 @@ function BookAppointment() {
   const handleCounselorSelect = async (e) => {
     console.log(e.target.name, e.target.value);
     setChosenCounselor(e.target.value);
-    instance
-      .post(
-        '/appointment/get-availability',
-        JSON.stringify({ counselor: e.target.value })
-      )
-      .then((result) => {
-        console.log(result.data.time);
-        console.log(result.data.day_type);
-        setCounselorTime(result.data.time);
-        setDateType(result.data.day_type);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    getAvailability(e.target.value);
   };
 
   const submitHandler = async () => {
-    if (
-      !chosenCounselor ||
-      !meetingMode ||
-      !chooseDate ||
-      !chooseTime
-    ) {
+    if (!chosenCounselor || !meetingMode || !chooseDate || !chooseTime) {
       console.log(
         'Booking apnt',
         chosenCounselor,
@@ -219,6 +225,8 @@ function BookAppointment() {
       { label: '11:00 PM', value: '11:00 PM' },
       { label: '11:30 PM', value: '11:30 PM' },
     ];
+  } else {
+    buttons = null;
   }
 
   const handleResize = useCallback(() => {
@@ -279,6 +287,10 @@ function BookAppointment() {
     return '170px';
   }
 
+  useEffect(() => {
+    console.log(chosenCounselor);
+  });
+
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
@@ -326,7 +338,8 @@ function BookAppointment() {
                     </InputLabel>
                     <Select
                       onChange={handleCounselorSelect}
-                      defaultValue=""
+                      defaultValue={chosenCounselor}
+                      value={chosenCounselor}
                       color="success"
                       label="CounselorName"
                     >
@@ -383,36 +396,52 @@ function BookAppointment() {
                   variant="h5"
                   sx={{ fontWeight: 'bold', margin: '12px 0px 0px 10px' }}
                 >
-                  Select a Date and Time:
+                  Select a Date
                 </Typography>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoItem>
-                    <DateCalendar
-                      shouldDisableDate={
-                        chooseDateType === 'weekdays'
-                          ? disableWeekends
-                          : disableWeekdays
-                      }
-                      disablePast
-                      onChange={(e) => setDate(new Date(e.$d))}
-                      sx={{
-                        margin: '14px 30px 0px 8px',
-                        border: '1px solid grey',
-                        borderRadius: '20px',
-                        backgroundColor: 'white',
-                        '& .MuiPickersDay-root': {
-                          '&.Mui-selected': {
-                            backgroundColor:
-                              'rgba(147, 183, 125,0.5) !important',
-                            color: '#000',
+                {!chosenCounselor ? (
+                  <Typography
+                    color="red"
+                    sx={{ mt: 2, m: 2, fontSize: '16px' }}
+                  >
+                    Please select a counselor to view available dates
+                  </Typography>
+                ) : chosenCounselor && !chooseDateType ? (
+                  <Typography
+                    color="red"
+                    sx={{ mt: 2, m: 2, fontSize: '16px' }}
+                  >
+                    This counselor has no available dates
+                  </Typography>
+                ) : (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoItem>
+                      <DateCalendar
+                        shouldDisableDate={
+                          chooseDateType === 'Weekdays'
+                            ? disableWeekends
+                            : disableWeekdays
+                        }
+                        disablePast
+                        onChange={(e) => setDate(new Date(e.$d))}
+                        sx={{
+                          margin: '14px 30px 0px 8px',
+                          border: '1px solid grey',
+                          borderRadius: '20px',
+                          backgroundColor: 'white',
+                          '& .MuiPickersDay-root': {
+                            '&.Mui-selected': {
+                              backgroundColor:
+                                'rgba(147, 183, 125,0.5) !important',
+                              color: '#000',
+                            },
                           },
-                        },
-                      }}
-                      views={['day']}
-                    />
-                  </DemoItem>
-                </LocalizationProvider>
+                        }}
+                        views={['day']}
+                      />
+                    </DemoItem>
+                  </LocalizationProvider>
+                )}
 
                 <Box display="flex" flexDirection="row">
                   <Checkbox
@@ -433,65 +462,105 @@ function BookAppointment() {
                   variant="h5"
                   sx={{ fontWeight: 'bold', margin: '20px 0px 0px 10px' }}
                 >
-                  Time
+                  Select a Time
                 </Typography>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  sx={{
-                    margin: '30px 80px 10px 10px',
-                    borderRadius: '12px',
-                    backgroundColor: 'rgba(147, 183, 125,0.5)',
-                    width: timeBox(),
-                    height: '500px',
-                    pt: '15px',
-                  }}
-                >
-                  {buttons.map((button) => (
-                    <Button
-                      key={button.value}
-                      onClick={() => handleTimeClick(button.value)}
-                      disableRipple
-                      sx={{
-                        borderRadius: '12px',
-                        backgroundColor:
-                          button.value === chosenval ? '#C5C5C5' : '#ffffff',
-                        border: '2px solid rgb(147, 183, 125)',
-                        boxShadow: '0px 2px 7px grey',
-                        width: '90%',
-                        height: '60px',
-                        alignSelf: 'center',
-                        margin: '15px 0px 0px 0px',
-                        transition: '0.1s',
-                      }}
+                {!chosenCounselor ? (
+                  <Typography
+                    color="red"
+                    sx={{ mt: 2, m: 2, fontSize: '16px' }}
+                  >
+                    Please select a counselor to view available slots
+                  </Typography>
+                ) : (
+                  chosenCounselor &&
+                  !counselorTime && (
+                    <Typography
+                      color="red"
+                      sx={{ mt: 2, m: 2, fontSize: '16px' }}
                     >
-                      <Typography
-                        variant="h5"
+                      This counselor has no available slots
+                    </Typography>
+                  )
+                )}
+
+                {chosenCounselor && counselorTime && (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    sx={{
+                      margin: '30px 80px 10px 10px',
+                      borderRadius: '12px',
+                      backgroundColor: 'rgba(147, 183, 125,0.5)',
+                      width: timeBox(),
+                      height: '500px',
+                      pt: '15px',
+                    }}
+                  >
+                    {buttons.map((button) => (
+                      <Button
+                        key={button.value}
+                        onClick={() => handleTimeClick(button.value)}
+                        disableRipple
                         sx={{
+                          borderRadius: '12px',
+                          backgroundColor:
+                            button.value === chosenval ? '#C5C5C5' : '#ffffff',
+                          border: '2px solid rgb(147, 183, 125)',
+                          boxShadow: '0px 2px 7px grey',
+                          width: '90%',
+                          height: '60px',
                           alignSelf: 'center',
-                          fontWeight: 'bold',
-                          color: '#000000',
-                          fontFamily: 'Calibri',
+                          margin: '15px 0px 0px 0px',
+                          transition: '0.1s',
                         }}
                       >
-                        {button.label}
-                      </Typography>
-                    </Button>
-                  ))}
-                </Box>
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            alignSelf: 'center',
+                            fontWeight: 'bold',
+                            color: '#000000',
+                            fontFamily: 'Calibri',
+                          }}
+                        >
+                          {button.label}
+                        </Typography>
+                      </Button>
+                    ))}
+                  </Box>
+                )}
 
-                <MyButton
-                  onClick={submitHandler}
-                  paddinghorizontal="10px"
-                  paddingvertical="15px"
+                <Button
+                  variant="contained"
                   sx={{
                     color: '#ffffff',
+                    backgroundColor: '#93B77D',
                     margin: '18px 40px 0px 10px',
                     width: timeBox(),
+                    py: 1,
+                    fontFamily: [
+                      '-apple-system',
+                      'BlinkMacSystemFont',
+                      '"Segoe UI"',
+                      'Roboto',
+                      '"Helvetica Neue"',
+                      'Arial',
+                      'sans-serif',
+                    ].join(','),
+                    '&:hover': {
+                      backgroundColor: '#228B22',
+                    },
+                    boxShadow: '2px',
+                    fontSize: '18px',
                   }}
+                  disabled={
+                    !chosenCounselor || !counselorTime || !chooseDateType
+                  }
+                  fullWidth
+                  onClick={submitHandler}
                 >
                   Book Now
-                </MyButton>
+                </Button>
               </Box>
             </Box>
           </Box>

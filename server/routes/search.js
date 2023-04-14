@@ -1,9 +1,9 @@
-const express = require("express");
-const jwtDecode = require("jwt-decode");
-const Counselor = require("../models/counselorModel");
-const Reviews = require("../models/reviewsModel");
-const Availability = require("../models/availabilityModel");
-const Student = require("../models/studentModel");
+const express = require('express');
+const jwtDecode = require('jwt-decode');
+const Counselor = require('../models/counselorModel');
+const Reviews = require('../models/reviewsModel');
+const Availability = require('../models/availabilityModel');
+const Student = require('../models/studentModel');
 
 const router = express.Router();
 
@@ -17,30 +17,29 @@ const getRating = (reviews) => {
   return rating;
 };
 
-
-/* 
+/*
 search and filter is required in these two areas:
     1. search + filter counselors by student
     2. search + filter students & counselors by admin
 */
-router.post("/search-counselors", async (req, res) => {
+router.post('/search-counselors', async (req, res, next) => {
   // get and decode jwt token
-  console.log("idhr")
+  console.log('idhr');
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
   const { usertype } = jwtDecoded;
 
   // if i am the student
-  if (usertype === "Student") {
+  if (usertype === 'Student') {
     try {
       // use the name from req.body to search for counselors
-      console.log("request body", req.body);
+      console.log('request body', req.body);
       const { query } = req.body;
-      const name = query.split(" ");
+      const name = query.split(' ');
       const firstName = name[0];
       const lastName = name[1];
-      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, "i");
+      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, 'i');
       const filter = { $or: [{ first_name: regex }, { last_name: regex }] };
       // if there is a filter then use that to filter the search results
       if (req.body.gender) {
@@ -48,7 +47,7 @@ router.post("/search-counselors", async (req, res) => {
       }
       // get all counselors that match either the first name, last name, and gender (if provided)
       const result = await Counselor.find(filter);
-      console.log('result', result)
+      console.log('result', result);
       const returnObj = await Promise.all(
         // for each counselor
         // eslint-disable-next-line consistent-return
@@ -68,40 +67,44 @@ router.post("/search-counselors", async (req, res) => {
               name: `${item.first_name} ${item.last_name}`,
               qualification: item.qualification,
               rating: getRating(reviews),
-              accType: "Counselor",
+              accType: 'Counselor',
             };
           }
           for (let i = 0; i < availability.length; i += 1) {
-            console.log(availability[i].day_type === req.body.day)
-            console.log(availability[i].day_type)
-            console.log(req.body.day)
-            console.log(availability[i].counselor_username === item.username)
+            console.log(availability[i].day_type === req.body.day);
+            console.log(availability[i].day_type);
+            console.log(req.body.day);
+            console.log(availability[i].counselor_username === item.username);
             // if the availability day matches the filter day, then return the object
-            if (availability[i].day_type === req.body.day && availability[i].counselor_username === item.username) {
-              console.log("in if")
+            if (
+              availability[i].day_type === req.body.day &&
+              availability[i].counselor_username === item.username
+            ) {
+              console.log('in if');
               return {
                 username: item.username,
                 name: `${item.first_name} ${item.last_name}`,
                 qualification: item.qualification,
                 rating: getRating(reviews),
-                accType: "Counselor",
+                accType: 'Counselor',
               };
             }
           }
         })
       );
-      console.log("returnObj", returnObj);
+      console.log('returnObj', returnObj);
       const filtered = returnObj.filter((item) => item !== undefined);
       res.send(filtered);
     } catch (err) {
-      res.send(err);
+      res.send(500).json({ err: err.message });
+      next(err);
     }
   }
 });
 
-router.post("/search-accounts", async (req, res) => {
+router.post('/search-accounts', async (req, res, next) => {
   // get and decode jwt token
-  console.log("in search accounts")
+  console.log('in search accounts');
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
@@ -109,28 +112,28 @@ router.post("/search-accounts", async (req, res) => {
 
   // else if i am admin, then use the name from req.body to search for counselors + students
   // if there is a filter, then use that to filter the results
-  if (usertype === "Admin") {
+  if (usertype === 'Admin') {
     try {
       // get the name
       const { query } = req.body;
       console.log(query);
-      const name = query.split(" ");
+      const name = query.split(' ');
       const firstName = name[0];
       const lastName = name[1];
-      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, "i");
+      const regex = new RegExp(`\\b${firstName}|${lastName}\\b`, 'i');
       const filter = { $or: [{ first_name: regex }, { last_name: regex }] };
-      console.log("Search may:", filter)
+      console.log('Search may:', filter);
       // if account type is provided then:
       if (req.body.accountType) {
         const { accountType } = req.body;
         console.log(accountType);
         // student, so return student's name and rollnumber
-        if (accountType === "Student") {
+        if (accountType === 'Student') {
           const results = await Student.find(filter);
           const returnObj = results.map((item) => ({
             name: `${item.first_name} ${item.last_name}`,
             username: item.username,
-            accType: "Student",
+            accType: 'Student',
             accStatus: item.status,
           }));
           res.send(returnObj);
@@ -147,7 +150,7 @@ router.post("/search-accounts", async (req, res) => {
                 name: `${item.first_name} ${item.last_name}`,
                 qualification: item.qualification,
                 rating: getRating(reviews),
-                accType: "Counselor",
+                accType: 'Counselor',
                 accStatus: item.status,
               };
             })
@@ -162,7 +165,7 @@ router.post("/search-accounts", async (req, res) => {
         const returnStudents = resultsStudents.map((item) => ({
           name: `${item.first_name} ${item.last_name}`,
           username: item.username,
-          accType: "Student",
+          accType: 'Student',
           accStatus: item.status,
         }));
         const resultsCounselors = await Counselor.find(filter);
@@ -177,20 +180,19 @@ router.post("/search-accounts", async (req, res) => {
               name: `${item.first_name} ${item.last_name}`,
               qualification: item.qualification,
               rating: getRating(reviews),
-              accType: "Counselor",
+              accType: 'Counselor',
               accStatus: item.status,
             };
-
           })
         );
         console.log(returnCounselors);
         res.send([...returnStudents, ...returnCounselors]);
       }
     } catch (err) {
-      res.send(err);
+      res.send(500).json({ err: err.message });
+      next(err);
     }
   }
 });
-
 
 module.exports = router;
