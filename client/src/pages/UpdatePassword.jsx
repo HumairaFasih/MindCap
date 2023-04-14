@@ -24,7 +24,7 @@ function UpdatePassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [mismatch, setMismatch] = useState(false);
+  const [mismatch, setMismatch] = useState(null);
 
   const passwordReqStyle = {
     width: 100,
@@ -38,8 +38,9 @@ function UpdatePassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password === confirmPassword) {
-      setMismatch(false);
+    if (password !== confirmPassword) {
+      setMismatch(true);
+    } else {
       instance
         .patch(
           '/authenticate/update-password',
@@ -47,12 +48,11 @@ function UpdatePassword() {
         )
         .then((result) => {
           console.log(result);
+          setMismatch(false);
         })
         .catch((err) => {
           console.log(err.message);
         });
-    } else {
-      setMismatch(true);
     }
   };
 
@@ -181,7 +181,7 @@ function UpdatePassword() {
                   component="form"
                   onSubmit={handleSubmit}
                 >
-                  {mismatch ? (
+                  {mismatch === true ? (
                     <Alert
                       severity="error"
                       sx={{ width: responsiveText(), mb: 2 }}
@@ -189,7 +189,11 @@ function UpdatePassword() {
                       Passwords do not match. Please try again.
                     </Alert>
                   ) : (
-                    <Alert severity="success">Password successfully updated!</Alert>
+                    mismatch === false && (
+                      <Alert severity="success">
+                        Password successfully updated!
+                      </Alert>
+                    )
                   )}
                   <Box>
                     <FormControl
