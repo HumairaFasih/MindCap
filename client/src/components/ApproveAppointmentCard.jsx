@@ -48,7 +48,7 @@ function ApproveAppointmentCard({
     if (value === 'View Medical Report') {
       const result = await axios({
         method: 'get',
-        url: `http://localhost:3003/api/user/medical-record?name=${studentName}&counselor=${counselorName}`,
+        url: `/api/user/medical-record?name=${studentName}&counselor=${counselorName}`,
         withCredentials: true,
         responseType: 'blob',
       });

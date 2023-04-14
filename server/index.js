@@ -27,7 +27,8 @@ const app = express();
 app.use(express.json());
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+// allow requests from all origins (for development purposes)
+app.use(cors({ origin: true, credentials: true })); // origin true allows all origins
 
 // routes (all requests made to these endpoints will be forwaded to the respective routers)
 app.use('/api/authenticate', authenticateRouter);
