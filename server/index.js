@@ -18,6 +18,7 @@ const adminRouter = require('./routes/admin');
 const appointmentRouter = require('./routes/appointment');
 const complaintRouter = require('./routes/complaint');
 const searchRouter = require('./routes/search');
+const NotifRouter = require('./routes/notification')
 
 // intilaise express app
 const app = express();
@@ -36,6 +37,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/appointment', appointmentRouter);
 app.use('/api/complaint', complaintRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/notification', NotifRouter);
 
 app.get('/api/current-user', async (req, res, next) => {
   // get currently logged in user's details using their token

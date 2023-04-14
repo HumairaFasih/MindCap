@@ -29,6 +29,8 @@ function App() {
           <Route path="create-counselor" element={<CreateCounselor />} />
           <Route path="lodge-complaint" element={<LodgeComplaint />} />
           <Route path="search" element={<SearchPage/>} />
+          <Route path="complaint-details/:complaintId" element={<ResolveComplaint />} />
+          <Route path="notifications" element={<ViewNotifications />} />
           <Route path="user">
             <Route path="student">
               <Route path=":username" element={<StudentProfile />} />

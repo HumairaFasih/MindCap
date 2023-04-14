@@ -49,6 +49,7 @@ router.post('/lodge', async (req, res) => {
 
 router.get('/view', async (req, res) => {
   // get and decode jwt token
+  try{
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
@@ -61,6 +62,9 @@ router.get('/view', async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   }
+}catch(err){
+  console.log(err);
+}
 });
 
 router.post('/resolve', async (req, res) => {
@@ -74,6 +78,24 @@ router.post('/resolve', async (req, res) => {
       const { complaintId } = req.body;
       await Complaints.update({ _id: complaintId }, { status: 'Resolved' });
       res.send('Complaint Resolved!');
+    } catch (err) {
+      console.log('Error')
+      res.status(500).json({ message: err.message });
+    }
+  }
+});
+
+router.post('/view-one', async (req, res) => {
+  // get and decode jwt token
+  const token = req.cookies.jwt;
+  const jwtDecoded = jwtDecode(token);
+
+  const { usertype } = jwtDecoded;
+  if (usertype === 'Admin') {
+    try {
+      const { apptId } = req.body;
+      const result = await Complaints.findOne({ _id: apptId });
+      res.send(result);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }

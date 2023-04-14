@@ -1,11 +1,14 @@
-import * as React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Link } from '@mui/material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import GridViewIcon from '@mui/icons-material/GridView';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import { useNavigate } from 'react-router-dom';
 import LetterAvatar from './LetterAvatar';
 import { retrieveDaySuffix, convertMonth } from '../utilities/date_functions';
+import { AuthContext } from '../context/AuthContext';
+
 
 function ComplaintCard({
   complaintId,
@@ -15,6 +18,14 @@ function ComplaintCard({
   details,
   status,
 }) {
+  const {
+    auth: {
+      authDetails: { usertype, username },
+    },
+  } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
   const getStatusColor = (statusColour) => {
     switch (statusColour) {
       case 'Resolved':
@@ -155,6 +166,7 @@ function ComplaintCard({
               color: '#000000 !important',
               textDecorationColor: '#000000 !important',
             }}
+            onClick={() => navigate(`complaint-details/${complaintId}`)}
           >
             View Details
           </Link>

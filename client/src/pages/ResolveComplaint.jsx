@@ -4,6 +4,7 @@ import { IconButton, Box, Rating, Typography } from '@mui/material';
 import WestIcon from '@mui/icons-material/West';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import EventIcon from '@mui/icons-material/Event';
+import Loading from '../components/LoadingScreen';
 
 import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
@@ -17,14 +18,21 @@ import './profile.css';
 
 const drawerWidth = 270;
 
+
 function ResolveComplaint() {
   const {
     auth: {
       authDetails: { usertype, username },
     },
   } = useContext(AuthContext);
-  const navigate = useNavigate();
-
+  useEffect(() => {
+    if(usertype) {
+      console.log('here')
+    }
+  }, [usertype])
+  
+  const location = useLocation();
+  const [apptId, setID] = useState('');
   const [counselorDetails, setCounselorDetails] = useState({
     username: '',
     fname: '',
@@ -32,28 +40,71 @@ function ResolveComplaint() {
     gender: '',
     experience: '',
     qualification: '',
-    bio: '',
-    day: '',
-    time: '',
     rating: 0,
-    revs: [],
+  });
+  const [loaded, setLoaded] = useState(false);
+
+  const [complaint, setComplaint] = useState({
+    counselor_username: '',
+    type: '',
+    details: '',
+    filed_date: null,
   });
 
-  const handleSubmit = async (e) => {   /* Has to shows snackbar at dashboard screen + resolve complaint in DB  */
-    e.preventDefault();
-    navigate('/')
-  };
+  const [status, setStatus] = useState('');
+
+  const [complaintId, setComlaintId] = useState('');
 
   useEffect(() => {
-    instance
-      .get(`user/counselor/${username}`)
-      .then((result) => {
-        setCounselorDetails(result.data);
-      })
-      .catch((err) => {
+    setID(location.pathname.split('/')[2]);
+  }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const result = await instance.post(
+          `/complaint/view-one`,
+          JSON.stringify({ apptId: location.pathname.split('/')[2] })
+        );
+        setComplaint(result.data);
+        setStatus(result.data.status)
+        setComlaintId(result.data._id)
+        const result2 = await instance.get(
+          `user/counselor/${result.data.counselor_username}`
+        );
+        setCounselorDetails({
+          username: result2.data.username,
+          fname: result2.data.fname,
+          lname: result2.data.lname,
+          gender: result2.data.gender,
+          experience: result2.data.experience,
+          qualification: result2.data.qualification,
+          rating: result2.data.rating,
+        });
+      } catch (err) {
         console.log(err);
-      });
-  }, [username]);
+      }
+    };
+    const getDataHandler = async () => {
+        await getData();
+        setLoaded(true);
+    }
+    getDataHandler()
+  }, []);
+
+  const handleResolution = async () => {
+    const result = await instance.post(
+      `/complaint/resolve`,
+      JSON.stringify({ complaintId })
+    );
+    if(result.data == 'Complaint Resolved!'){
+        setStatus('Resolved');
+    }
+  }
+
+  if (!loaded) {
+    return <Loading />;
+  }
 
   return (
     <Box>
@@ -67,13 +118,6 @@ function ResolveComplaint() {
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          <IconButton
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <WestIcon style={{ fontSize: '2.5rem', color: '#000000' }} />
-          </IconButton>
           <Box className='user-profile-header'>
             <Box className='user-profile-icon'>
               <ProfileIcon accountName={counselorDetails.fname} />
@@ -115,7 +159,7 @@ function ResolveComplaint() {
                 }}
               >
                 <ErrorOutlineIcon sx={{ marginRight: '0.8rem' }} />
-                <Typography>Behavioral Misconduct</Typography>
+                <Typography>{complaint.type}</Typography>
               </Box>
 
               <Box marginTop='2.5rem'>
@@ -130,7 +174,7 @@ function ResolveComplaint() {
                   }}
                 >
                   <EventIcon sx={{ marginRight: '0.8rem' }} />
-                  <Typography>22-February-2023</Typography>
+                  <Typography>{complaint.filed_date.substring(0, 10)}</Typography>
                 </Box>
               </Box>
 
@@ -148,12 +192,7 @@ function ResolveComplaint() {
                 }}
               >
                 <Typography>
-                  Hello World Hello World Hello World Hello World Hello World Hello
-                  World Hello World Hello World Hello World Hello World Hello
-                  World Hello World Hello World Hello World Hello World Hello
-                  World Hello World Hello World Hello World Hello World Hello
-                  World Hello World Hello World Hello World Hello World Hello
-                  World Hello World Hello World
+                {complaint.details}
                 </Typography>
               </Box>
               </Box>
@@ -164,9 +203,9 @@ function ResolveComplaint() {
                   paddinghorizontal='5px'
                   paddingvertical='5px'
                   variant='contained'
-                  onClick={handleSubmit}
+                  onClick={handleResolution}
                 >
-                  Resolve
+                {status}
                 </MyButton>
               </Box>
             </Box>
