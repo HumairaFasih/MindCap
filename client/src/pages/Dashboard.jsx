@@ -51,8 +51,9 @@ function Dashboard() {
 
   const getPastMeetings = (sortedMeetings) => {
     const past = sortedMeetings.filter((item) => {
+      console.log('item', item.date)
       const meetingDateTime = new Date(
-        `${item.date.split('T')[0]}T${item.time.split('T')[1]}`
+        `${item.date.split('T')[1]}T${item.time.split('T')[0]}`
       );
       if (
         item.status !== 'Cancelled' &&
@@ -277,7 +278,7 @@ function Dashboard() {
                     ? getFutureMeetings(meetings).map((item) => (
                         <ApproveAppointmentCard
                           key={item._id}
-                          appointmentId={item._id}
+                          appointment_id={item._id}
                           studentName={item.student_id}
                           date={new Date(item.date).toLocaleDateString()}
                           time={item.time}
