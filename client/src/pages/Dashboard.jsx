@@ -217,7 +217,7 @@ function Dashboard() {
               marginL="20px"
             />
             <Box sx={{ ml: '20px' }}>
-              <SubSecHeading text="We hope you are well" />
+              <SubSecHeading text={usertype === 'Student' ? "We hope you are well" : (usertype === 'Counselor' ? "Here's an overview of all appointments" : usertype === "Admin" && "Here's an overview of all complaints")} />
             </Box>
           </Box>
 
