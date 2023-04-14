@@ -22,7 +22,7 @@ router.get('/get-all-counselors', async (req, res) => {
   }
 });
 
-router.get('/view', async (req, res) => {
+router.get('/view', async (req, res, next) => {
   // get and decode jwt token
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
@@ -37,13 +37,14 @@ router.get('/view', async (req, res) => {
       res.send(result);
     } catch (error) {
       res.status(500).json({ message: error.message });
+      next(err);
     }
   }
   // else counselor is viewing, then return all where counselor_id === username
   else if (usertype === 'Counselor') {
     try {
       const result = await Appointments.find({ counselor_id: username });
-      
+
       res.send(result);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -51,14 +52,23 @@ router.get('/view', async (req, res) => {
   }
 });
 
-router.post('/get-availability', async (req, res) => {
+router.post('/get-availability', async (req, res, next) => {
   const result = await Availability.getDetails({
     counselor_username: req.body.counselor,
   });
-  res.json({ day: result.day_type, time: result.time });
+
+  try {
+    console.log('Logging day_type of counselor: ', result.day_type);
+    console.log('Logging available time of counselor: ', result.time);
+    res.json({ day_type: result.day_type, time: result.time });
+  } catch (err) {
+    console.log('This counselor has not yet specified their availability!');
+    res.status(500).json({ message: err.message });
+    next(err);
+  }
 });
 
-router.post('/book', async (req, res) => {
+router.post('/book', async (req, res, next) => {
   const token = req.cookies.jwt;
   const jwtDecoded = jwtDecode(token);
 
@@ -104,6 +114,7 @@ router.post('/book', async (req, res) => {
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: err.message });
+      next(err);
     }
   }
 });
@@ -130,7 +141,7 @@ router.post('/set-status', async (req, res) => {
 });
 
 router.post('/cancel', async (req, res) => {
-  console.log("idhr aya", req.body)
+  console.log('idhr aya', req.body);
   const { appointmentId } = req.body;
   try {
     await Appointments.update({ _id: appointmentId }, { status: 'Cancelled' });

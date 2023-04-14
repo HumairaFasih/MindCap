@@ -10,7 +10,7 @@ export const MyButton = styled(Button)(
     backgroundcolor,
     bradius,
   }) => ({
-    boxShadow: 'none',
+    boxShadow: '2px',
     textTransform: 'none',
     color: 'white',
     fontSize: 18,
