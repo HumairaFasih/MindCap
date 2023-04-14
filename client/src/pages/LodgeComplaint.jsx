@@ -177,7 +177,7 @@ function LodgeComplaint() {
           />
 
           <Box
-            sx={{ mt: 2, display: 'flex', justifyContent: 'right', mr: '8%' }}
+            sx={{ mt: 2, display: 'flex', width:'90%', justifyContent: 'right', ml:'20px'}}
           >
             <MyButton
               type="submit"
