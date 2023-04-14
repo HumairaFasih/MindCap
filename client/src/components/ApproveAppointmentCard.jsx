@@ -33,6 +33,7 @@ function ApproveAppointmentCard({
   mode,
   status,
   onStatusChange,
+  counselorName
 }) {
   const [isChecked, setIsChecked] = React.useState(false);
 
@@ -42,10 +43,12 @@ function ApproveAppointmentCard({
   };
 
   const handleMeetingCardMenu = async (value) => {
+    console.log('MEDICAL RECORD MAY COUNSELOR:', counselorName)
+    // pass counselor name to backend
     if (value === 'View Medical Report') {
       const result = await axios({
         method: 'get',
-        url: `http://localhost:3003/api/user/medical-record?name=${studentName}`,
+        url: `http://localhost:3003/api/user/medical-record?name=${studentName}&counselor=${counselorName}`,
         withCredentials: true,
         responseType: 'blob',
       });

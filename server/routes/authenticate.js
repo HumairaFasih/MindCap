@@ -39,6 +39,12 @@ router.post('/login', async (req, res, next) => {
   // try catch hell since we wont have jwt token and thus no usertype to make search easier
   try {
     const student = await Student.login(username, password);
+    // find the user in schema and if the account status is set to false then don't allow login
+    console.log('STUDENT:', student)
+    if (student.status === false) {
+      return res.status(400).json({ message: 'Account is disabled' });
+    }
+
     console.log(student);
     const jwtToken = createToken(student.id, student.username, 'Student');
     res.cookie('jwt', jwtToken, { maxAge: expireTime * 1000 });
@@ -46,6 +52,9 @@ router.post('/login', async (req, res, next) => {
   } catch (_) {
     try {
       const counselor = await Counselor.login(username, password);
+      if (counselor.status === false) {
+        return res.status(400).json({ message: 'Account is disabled' });
+      }
       const jwtToken = createToken(
         counselor.id,
         counselor.username,

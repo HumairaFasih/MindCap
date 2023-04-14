@@ -33,7 +33,7 @@ router.get('/view', async (req, res) => {
   if (usertype === 'Student') {
     try {
       const result = await Appointments.find({ student_id: username });
-      console.log(result);
+      // console.log(result);
       res.send(result);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -130,7 +130,7 @@ router.post('/set-status', async (req, res) => {
 });
 
 router.post('/cancel', async (req, res) => {
-  console.log("idhr aya", req.body)
+  // console.log("idhr aya", req.body)
   const { appointmentId } = req.body;
   try {
     await Appointments.update({ _id: appointmentId }, { status: 'Cancelled' });

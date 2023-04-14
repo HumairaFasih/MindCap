@@ -286,6 +286,7 @@ function Dashboard() {
                           onStatusChange={(status) =>
                             handleAppointmentStatus(item._id, status)
                           }
+                          counselorName={username}
                         />
                       ))
                     : usertype === 'Admin' &&

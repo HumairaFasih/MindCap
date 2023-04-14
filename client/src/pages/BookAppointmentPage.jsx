@@ -114,8 +114,7 @@ function BookAppointment() {
       !chosenCounselor ||
       !meetingMode ||
       !chooseDate ||
-      !chooseTime ||
-      !shareStatus
+      !chooseTime
     ) {
       console.log(
         'Booking apnt',
