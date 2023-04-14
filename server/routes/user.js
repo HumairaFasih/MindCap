@@ -69,10 +69,16 @@ router.get('/student/:username', async (req, res) => {
   try {
     const student = await Student.getDetails({ username });
     console.log('Printing student object', student);
+    let medicalFile = {};
+    try{
+      medicalFile = await MedicalRecord.getDetails({ username });
+      console.log('user ki medical file', medicalFile.filename);
+    }
+    catch(error){
+      medicalFile = {filename: ''};
+    }
 
-    const medicalFile = await MedicalRecord.getDetails({ username });
-    console.log('user ki medical file', medicalFile.filename);
-
+    console.log("YAHA TK TO HAI:", medicalFile.filename)
     const returnObj = {
       fname: student.first_name,
       lname: student.last_name,

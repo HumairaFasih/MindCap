@@ -20,6 +20,7 @@ export default function SearchPage() {
   ]);
   const handleDeleteCard = (id) => {
     const updatedCards = searchResults.filter(
+      
       (searchResults) => searchResults.username !== id
     );
     setSearchResults(updatedCards);

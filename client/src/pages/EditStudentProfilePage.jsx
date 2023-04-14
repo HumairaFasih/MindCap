@@ -22,6 +22,7 @@ import { MyButton } from '../components/MyButton';
 import { LongButton } from '../components/LongButton';
 import { AuthContext } from '../context/AuthContext';
 import { instance } from '../axios';
+import axios from 'axios';
 
 const drawerWidth = 270;
 
@@ -79,9 +80,11 @@ function EditStudentProfile() {
       formData.append('newlastname', studentDetails.lname);
       formData.append('newdob', dob);
       formData.append('newgender', studentDetails.gender);
+      // write the axios post in instance format
+      
 
       axios
-        .post(`/user/student/edit-profile`, formData, {
+        .post(`http://localhost:3003/api/user/student/edit-profile`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         })

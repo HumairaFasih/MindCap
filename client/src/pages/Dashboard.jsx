@@ -23,6 +23,7 @@ function Dashboard() {
   const [meetings, setMeetings] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [complaints, setComplaints] = useState([]);
+  const [nothingToShow, setNothingToShow] = useState(false);
 
   const {
     auth: {
@@ -98,7 +99,13 @@ function Dashboard() {
           result.data.length > 0 &&
           [...result.data].sort((a, b) => new Date(a.date) - new Date(b.date));
         setMeetings(sortedMeetings);
-
+        // if sortedMeetings is empty, set nothingToShow to true
+        console.log('sortedMeetings', sortedMeetings);
+        console.log('result', result.data);
+        if (result.data.length === 0) {
+          setNothingToShow(true);
+        }
+        console.log('nothing to show', nothingToShow);
         console.log('Printing loaded data for meeting');
         console.log(result.data);
         setLoaded(true);
@@ -116,6 +123,10 @@ function Dashboard() {
         result.data.length > 0 &&
         [...result.data].sort((a, b) => new Date(a.date) - new Date(b.date));
       setComplaints(sortedComplaints);
+      // if sortedMeetings is empty, set nothingToShow to true
+      if (sortedComplaints.length === 0) {
+        setNothingToShow(true);
+      }
       console.log('Printing loaded data for complaints');
       console.log(result.data);
       setLoaded(true);
@@ -243,16 +254,23 @@ function Dashboard() {
                 <Slider {...settings}>
                   {usertype === 'Student' ? <BookAppointmentCard /> : null}
                   {/* render future meetings based on usertype */}
-                  {usertype === 'Student'
-                    ? getFutureMeetings(meetings).map((item) => (
+                  {usertype === 'Student' && nothingToShow ? (
+                    null
+                  ) : usertype === 'Counselor' && nothingToShow ? (
+                    null
+                  ) : usertype === 'Admin' && nothingToShow ? (
+                    null
+                  ) : usertype === 'Student' ? getFutureMeetings(meetings).map((item) => (
+                    console.log('MEETitem', item._id),
                         <MeetingCard
                           key={item._id}
-                          appointmentId={item._id}
+                          appointment_id={item._id}
                           counselorName={item.counselor_id}
                           date={new Date(item.date).toLocaleDateString()}
                           time={item.time}
                           mode={item.mode}
                           status={item.status}
+                          usertype={usertype}
                         />
                       ))
                     : usertype === 'Counselor'
@@ -321,6 +339,7 @@ function Dashboard() {
                         status={
                           item.status === 'Pending' ? 'Cancelled' : item.status
                         }
+                        usertype={usertype}
                       />
                     ))}
                   {complaints.length > 0 &&

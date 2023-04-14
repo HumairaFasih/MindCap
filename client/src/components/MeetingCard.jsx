@@ -6,6 +6,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InterpreterModeIcon from '@mui/icons-material/InterpreterMode';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import { AuthContext } from '../context/AuthContext';
 import LongMenu from './Menu';
 import LetterAvatar from './LetterAvatar';
 import {
@@ -23,7 +24,9 @@ function MeetingCard({
   time,
   mode,
   status,
+  usertype,
 }) {
+  console.log(appointment_id)
   const [isCancelled, setIsCancelled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -150,7 +153,7 @@ function MeetingCard({
           >
             <DateRangeIcon />
           </Typography>
-          <Typography>{getDate(date)}</Typography>
+          <Typography>{getDate(date, usertype)}</Typography>
         </Box>
 
         <Box display="flex" flexDirection="row">

@@ -16,7 +16,7 @@ import {
 } from '../utilities/date_functions';
 
 
-function PastMeetingCard({ appointmentId, name, date, time, mode, status }) {
+function PastMeetingCard({ appointmentId, name, date, time, mode, status, usertype }) {
   console.log(date);
   const getIcon = (statusIcon) => {
     switch (statusIcon) {
@@ -93,7 +93,7 @@ function PastMeetingCard({ appointmentId, name, date, time, mode, status }) {
             >
               <DateRangeIcon />
             </Typography>
-            <Typography>{getDate(date)}</Typography>
+            <Typography>{getDate(date, usertype)}</Typography>
           </Box>
 
           <Box display="flex" flexDirection="row">

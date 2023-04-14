@@ -67,10 +67,14 @@ export const getTime = (t) => {
   }${minutes} ${meridian}`;
 };
 
-export const getDate = (inp) => {
+export const getDate = (inp, usertype) => {
   const parts = inp.split("/"); 
-  const day = parts[0]; 
-  const month = parts[1]; 
+  let day = parts[0];
+  let month = parts[1];
+  if (usertype === "Student") {
+    day = parts[1];
+    month = parts[0];
+  } 
   const date = new Date(`20${parts[2]}-${month}-${day}`);
   const formattedDate = `${date.getDate()}${retrieveDaySuffix(date.getDate())} ${convertMonth(date.getMonth() + 1)}`;
   console.log(formattedDate);

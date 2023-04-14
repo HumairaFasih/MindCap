@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Typography } from '@mui/material';
+import { instance } from '../axios';
 import './popup.css';
 
 export default function AlertDialog({userName, accType, onDelete}) {
@@ -20,9 +21,11 @@ export default function AlertDialog({userName, accType, onDelete}) {
   };
 
   const handleClick = (userName, accType) => (event) => {
+    console.log('YAHA USER:', userName);
+    event.preventDefault();
     setOpen(false);
     onDelete(userName);
-    event.preventDefault();
+    
     instance.post(`admin/delete-account`, JSON.stringify({ username: userName, accType })).then((result) => {
       console.log('Deleteyay');
     }
