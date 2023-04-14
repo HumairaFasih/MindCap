@@ -75,9 +75,16 @@ function Sidebar(props) {
       >
         <List>
           {TopSidebarNav(usertype, username).map(({ route, icon, label }) =>
-            usertype === 'Counselor' &&
-            (label === 'Search Counselors' ||
-              label === 'Lodge Complaint') ? null : (
+            usertype === 'Admin' &&
+            (label === 'My Profile' ||
+              label === 'Search Counselors' ||
+              label === 'Lodge Complaint') ? null : usertype === 'Counselor' &&
+              (label === 'Search Counselors' ||
+                label === 'Lodge Complaint' ||
+                label === 'Create Account' ||
+                label === 'Manage Accounts') ? null : usertype === 'Student' &&
+              (label === 'Create Account' ||
+                label === 'Manage Accounts') ? null : (
               <ListItem key={label} disablePadding disableGutters>
                 <ListItemButton sx={{ py: 1 }} onClick={() => navigate(route)}>
                   <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
