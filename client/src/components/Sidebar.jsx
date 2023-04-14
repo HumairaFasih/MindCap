@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -19,6 +19,7 @@ import MindCapLogo from '../assets/images/logo-no-bg.png';
 import TopSidebarNav from './TopSidebarNav';
 import BottomSidebarNav from './BottomSidebarNav';
 import { AuthContext } from '../context/AuthContext';
+import { instance } from '../axios';
 
 function Sidebar(props) {
   const { window } = props;
@@ -31,8 +32,10 @@ function Sidebar(props) {
     auth: {
       authDetails: { usertype, username },
     },
+    setAuth,
   } = useContext(AuthContext);
 
+  const navigate = useNavigate();
   const drawerWidth = 270;
 
   const drawer = (
@@ -76,42 +79,7 @@ function Sidebar(props) {
             (label === 'Search Counselors' ||
               label === 'Lodge Complaint') ? null : (
               <ListItem key={label} disablePadding disableGutters>
-                <Link
-                  to={route}
-                  style={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    width: 'fullWidth',
-                  }}
-                >
-                  <ListItemButton sx={{ py: 1 }}>
-                    <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
-
-                    <Typography
-                      variant="h8"
-                      sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
-                    >
-                      {label}
-                    </Typography>
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-            )
-          )}
-        </List>
-
-        <List>
-          {BottomSidebarNav.map(({ route, icon, label }) => (
-            <Link
-              to={route}
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-                width: 'fullWidth',
-              }}
-            >
-              <ListItem key={label} disablePadding>
-                <ListItemButton sx={{ pt: 1 }}>
+                <ListItemButton sx={{ py: 1 }} onClick={() => navigate(route)}>
                   <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
 
                   <Typography
@@ -122,7 +90,40 @@ function Sidebar(props) {
                   </Typography>
                 </ListItemButton>
               </ListItem>
-            </Link>
+            )
+          )}
+        </List>
+
+        <List>
+          {BottomSidebarNav.map(({ route, icon, label }) => (
+            <ListItem key={label} disablePadding>
+              <ListItemButton
+                sx={{ pt: 1 }}
+                onClick={() => {
+                  if (label === 'Sign Out') {
+                    console.log('here');
+                    instance
+                      .get('/authenticate/logout')
+                      .then(() => {
+                        localStorage.removeItem('isAuthenticated');
+                        setAuth({ isAuthenticated: false, authDetails: null });
+                      })
+                      .catch((err) => console.log(err));
+                  } else {
+                    navigate(route);
+                  }
+                }}
+              >
+                <Box sx={{ m: 1, pr: 1 }}>{icon}</Box>
+
+                <Typography
+                  variant="h8"
+                  sx={{ fontWeight: '600', fontSize: '18px', mb: 1 }}
+                >
+                  {label}
+                </Typography>
+              </ListItemButton>
+            </ListItem>
           ))}
           <Divider
             variant="middle"

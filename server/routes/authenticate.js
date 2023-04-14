@@ -20,6 +20,18 @@ const createToken = (id, username, usertype) =>
     expiresIn: expireTime,
   });
 
+router.get('/logout', async (req, res, next) => {
+  try {
+    res.clearCookie('jwt', { maxAge: expireTime * 1000 });
+    res
+      .status(200)
+      .json({ success: true, message: 'User logged out successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    next(err);
+  }
+});
+
 // find and match credentials, if successful set jwt cookie and respond back with object id
 router.post('/login', async (req, res, next) => {
   const { username, password } = req.body;

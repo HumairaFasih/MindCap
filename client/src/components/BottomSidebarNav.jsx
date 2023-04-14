@@ -21,7 +21,7 @@ const BottomSidebarNav = [
     label: 'Update Password',
   },
   {
-    route: '/sign-out',
+    route: '',
     icon: SignOutIcon,
     label: 'Sign Out',
   },
