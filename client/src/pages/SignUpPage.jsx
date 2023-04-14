@@ -109,27 +109,39 @@ function SignUp() {
       }));
     }
 
-    {
-      instance
-        .post(
-          '/authenticate/signup',
-          JSON.stringify({
-            firstName: firstName.value,
-            lastName: lastName.value,
-            email: email.value,
-            username: username.value,
-            password: password.value,
+    // THE PASSWORD MUST CONTAIN AT LEAST 8 CHARACTERS, 1 UPPERCASE, 1 LOWERCASE, 1 NUMBER
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+    if (passwordRegex.test(password.value)) { // if password is valid
+      {
+        instance
+          .post(
+            '/authenticate/signup',
+            JSON.stringify({
+              firstName: firstName.value,
+              lastName: lastName.value,
+              email: email.value,
+              username: username.value,
+              password: password.value,
+            })
+          )
+          .then((result) => {
+            console.log('Sign Up Successful, Redirecting to Dashboard...');
+            console.log(result);
+            navigate('../login');
           })
-        )
-        .then((result) => {
-          console.log('Sign Up Successful, Redirecting to Dashboard...');
-          console.log(result);
-          navigate('../login');
-        })
-        .catch((err) => {
-          console.log('Sign Up Failed!');
-          console.log(err.message);
-        });
+          .catch((err) => {
+            console.log('Sign Up Failed!');
+            console.log(err.message);
+          });
+      }
+    }
+    else {
+      e.preventDefault();
+      setSignUpFormData((prev) => ({
+        ...prev,
+        password: { ...prev[password], error: true },
+        confirmPassword: { ...prev[confirmPassword], error: true },
+      }));
     }
   };
 
@@ -270,7 +282,7 @@ function SignUp() {
               onChangeHandler={handleChange}
               error={signUpFormData.password.error}
               helperText={
-                signUpFormData.password.value && 'Password does not match!'
+                signUpFormData.password.value && 'Password must contain at least 8 characters, 1 uppercase, 1 lowercase, and 1 number'
               }
             />
 
@@ -285,7 +297,7 @@ function SignUp() {
               error={signUpFormData.confirmPassword.error}
               helperText={
                 signUpFormData.confirmPassword.value &&
-                'Password does not match!'
+                'Passwords need to match!'
               }
             />
 

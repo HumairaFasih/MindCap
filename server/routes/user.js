@@ -217,9 +217,23 @@ router.post(
 
 router.get('/medical-record', async (req, res) => {
   const username = req.query.name;
+  const counselor = req.query.counselor;
   const result = await MedicalRecord.getDetailsNonLean({
     username,
   });
+
+  // check if name of counselor is in visible_to array of medical record
+  // if not, return 403
+  // if yes, return the medical record
+  
+  if (result === null) {
+    res.status(404).send('Medical Record not found');
+    return;
+  }
+  else if (!result.visible_to.includes(counselor)) {
+    res.status(403).send('You are not allowed to view this medical record');
+    return;
+  }
 
   res.send(result.data);
 });
