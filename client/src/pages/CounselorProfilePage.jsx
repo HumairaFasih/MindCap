@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { IconButton, Alert, Box, Rating, TextField } from '@mui/material';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Alert, Box, Rating, TextField } from '@mui/material';
 import TodayIcon from '@mui/icons-material/Today';
-import WestIcon from '@mui/icons-material/West';
 import PageTitle from '../components/PageTitle';
 import SubSecHeading from '../components/SubSecHeading';
 import ProfileIcon from '../components/ProfileIcon';
@@ -27,10 +26,11 @@ function CounselorProfile() {
   const [rateError, setRateError] = useState(false);
   const [reviewError, setReviewError] = useState(false);
   const navigate = useNavigate();
-
+  const location = useLocation();
+  
   const conditionalNavigate = () => {
     if (usertype === 'Student') {
-      navigate('/book-appointment');
+      navigate('/book-appointment', { state: { from: location } });
     } else if (usertype === 'Counselor') {
       navigate('/user/counselor/edit-profile', { replace: true });
     }
@@ -49,7 +49,7 @@ function CounselorProfile() {
         JSON.stringify({ username: userName, accType, accStatus })
       )
       .then((result) => {
-        console.log('yay');
+        console.log('Status changed');
       })
       .catch((err) => {
         console.log(err.message);
@@ -63,7 +63,7 @@ function CounselorProfile() {
         JSON.stringify({ username: userName, accType })
       )
       .then((result) => {
-        console.log('yay');
+        console.log('Account deleted!');
       })
       .catch((err) => {
         console.log(err.message);
@@ -90,13 +90,18 @@ function CounselorProfile() {
   });
 
   const handleChange = (prop) => (event) => {
-    if (prop === 'rating' && event.target.value !== '' && rateError) {
+    if (prop === 'rating' && parseInt(event.target.value) !== 0 && rateError) {
       setRateError(false);
     }
     if (prop === 'review' && event.target.value !== '' && reviewError) {
       setReviewError(false);
     }
-    setNewReview({ ...review, [prop]: event.target.value });
+
+    if (prop === 'rating') {
+      setNewReview({ ...review, [prop]: parseInt(event.target.value) });
+    } else {
+      setNewReview({ ...review, [prop]: event.target.value });
+    }
   };
 
   const handleSubmit = async (e) => {

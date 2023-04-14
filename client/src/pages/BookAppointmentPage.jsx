@@ -1,11 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import {
   Box,
+  Alert,
   Typography,
   Divider,
   InputLabel,
+  IconButton,
   MenuItem,
   FormControl,
   FormControlLabel,
@@ -15,7 +16,7 @@ import {
   Checkbox,
   Button,
 } from '@mui/material';
-
+import WestIcon from '@mui/icons-material/West';
 import { DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -24,14 +25,15 @@ import { MyButton } from '../components/MyButton';
 import Sidebar from '../components/Sidebar';
 import PageTitle from '../components/PageTitle';
 import { instance } from '../axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const drawerWidth = 270;
 function BookAppointment() {
   // get CounselorTime and chooseDateType from backend
 
   const [counselorNames, setCounselorNames] = useState([]);
-  const [chosen, setChosen] = React.useState(true);
-  const [chosenval, setChosenTimeVal] = React.useState('');
+  const [chosen, setChosen] = useState(true);
+  const [chosenval, setChosenTimeVal] = useState('');
   const [chosenCounselor, setChosenCounselor] = useState('');
   const [counselorTime, setCounselorTime] = useState('12-3AM');
   const [chooseDateType, setDateType] = useState('weekdays');
@@ -40,7 +42,21 @@ function BookAppointment() {
   const [meetingMode, setMeetingMode] = useState('');
   const [shareStatus, setShareStatus] = useState('false');
   const [screenSize, setScreenSize] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
   let buttons = [];
+
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
+
+  useEffect(() => {
+    const routeRegex = /^\/user\/counselor\//;
+    if (routeRegex.test(from)) {
+      setChosenCounselor(from.split('/').at(-1));
+    } else {
+      setChosenCounselor('');
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -75,6 +91,7 @@ function BookAppointment() {
   };
 
   const handleCounselorSelect = async (e) => {
+    console.log(e.target.name, e.target.value);
     setChosenCounselor(e.target.value);
     instance
       .post(
@@ -82,32 +99,53 @@ function BookAppointment() {
         JSON.stringify({ counselor: e.target.value })
       )
       .then((result) => {
+        console.log(result.data.time);
+        console.log(result.data.day_type);
         setCounselorTime(result.data.time);
         setDateType(result.data.day_type);
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.message);
       });
   };
 
   const submitHandler = async () => {
-    instance
-      .post(
-        '/appointment/book',
-        JSON.stringify({
-          counselorUsername: chosenCounselor,
-          meetingMode,
-          date: chooseDate,
-          time: chooseTime,
-          share: shareStatus,
+    if (
+      !chosenCounselor ||
+      !meetingMode ||
+      !chooseDate ||
+      !chooseTime ||
+      !shareStatus
+    ) {
+      console.log(
+        'Booking apnt',
+        chosenCounselor,
+        meetingMode,
+        chooseDate,
+        chooseTime,
+        shareStatus
+      );
+      setError(true);
+    } else {
+      setError(false);
+      instance
+        .post(
+          '/appointment/book',
+          JSON.stringify({
+            counselorUsername: chosenCounselor,
+            meetingMode,
+            date: chooseDate,
+            time: chooseTime,
+            share: shareStatus,
+          })
+        )
+        .then((result) => {
+          console.log(result);
         })
-      )
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
   };
 
   if (counselorTime === '12-3AM') {
@@ -137,7 +175,7 @@ function BookAppointment() {
       { label: '8:00 AM', value: '8:00 AM' },
       { label: '8:30 AM', value: '8:30 AM' },
     ];
-  } else if (counselorTime === '9-12PM') {
+  } else if (counselorTime === '9-12AM') {
     buttons = [
       { label: '9:00 AM', value: '9:00 AM' },
       { label: '9:30 AM', value: '9:30 AM' },
@@ -173,7 +211,7 @@ function BookAppointment() {
       { label: '8:00 PM', value: '8:00 PM' },
       { label: '8:30 PM', value: '8:30 PM' },
     ];
-  } else if (counselorTime === '9-12AM') {
+  } else if (counselorTime === '9-12PM') {
     buttons = [
       { label: '9:00 PM', value: '9:00 PM' },
       { label: '9:30 PM', value: '9:30 PM' },
@@ -184,16 +222,15 @@ function BookAppointment() {
     ];
   }
 
-
   const handleResize = useCallback(() => {
-    console.log(window.outerWidth)	
-    if (window.outerWidth <= 280) {	
-      setScreenSize('small');	
-    } else if (window.outerWidth <= 500) {	
-      setScreenSize('medium');	
-    } else if (window.outerWidth<= 1000){	
-      setScreenSize('large');	
-    } else{
+    console.log(window.outerWidth);
+    if (window.outerWidth <= 280) {
+      setScreenSize('small');
+    } else if (window.outerWidth <= 500) {
+      setScreenSize('medium');
+    } else if (window.outerWidth <= 1000) {
+      setScreenSize('large');
+    } else {
       setScreenSize('xlarge');
     }
   }, []);
@@ -204,47 +241,43 @@ function BookAppointment() {
     return () => window.removeEventListener('resize', handleResize);
   }, [handleResize]);
 
-  function responsiveColumn(){
-    console.log(screenSize)
-    if (screenSize==='small') {
-      return 'column'
+  function responsiveColumn() {
+    if (screenSize === 'small') {
+      return 'column';
     }
-    if (screenSize==='medium') {
-      return 'column'
+    if (screenSize === 'medium') {
+      return 'column';
     }
-    if (screenSize==='large') {
-      return 'column'
+    if (screenSize === 'large') {
+      return 'column';
     }
-    return 'row'
+    return 'row';
   }
 
-  function timeBox(){
-    console.log(screenSize)
-    if (screenSize==='small') {
-      return '90vw'
+  function timeBox() {
+    if (screenSize === 'small') {
+      return '90vw';
     }
-    if (screenSize==='medium') {
-      return '90vw'
+    if (screenSize === 'medium') {
+      return '90vw';
     }
-    if (screenSize==='large') {
-      return '530px'
+    if (screenSize === 'large') {
+      return '530px';
     }
-    return '530px'
+    return '530px';
   }
 
-
-  function timeBoxPadding(){
-    console.log(screenSize)
-    if (screenSize==='small') {
-      return '0px'
+  function timeBoxPadding() {
+    if (screenSize === 'small') {
+      return '0px';
     }
-    if (screenSize==='medium') {
-      return '0px'
+    if (screenSize === 'medium') {
+      return '0px';
     }
-    if (screenSize==='large') {
-      return '0px'
+    if (screenSize === 'large') {
+      return '0px';
     }
-    return '170px'
+    return '170px';
   }
 
   return (
@@ -260,17 +293,31 @@ function BookAppointment() {
           }}
         >
           <Box sx={{ padding: '12px' }}>
-            <Typography
-              variant="h4"
-              sx={{ fontWeight: 'bold', mb: '15px', ml: '20px' }}
+            <IconButton
+              sx={{ mt: 0 }}
+              onClick={() => {
+                navigate(-1);
+              }}
             >
-              Book Appointment with Counselor
-            </Typography>
+              <WestIcon style={{ fontSize: '30px', color: '#000000' }} />
+            </IconButton>
+            <PageTitle text="Book Appointment" marginB="15px" marginL="20px" />
             <Divider
               variant="middle"
               sx={{ background: '#000', mt: '15px', mb: '15px' }}
             />
-            
+            {error === true ? (
+              <Alert severity="error" sx={{ mb: 2, ml: 2, mr: 2 }}>
+                Please complete all fields to book your appointment!
+              </Alert>
+            ) : (
+              error === false && (
+                <Alert severity="success" sx={{ mb: 2, ml: 2, mr: 2 }}>
+                  Appointment booked!
+                </Alert>
+              )
+            )}
+
             <Box display="flex" flexDirection={responsiveColumn()}>
               <Box sx={{ margin: '0px 0px 0px 10px' }}>
                 <Box sx={{ margin: '10px 80px 10px 0px' }}>
@@ -280,17 +327,30 @@ function BookAppointment() {
                     </InputLabel>
                     <Select
                       onChange={handleCounselorSelect}
-                      default
+                      defaultValue=""
                       color="success"
                       label="CounselorName"
                     >
-                      {counselorNames.length !== 0
-                        ? counselorNames.map((counselor) => (
-                            <MenuItem value={counselor} sx={{ minWidth: 300 }}>
+                      {counselorNames &&
+                        (!chosenCounselor ? (
+                          counselorNames.map((counselor) => (
+                            <MenuItem
+                              key={counselor}
+                              value={counselor}
+                              sx={{ minWidth: 300 }}
+                            >
                               {counselor}
                             </MenuItem>
                           ))
-                        : null}
+                        ) : (
+                          <MenuItem
+                            key={chosenCounselor}
+                            value={chosenCounselor}
+                            sx={{ minWidth: 300 }}
+                          >
+                            {chosenCounselor}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 </Box>
@@ -313,9 +373,9 @@ function BookAppointment() {
                     <FormControlLabel
                       className="radioGroup"
                       sx={{ margin: '6px 0px 0px 6px' }}
-                      value="inPerson"
+                      value="In-Person"
                       control={<Radio color="success" />}
-                      label="In-person"
+                      label="In-Person"
                     />
                   </RadioGroup>
                 </FormControl>
@@ -358,7 +418,7 @@ function BookAppointment() {
                 <Box display="flex" flexDirection="row">
                   <Checkbox
                     onChange={(e) => setShareStatus(e.target.checked)}
-                    {...{ 'aria-label': 'Checkbox demo' }}
+                    {...{ 'aria-label': 'Share status' }}
                     defaultChecked
                     color="success"
                     sx={{ margin: '14px 0px 0px 0px' }}
@@ -396,7 +456,7 @@ function BookAppointment() {
                       sx={{
                         borderRadius: '12px',
                         backgroundColor:
-                          button.value === chosenval ? '#C2D7BF' : '#ffffff',
+                          button.value === chosenval ? '#C5C5C5' : '#ffffff',
                         border: '2px solid rgb(147, 183, 125)',
                         boxShadow: '0px 2px 7px grey',
                         width: '90%',
@@ -423,11 +483,13 @@ function BookAppointment() {
 
                 <MyButton
                   onClick={submitHandler}
-                  
                   paddinghorizontal="10px"
                   paddingvertical="15px"
-              
-                  sx={{ color: '#ffffff', margin: '18px 40px 0px 10px', width: timeBox()}}
+                  sx={{
+                    color: '#ffffff',
+                    margin: '18px 40px 0px 10px',
+                    width: timeBox(),
+                  }}
                 >
                   Book Now
                 </MyButton>

@@ -11,7 +11,7 @@ function ProtectedRoutes() {
   return isAuthenticated ? (
     <Outlet />
   ) : isAuthenticated === false ? (
-    <Navigate to="/login" state={{ from: location }} />
+    <Navigate to="/login" />
   ) : (
     <Loading />
   );
