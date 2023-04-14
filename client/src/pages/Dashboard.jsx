@@ -299,6 +299,7 @@ function Dashboard() {
                           type={item.type}
                           details={item.details}
                           status={item.status}
+                          usertype={usertype}
                         />
                       ))}
                 </Slider>

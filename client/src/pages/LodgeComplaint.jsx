@@ -65,6 +65,8 @@ function LodgeComplaint() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('handling submit for lodge complaint');
+    // get current date and time and add to complaint
+    const date = new Date();
     instance
       .post(
         '/complaint/lodge',
@@ -72,6 +74,7 @@ function LodgeComplaint() {
           counselor: chosenCounselor,
           complaint_type: complaintType,
           complaint_details: complaintDetails,
+          date: date,
         })
       )
       .then(() => {

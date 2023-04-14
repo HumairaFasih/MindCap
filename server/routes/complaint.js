@@ -14,7 +14,7 @@ router.post('/lodge', async (req, res) => {
 
   if (usertype === 'Student') {
     try {
-      const { counselor, complaint_type, complaint_details } = req.body;
+      const { counselor, complaint_type, complaint_details, date } = req.body;
 
       // create complaint
       await Complaints.create({
@@ -22,6 +22,7 @@ router.post('/lodge', async (req, res) => {
         type: complaint_type,
         filed_date: new Date(),
         details: complaint_details,
+        filed_date: date,
         status: 'Pending',
       });
       // create notification for student

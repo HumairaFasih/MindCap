@@ -6,8 +6,14 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import { useNavigate } from 'react-router-dom';
 import LetterAvatar from './LetterAvatar';
-import { retrieveDaySuffix, convertMonth } from '../utilities/date_functions';
+// import { retrieveDaySuffix, convertMonth } from '../utilities/date_functions';
 import { AuthContext } from '../context/AuthContext';
+import {
+  retrieveDaySuffix,
+  convertMonth,
+  getTime,
+  getDate,
+} from '../utilities/date_functions';
 
 
 function ComplaintCard({
@@ -70,11 +76,9 @@ function ComplaintCard({
     }
   };
 
-  const displayDate = `${new Date(date).getDate()}${retrieveDaySuffix(
-    new Date(date).getDate()
-  )} ${convertMonth(new Date(date).getMonth() + 1)} ${new Date(
-    date
-  ).getFullYear()}`;
+
+
+  const displayDate = getDate(date);
 
   return (
     <Box>
