@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -14,6 +14,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
+import './EditCounselorProfilePage'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import UploadImg from '../assets/images/upload-img.png';
 import Sidebar from '../components/Sidebar';
@@ -22,6 +23,7 @@ import { MyButton } from '../components/MyButton';
 import { LongButton } from '../components/LongButton';
 import { AuthContext } from '../context/AuthContext';
 import { instance } from '../axios';
+
 
 const drawerWidth = 270;
 
@@ -101,6 +103,63 @@ function EditStudentProfile() {
     setStudentDetails({ ...studentDetails, [name]: value });
   };
 
+  const [screenSize, setScreenSize] = useState('');
+  const handleResize = useCallback(() => {
+    if (window.outerWidth <= 500) {
+      setScreenSize('small');
+    }else if (window.outerWidth<=600){
+      setScreenSize('between')
+    }    
+    else if (window.outerWidth <= 818) {
+      setScreenSize('medium');
+    } else if (window.outerWidth <= 1400) {
+      setScreenSize('large');
+    } else if (window.outerWidth <= 1700) {
+      setScreenSize('very large');
+    } else {
+      setScreenSize('Big boi');
+    }
+  }, []);
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
+
+
+  function btnResponsive(){
+    if (screenSize==='small') {
+      return '300px'
+    }
+    if (screenSize==='between') {
+      return '300px'
+    }
+    if (screenSize==='medium') {
+      return '300px'
+    }
+    if (screenSize==='large') {
+      return '400px'
+    }
+    return '400px'
+  }
+
+  function textResponsive(){
+    if (screenSize==='small') {
+      return '300px'
+    }
+    if (screenSize==='between') {
+      return '300px'
+    }
+    if (screenSize==='medium') {
+      return '300px'
+    }
+    if (screenSize==='large') {
+      return '400px'
+    }
+    return '400px'
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
@@ -121,20 +180,14 @@ function EditStudentProfile() {
           />
         </Box>
         <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-            height: '100%',
-          }}
+          className='ExternalBox'
         >
           <Box
+            className="InternalBox"
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '50%',
-              height: '100%',
-              m: 1,
+              maxWidth: '100%',
+              width: 500,
+              minWidth: 280,
             }}
           >
             <TextField
@@ -144,7 +197,7 @@ function EditStudentProfile() {
               value={studentDetails.fname}
               variant="outlined"
               onChange={handleChange}
-              sx={{ width: 400, m: 3 }}
+              sx={{ width: textResponsive(), m: 3 }}
               error={error}
               helperText={error ? 'Please fill in this field' : ''}
             />
@@ -152,11 +205,11 @@ function EditStudentProfile() {
             <DatePicker
               value={dob}
               onChange={(newdob) => setdob(newdob)}
-              sx={{ width: 400, m: 3 }}
+              sx={{width: textResponsive(), m: 3 }}
               label="Date of Birth"
             />
 
-            <FormControl sx={{ m: 3 }}>
+            <FormControl sx={{ m: 3, width: textResponsive()}}>
               <FormLabel
                 id="medical report"
                 sx={{ color: '#ADADAD', fontWeight: 'bold' }}
@@ -172,7 +225,7 @@ function EditStudentProfile() {
                 flexDirection: 'column',
                 color: '#969696',
                 borderRadius: 10,
-                width: 400,
+                width: textResponsive(),
                 height: 300,
                 alignItems: 'center',
                 p: 2,
@@ -220,11 +273,11 @@ function EditStudentProfile() {
             </Card>
           </Box>
           <Box
+            className="InternalBox"
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '50%',
-              height: '100%',
+              maxWidth: '100%',
+              width: 500,
+              minWidth: 280,
               m: 1,
             }}
           >
@@ -235,7 +288,7 @@ function EditStudentProfile() {
               value={studentDetails.lname}
               onChange={handleChange}
               variant="outlined"
-              sx={{ width: 400, m: 3 }}
+              sx={{width:textResponsive(), m: 3 }}
               error={error}
               helperText={error ? 'Please fill in this field' : ''}
             />
@@ -247,7 +300,7 @@ function EditStudentProfile() {
               value={studentDetails.roll_num}
               onChange={handleChange}
               variant="filled"
-              sx={{ width: 400, m: 3 }}
+              sx={{ width: textResponsive(), m: 3 }}
             />
             <TextField
               disabled
@@ -257,7 +310,7 @@ function EditStudentProfile() {
               value={studentDetails.email}
               onChange={handleChange}
               variant="filled"
-              sx={{ width: 400, m: 3 }}
+              sx={{ width: textResponsive(), m: 3 }}
             />
 
             <FormControl sx={{ m: 3 }}>
@@ -298,7 +351,7 @@ function EditStudentProfile() {
               </RadioGroup>
             </FormControl>
 
-            <LongButton type="submit" sx={{ ml: 3 }}>
+            <LongButton type="submit" sx={{ ml: 3, width:btnResponsive()}}>
               Save Changes
             </LongButton>
           </Box>
