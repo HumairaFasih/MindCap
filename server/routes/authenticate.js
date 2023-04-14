@@ -118,6 +118,14 @@ router.patch('/update-password', async (req, res, next) => {
       res.status(500).json({ message: err.message });
       next(err);
     }
+  } else if (usertype === 'Admin') {
+    try {
+      await Admin.update({ _id: id }, { password: hashed });
+      res.send('Password Updated');
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      next(err);
+    }
   }
 });
 
