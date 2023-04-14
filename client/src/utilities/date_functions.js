@@ -69,8 +69,8 @@ export const getTime = (t) => {
 
 export const getDate = (inp, usertype) => {
   const parts = inp.split("/"); 
-  let day = parts[1];
-  let month = parts[0];
+  let day = parts[0];
+  let month = parts[1];
   // if (usertype === "Student" || usertype === "Admin") {
   //   day = parts[1];
   //   month = parts[0];
