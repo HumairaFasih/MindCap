@@ -153,7 +153,7 @@ function MeetingCard({
           >
             <DateRangeIcon />
           </Typography>
-          <Typography>{date}</Typography>
+          <Typography>{getDate(date, usertype)}</Typography>
         </Box>
 
         <Box display="flex" flexDirection="row">
