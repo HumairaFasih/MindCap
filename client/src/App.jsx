@@ -20,6 +20,15 @@ import LodgeComplaint from './pages/LodgeComplaint';
 import SearchPage from './pages/SearchPage';
 
 function App() {
+  // if user access '/' route and they are not authenticated then redirect to login page
+
+  if (window.location.pathname === '/') {
+    if (!localStorage.getItem('token')) {
+      window.location.href = '/login';
+    } else {
+      window.location.href = '/dashboard';
+    }
+  }
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Routes>
@@ -43,6 +52,7 @@ function App() {
           </Route>
           <Route path="book-appointment" element={<BookAppointment />} />
         </Route>
+        
         <Route path="login" element={<SignIn />} />
         <Route path="signup" element={<SignUp />} />
         <Route path="*" element={<PageNotFound />} />
