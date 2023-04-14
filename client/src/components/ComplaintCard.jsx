@@ -129,7 +129,7 @@ function ComplaintCard({
           >
             <DateRangeIcon />
           </Typography>
-          <Typography>{displayDate}</Typography>
+          <Typography>{date}</Typography>
         </Box>
 
         <Box display="flex" flexDirection="row">
