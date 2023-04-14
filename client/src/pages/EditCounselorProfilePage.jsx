@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Box,
   TextField,
@@ -129,6 +129,63 @@ function EditCounselorProfile() {
     }
   };
 
+  const [screenSize, setScreenSize] = useState('');
+  const handleResize = useCallback(() => {
+    if (window.outerWidth <= 500) {
+      setScreenSize('small');
+    }else if (window.outerWidth<=600){
+      setScreenSize('between')
+    }    
+    else if (window.outerWidth <= 818) {
+      setScreenSize('medium');
+    } else if (window.outerWidth <= 1400) {
+      setScreenSize('large');
+    } else if (window.outerWidth <= 1700) {
+      setScreenSize('very large');
+    } else {
+      setScreenSize('Big boi');
+    }
+  }, []);
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
+
+
+  function btnResponsive(){
+    if (screenSize==='small') {
+      return '95vw'
+    }
+    if (screenSize==='between') {
+      return '300px'
+    }
+    if (screenSize==='medium') {
+      return '250px'
+    }
+    if (screenSize==='large') {
+      return '400px'
+    }
+    return '400px'
+  }
+
+  function textResponsive(){
+    if (screenSize==='small') {
+      return '300px'
+    }
+    if (screenSize==='between') {
+      return '300px'
+    }
+    if (screenSize==='medium') {
+      return '250px'
+    }
+    if (screenSize==='large') {
+      return '400px'
+    }
+    return '400px'
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex' }}>
@@ -170,7 +227,7 @@ function EditCounselorProfile() {
                 value={counselorDetails.fname}
                 variant="outlined"
                 onChange={handleChange}
-                sx={{ width: 400, m: 3 }}
+                sx={{width: textResponsive(), m: 3 }}
                 error={error}
                 helperText={error ? 'Please fill in this field' : ''}
               />
@@ -182,7 +239,7 @@ function EditCounselorProfile() {
                 value={counselorDetails.lname}
                 onChange={handleChange}
                 variant="outlined"
-                sx={{ width: 400, m: 3 }}
+                sx={{width: textResponsive(), m: 3 }}
                 error={error}
                 helperText={error ? 'Please fill in this field' : ''}
               />
@@ -194,7 +251,7 @@ function EditCounselorProfile() {
                 value={counselorDetails.username}
                 onChange={handleChange}
                 variant="filled"
-                sx={{ width: 400, m: 3 }}
+                sx={{width: textResponsive(), m: 3 }}
               />
 
               <TextField
@@ -205,7 +262,7 @@ function EditCounselorProfile() {
                 value={counselorDetails.email}
                 onChange={handleChange}
                 variant="filled"
-                sx={{ width: 400, m: 3 }}
+                sx={{width: textResponsive(), m: 3 }}
               />
 
               <DatePicker
@@ -214,7 +271,7 @@ function EditCounselorProfile() {
                 onChange={(newValue) => {
                   setdob(newValue);
                 }}
-                sx={{ width: 400, m: 3 }}
+                sx={{width: textResponsive(), m: 3 }}
               />
 
               <TextField
@@ -236,7 +293,7 @@ function EditCounselorProfile() {
                   },
                 }}
                 onChange={handleChange}
-                sx={{ width: 400, m: 3 }}
+                sx={{width: textResponsive(), m: 3 }}
               />
 
               <TextField
@@ -249,7 +306,7 @@ function EditCounselorProfile() {
                     : ''
                 }
                 onChange={handleChange}
-                sx={{ width: 400, m: 3 }}
+                sx={{ width: textResponsive(), m: 3 }}
               />
 
               <TextField
@@ -260,7 +317,7 @@ function EditCounselorProfile() {
                 onChange={handleChange}
                 multiline
                 rows={6}
-                sx={{ width: 400, m: 3 }}
+                sx={{ width: textResponsive(), m: 3 }}
               />
             </Box>
 
@@ -415,7 +472,7 @@ function EditCounselorProfile() {
                 </RadioGroup>
               </FormControl>
 
-              <LongButton type="submit" sx={{ ml: 2 }}>
+              <LongButton type="submit" sx={{ ml: 2, width:btnResponsive()}}>
                 Save Changes
               </LongButton>
             </Box>

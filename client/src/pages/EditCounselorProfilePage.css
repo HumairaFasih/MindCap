@@ -13,10 +13,10 @@
     /* margin-left:50px; */
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1095px) {
     .ExternalBox{
         display: flex;
-        flex-direction:  row ;
+        flex-direction:  column ;
         justify-content:  space-between ;
     }
     .InternalBox{
