@@ -34,6 +34,14 @@ AdminSchema.statics.login = async function (username, password) {
   }
 };
 
+AdminSchema.statics.update = async function (filter, update) {
+  try {
+    await this.findOneAndUpdate(filter, update);
+  } catch (err) {
+    throw Error('Failed');
+  }
+};
+
 const Admin = mongoose.model('Admin', AdminSchema, 'Admin');
 
 module.exports = Admin;
