@@ -191,7 +191,7 @@ function BookAppointment() {
       setScreenSize('small');	
     } else if (window.outerWidth <= 500) {	
       setScreenSize('medium');	
-    } else if (window.outerWidth<= 1000){	
+    } else if (window.outerWidth<= 1500){	
       setScreenSize('large');	
     } else{
       setScreenSize('xlarge');
@@ -244,7 +244,7 @@ function BookAppointment() {
     if (screenSize==='large') {
       return '0px'
     }
-    return '170px'
+    return '100px'
   }
 
   return (
