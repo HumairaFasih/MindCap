@@ -321,7 +321,9 @@ function Dashboard() {
               <Typography
                 sx={{ fontSize: '30px', fontWeight: 'bold', ml: '15px' }}
               >
-                Past Appointments
+                {usertype === 'Admin'
+                  ? 'Resolved Complaints'
+                  : 'Past Appointments'}
               </Typography>
               <Box>
                 <Slider {...settings}>
