@@ -1,6 +1,6 @@
 # MindCap
 
-This is a project for CS360: Software Engineering course at LUMS.
+This is a mental health appointment booking web application for CAPS - a student counselling unit at LUMS.
 
 ## Installations
 
